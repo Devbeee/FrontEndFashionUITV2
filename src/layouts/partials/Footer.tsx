@@ -9,8 +9,8 @@ const { Title, Text } = Typography
 
 export function Footer() {
   return (
-    <AntFooter className='bg-blue-cyan text-white py-10'>
-      <Row justify='space-around' className='w-full'>
+    <AntFooter className='mt-auto bg-blue-cyan text-white pt-10'>
+      <Row justify='space-around' className='m-auto w-full'>
         <Col span={5}>
           <Title level={3} style={{ color: 'white' }}>
             THÔNG TIN CHUNG
@@ -22,7 +22,7 @@ export function Footer() {
             <div className='mt-2 text-white' key={contactInfoItem.title}>
               <strong>{contactInfoItem.title} </strong>
               <span>
-                <Link to={contactInfoItem.to} className='text-yellow font-semibold hover:opacity-90 hover:text-yellow'>
+                <Link to={contactInfoItem.to} className='text-yellow font-semibold hover:opacity-50 hover:text-yellow'>
                   {contactInfoItem.text}
                 </Link>
               </span>
@@ -43,22 +43,60 @@ export function Footer() {
             BÀI VIẾT MỚI
           </Title>
           <div className='space-y-4'>
-            <Row gutter={8} className='hover:text-yellow-400'>
-              <Link to=''>
-                <Col>
-                  <img
-                    src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
-                    alt='thumb'
-                    className='w-20 h-14'
-                  />
-                </Col>
-                <Col>
-                  <Text className='text-white'>
-                    4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
-                  </Text>
-                  <br />
-                  <Text className='text-gray-400'>05/04/2022</Text>
-                </Col>
+            <Row gutter={8}>
+              <Link to='' className='flex items-center'>
+              <Col>
+                <img
+                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
+                  alt='thumb'
+                  className='w-26 h-16'
+                />
+              </Col>
+              <Col className='ml-2'>
+                <Text className='text-white hover:text-yellow'>
+                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
+                </Text>
+                <br />
+                <Text className='text-gray-400'>05/04/2022</Text>
+              </Col>
+              </Link>
+            </Row>
+            <hr />
+            <Row gutter={8}>
+              <Link to='' className='flex items-center'>
+              <Col>
+                <img
+                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
+                  alt='thumb'
+                  className='w-26 h-16'
+                />
+              </Col>
+              <Col className='ml-2'>
+                <Text className='text-white hover:text-yellow'>
+                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
+                </Text>
+                <br />
+                <Text className='text-gray-400'>05/04/2022</Text>
+              </Col>
+              </Link>
+            </Row>
+            <hr />
+            <Row gutter={8}>
+              <Link to='' className='flex items-center'>
+              <Col>
+                <img
+                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
+                  alt='thumb'
+                  className='w-26 h-16'
+                />
+              </Col>
+              <Col className='ml-2'>
+                <Text className='text-white hover:text-yellow'>
+                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
+                </Text>
+                <br />
+                <Text className='text-gray-400'>05/04/2022</Text>
+              </Col>
               </Link>
             </Row>
           </div>
@@ -81,7 +119,13 @@ export function Footer() {
           </Col>
         ))}
       </Row>
-      <div className='text-center text-gray-400'>© Bản quyền thuộc về Mr. Bean | Cung cấp bởi Sapo</div>
+      <br />
+      <hr/>
+      <div className='text-center pt-3'>
+        <Text className='text-gray-400'>
+        © Bản quyền thuộc về Mr. Bean | Cung cấp bởi Sapo
+        </Text>
+      </div>
     </AntFooter>
   )
 }
