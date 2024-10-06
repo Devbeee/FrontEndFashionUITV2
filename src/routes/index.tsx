@@ -1,21 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { PATH } from '@/utils'
 import { DefaultLayout } from '@/layouts'
-
-import CollabPolicies from '@/components/Policies/CollabPolicies/CollabPolicies'
-import ExchangePolicies from '@/components/Policies/ExchangePolicies/ExchangePolicies'
-import MembershipPolicies from '@/components/Policies/MembershipPolicies/MembershipPolicies'
-import PaymentPolicies from '@/components/Policies/PaymentPolicies/PaymentPolicies'
-import PurchasePolicies from '@/components/Policies/PurchasePolicies/PurchasePolicies'
-import SecurityPolicies from '@/components/Policies/SecurityPolicies/SecurityPolicies'
-import StockPolicies from '@/components/Policies/StockPolicies/StockPolicies'
-import Collaborator from '@/components/SupportLinks/Collaborator/Collaborator'
-import ExchangeReturn from '@/components/SupportLinks/ExchangeReturn/ExchangeReturn'
-import Gift from '@/components/SupportLinks/Gift/Gift'
-import Inquiries from '@/components/SupportLinks/Inquiries/Inquiries'
-import Payment from '@/components/SupportLinks/Payment/Payment'
-import RetailAdvice from '@/components/SupportLinks/RetailAdvice/RetailAdvice'
-import Size from '@/components/SupportLinks/Size/Size'
+import { CollabPolicies, ExchangePolicies, MembershipPolicies, PaymentPolicies, PurchasePolicies, SecurityPolicies, StockPolicies,
+        Collaborator, ExchangeReturn, Gift, Inquiries, Payment, RetailAdvice, Size} from '@/components'
 
 export const router = createBrowserRouter([
   {
