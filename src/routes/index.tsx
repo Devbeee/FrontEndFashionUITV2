@@ -10,10 +10,10 @@ export const router = createBrowserRouter([
     path: PATH.home,
     element: <DefaultLayout />,
     children: [{
-      path: '/',
+      path: PATH.home,
       element: <Home />
-    }]
-    children: [{
+    },
+    {
       path: PATH.collab_pol,
       element: <CollabPolicies />,
       children: [{}]
