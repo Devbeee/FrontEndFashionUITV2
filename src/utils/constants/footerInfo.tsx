@@ -16,25 +16,25 @@ export const footerInfo = [
   {
     title: 'HỖ TRỢ',
     data: [
-      { text: 'Giải đáp thắc mắc', to: '/' },
-      { text: 'Hướng dẫn đổi trả', to: '' },
-      { text: 'Hướng dẫn chọn size', to: '' },
-      { text: 'Hướng dẫn thanh toán', to: '' },
-      { text: 'Chương trình cộng tác viên', to: '' },
-      { text: 'Tư vấn bán sĩ', to: '' },
-      { text: 'Quà tặng tri ân', to: '' }
+      { text: 'Giải đáp thắc mắc', to: '/inquiries_sup' },
+      { text: 'Hướng dẫn đổi trả', to: '/exchange_sup' },
+      { text: 'Hướng dẫn chọn size', to: '/size_sup' },
+      { text: 'Hướng dẫn thanh toán', to: '/payment_sup' },
+      { text: 'Chương trình cộng tác viên', to: '/collab_sup' },
+      { text: 'Tư vấn bán sỉ', to: '/retail_sup' },
+      { text: 'Quà tặng tri ân', to: '/gift_sup' }
     ]
   },
   {
     title: ' CHÍNH SÁCH',
     data: [
-      { text: 'Chính sách thành viên', to: '/' },
-      { text: 'Chính sách thanh toán', to: '' },
-      { text: 'Hướng dẫn mua hàng', to: '' },
-      { text: 'Chính sách đổi sản phẩmn', to: '' },
-      { text: 'Bảo mật thông tin cá nhân', to: '' },
-      { text: 'Nhập hàng giá sỉ', to: '' },
-      { text: 'Chính sách cộng tác viên', to: '' }
+      { text: 'Chính sách thành viên', to: '/membership_pol' },
+      { text: 'Chính sách thanh toán', to: '/payment_pol' },
+      { text: 'Hướng dẫn mua hàng', to: '/purchase_pol' },
+      { text: 'Chính sách đổi sản phẩm', to: '/exchange_pol' },
+      { text: 'Bảo mật thông tin cá nhân', to: '/security_pol' },
+      { text: 'Nhập hàng giá sỉ', to: '/stock_pol' },
+      { text: 'Chính sách cộng tác viên', to: '/collab_pol' }
     ]
   }
 ]
