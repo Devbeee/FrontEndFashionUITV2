@@ -4,7 +4,8 @@ import { BsSearch } from 'react-icons/bs'
 import { SlUser } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift } from 'react-icons/fa6'
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser } from 'react-icons/fa'
+import { MdOutlineWatchLater } from "react-icons/md";
 
 export const icons = {
   phone: <LiaPhoneSolid />,
@@ -16,5 +17,7 @@ export const icons = {
   facebook: <FaFacebookF />,
   twitter: <FaTwitter />,
   youtube: <FaYoutube />,
-  instagram: <FaInstagram />
+  instagram: <FaInstagram />,
+  faUser: <FaUser />,
+  watch: <MdOutlineWatchLater />
 }

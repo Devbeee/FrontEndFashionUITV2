@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { HotNews, Tags } from "@/components";
-import { MdOutlineWatchLater } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
+import { icons } from "@/utils";
 import { Button, Form, Input, Avatar, List } from 'antd';
 import { Typography } from "antd";
 const { Title } = Typography;
@@ -88,11 +87,11 @@ export function BLogDetail() {
                     </Title>
                     <div className="flex flex-row gap-4 justify-start">
                         <div className="flex flex-row items-center gap-1">
-                            <span className="text-gray400"><MdOutlineWatchLater className="text-lg" /></span>
+                            <span className="text-gray400 text-lg">{icons.watch}</span>
                             <span className="text-gray400">Thứ Ba, 05/04/2022</span>
                         </div>
                         <div className="flex flex-row items-center gap-1">
-                            <span className="text-gray400"><FaUser className="text-sm" /></span>
+                            <span className="text-gray400 text-sm">{icons.faUser}</span>
                             <span className="text-gray400">Bean Fashion</span>
                         </div>
                     </div>
