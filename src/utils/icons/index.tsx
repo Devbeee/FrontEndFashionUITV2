@@ -6,8 +6,9 @@ import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift } from 'react-icons/fa6'
 import { CiSettings } from "react-icons/ci";
 import { IoEyeOutline } from "react-icons/io5";
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser } from 'react-icons/fa'
 import { FiInfo } from 'react-icons/fi'
+import { MdOutlineWatchLater } from "react-icons/md";
 
 export const icons = {
   phone: <LiaPhoneSolid />,
@@ -22,5 +23,7 @@ export const icons = {
   instagram: <FaInstagram />,
   settings: <CiSettings />,
   eye: <IoEyeOutline />,
-  info: <FiInfo />
+  info: <FiInfo />,
+  faUser: <FaUser />,
+  watch: <MdOutlineWatchLater />
 }

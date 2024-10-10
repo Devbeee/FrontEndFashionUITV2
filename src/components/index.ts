@@ -14,3 +14,6 @@ export { default as Inquiries } from './SupportLinks/Inquiries';
 export { default as Payment } from './SupportLinks/Payment';
 export { default as RetailAdvice } from './SupportLinks/RetailAdvice';
 export { default as Size } from './SupportLinks/Size';
+export * from "./HotNews";
+export * from "./NewsCard";
+export * from "./Tags"

@@ -12,6 +12,9 @@ export default {
       width: {
         '1200': '1200px'
       },
+      maxWidth: {
+        '1200': '1200px'
+      },
       willChange: {
         'opacity': 'opacity'
       },

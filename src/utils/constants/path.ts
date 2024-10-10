@@ -1,7 +1,9 @@
 export const PATH = {
   home: '/', 
   products: '/products', 
-  cart: '/cart', 
+  cart: '/cart',
+  blog: '/blogs',
+  blogDetail: '/blog-detail', 
   
   collab_pol: '/collab_pol', //chinh sach cong tac vien
   exchange_pol: '/exchange_pol', //chinh sach doi san pham
