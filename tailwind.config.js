@@ -6,7 +6,8 @@ export default {
       colors: {
         'blue-cyan': '#00354b',
         'yellow': '#ffc107',
-        'primary': '#007bff'
+        'primary': '#007bff',
+        'white-0.3': 'rgba(255,255,255,0.3)'
       },
       width: {
         '1200': '1200px'
@@ -40,11 +41,17 @@ export default {
           '100%': {
             left: '0px'
           }
+        },
+        shine: {
+          '100%': {
+            left: '125%'
+          }
         }
       },
       animation: {
         pulsate: 'pulsate 1s ease-out infinite',
-        aniName: 'aniName 3s infinite'
+        aniName: 'aniName 3s infinite',
+        shine: 'shine 1.1s'
       },
       backgroundImage: {
         'fire': "url('@/assets/images/fire.png')",
