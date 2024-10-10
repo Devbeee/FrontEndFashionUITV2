@@ -2,7 +2,7 @@ export const PATH = {
   home: '/', 
   products: '/products', 
   cart: '/cart',
-  blog: '/blog',
+  blog: '/blogs',
   blogDetail: '/blog-detail', 
   
   collab_pol: '/collab_pol', //chinh sach cong tac vien

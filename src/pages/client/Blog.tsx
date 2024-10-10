@@ -1,50 +1,43 @@
 import { Tags, HotNews, NewsCard} from '@/components';
 import { Typography } from 'antd';
+import { IBlog } from '@/interfaces';
 
 const { Title } = Typography;
 
-type Blog = {
-    title: string;
-    description: string;
-    slug: string;
-    createdAt: string;
-    shortdesc: string;
-};
-
 // Data mẫu
-const blogsData: Blog[] = [
+const blogsData: IBlog[] = [
     {
       title: "Nhà thiết kế vĩ đại đầu tiên của năm 2022 Nhà thiết kế vĩ đại đầu tiên của năm 2022",
       description: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-      slug: "/ao-trang-nho",
+      slug: "ao-trang-nho",
       createdAt: "2022-04-05T12:22:12",
       shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
     },
     {
       title: "Cách phối đồ phong cách mùa hè",
       description: "Phong cách mùa hè luôn mang đến sự thoải mái và tươi mới. Những kiểu trang phục mới sẽ giúp bạn tận hưởng mùa hè trọn vẹn...",
-      slug: "/phoi-do-mua-he",
+      slug: "phoi-do-mua-he",
       createdAt: "2023-06-15T10:30:00",
       shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
     },
     {
       title: "Xu hướng thời trang thu đông 2023",
       description: "Thu đông 2023 mang đến các mẫu áo khoác oversize và boots cao cổ đang làm mưa làm gió trong giới thời trang...",
-      slug: "/xu-huong-thoi-trang-thu-dong",
+      slug: "xu-huong-thoi-trang-thu-dong",
       createdAt: "2023-09-01T14:00:00",
       shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
     },
     {
       title: "Những phụ kiện không thể thiếu trong năm 2024",
       description: "Phụ kiện là phần không thể thiếu trong phong cách thời trang. Năm 2024, xu hướng phụ kiện tập trung vào sự tinh tế và sáng tạo...",
-      slug: "/phu-kien-2024",
+      slug: "phu-kien-2024",
       createdAt: "2024-01-10T09:00:00",
       shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
     },
     {
       title: "Câu chuyện về chiếc đầm đen huyền thoại",
       description: "Chiếc đầm đen được xem là biểu tượng của sự thanh lịch và sang trọng. Hãy cùng tìm hiểu về câu chuyện đằng sau trang phục này...",
-      slug: "/chiec-dam-den-huyen-thoai",
+      slug: "chiec-dam-den-huyen-thoai",
       createdAt: "2023-11-25T16:45:00",
       shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
     },
@@ -97,10 +90,10 @@ const tagsData = [
 export function Blog() {
 
   return (
-    <div className="flex flex-col items-center justify-center w-full bg-white-primary">
+    <div className="flex flex-col items-center justify-center w-full bg-white">
       <div className="flex flex-row flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
         <div className="flex-[3]">
-          <Title level={5} className="text-left uppercase font-bold bg-gray100 rounded-md pl-2 py-2 shadow-sm mb-5">
+          <Title level={5} className="text-left uppercase font-bold bg-gray-100 rounded-md pl-2 py-2 shadow-sm mb-5">
             Tin tức
           </Title>
           <div className="flex flex-wrap gap-x-5 gap-y-5 sm:justify-center md:justify-start">

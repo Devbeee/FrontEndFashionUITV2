@@ -79,26 +79,11 @@ export const router = createBrowserRouter([
       path: PATH.size_sup,
       element: <Size />,
       children: [{}]
+    },
+    {
+      path: PATH.blog,
+      element: <Blog /> ,
+      children: [{}]
     }]
-  },
-  {
-    path: PATH.blog,
-    element: <DefaultLayout />,
-    children: [
-      {
-        path: '',
-        element: <Blog /> 
-      }
-    ]
-  },
-  {
-    path: PATH.blogDetail,
-    element: <DefaultLayout />,
-    children: [
-      {
-        path: '',
-        element: <BLogDetail /> 
-      }
-    ]
   }
 ])
