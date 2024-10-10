@@ -1,16 +1,28 @@
-import { Tabs, Carousel, Row } from "antd";
 import { useEffect, useState } from "react";
-import { Product } from "@/components";
+import { Carousel, Row } from "antd";
 import { Link } from "react-router-dom";
+
 import { Swiper, SwiperSlide } from "swiper/react";
-// import axiosClient from "@/configs/axiosClient";
 import { Navigation } from "swiper/modules";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "swiper/css"
 import "swiper/css/navigation";
-// import { CountdownTimer } from "@/components";
-// import { FiInfo } from "react-icons/fi";
+import "react-tabs/style/react-tabs.css";
 
-// const { TabPane } = Tabs;
+import { Product } from "@/components";
+import axiosClient from "@/configs/axiosClient";
+import { CountdownTimer } from "@/components";
+import { icons } from "@/utils";
+import { IProduct } from "@/interfaces";
+
+type SaleProduct = {
+    productId: number;
+    saleHour: number;
+    saleCount: number;
+    discountPercent: number;
+}
+
+type Product = IProduct;
 
 const sliderImages = [
     'src/assets/images/slider_1.webp',
@@ -84,126 +96,103 @@ const settings = {
     draggable: true
 };
 
-// interface SaleProduct {
-//     productId: number;
-//     saleHour: number;
-//     saleCount: number;
-//     discountPercent: number;
-
-// }
-
-interface Product {
-    _id: number;
-    name: string;
-    price: number;
-    discount: number;
-    sold: number;
-    saleCount: number;
-    category: {
-        sex: string;
-        categoryDetail: string;
-    }
-    images: { imgUrl: string }[];
-    slug: string;
-}
-
 export function Home() {
-    // const [tabIndex, setTabIndex] = useState<number>(0);
+    const [tabIndex, setTabIndex] = useState<number>(0);
     const [tabProductIndex, setProductTabIndex] = useState<number>(0);
     const [products, setProducts] = useState<Product[]>([]);
-    // const [officialProducts, setOfficialProducts] = useState<Product[]>([]);
+    const [officialProducts, setOfficialProducts] = useState<Product[]>([]);
     const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
     const [maleProducts, setMaleProducts] = useState<Product[]>([
         {
-        _id: 1,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
-    {
-        _id: 2,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
-    {
-        _id: 3,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
-    {
-        _id: 4,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
-    {
-        _id: 5,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
-    {
-        _id: 6,
-        name: "123",
-        price: 123,
-        discount: 20,
-        sold: 2,
-        saleCount: 2,
-        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-        slug: "123",
-        category: {
-            sex: 'nam',
-            categoryDetail: '1123123'
-        }
-    },
+            id: 1,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
+        {
+            id: 2,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
+        {
+            id: 3,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
+        {
+            id: 4,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
+        {
+            id: 5,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
+        {
+            id: 6,
+            name: "123",
+            price: 123,
+            discount: 20,
+            sold: 2,
+            saleCount: 2,
+            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+            slug: "123",
+            category: {
+                sex: 'nam',
+                categoryDetail: '1123123'
+            }
+        },
     ]);
     const [femaleProducts, setFemaleProducts] = useState<Product[]>([]);
     const [gymProducts, setGymProducts] = useState<Product[]>([]);
-    // const [saleProductsInTabIndex, setSaleProductsInTabIndex] = useState<Product[][]>([]);
-    // const currentTime = new Date();
-    // const [status, setStatus] = useState<boolean[]>([false, false, false, false]);
+    const [saleProductsInTabIndex, setSaleProductsInTabIndex] = useState<Product[][]>([]);
+    const currentTime = new Date();
+    const [status, setStatus] = useState<boolean[]>([false, false, false, false]);
     const [width, setWidth] = useState(window.innerWidth);
 
     // pagination
@@ -220,111 +209,130 @@ export function Home() {
     //         });
     // };
 
-    // const getSaleProducts = async () => {
-    //     try {
-    //         const month = currentTime.getMonth() + 1;
-    //         const paddedMonth = month < 10 ? `0${month}` : month;
-    //         const day = currentTime.getDate();
-    //         const paddedDay = day < 10 ? `0${day}` : day;
-    //         const response = await axiosClient.get(
-    //             `/sale/get/${currentTime.getFullYear()}-${paddedMonth}-${paddedDay}`
-    //         );
-    //         const saleProducts = response.data;
+    const getSaleProducts = async () => {
+        try {
+            const month = currentTime.getMonth() + 1;
+            const paddedMonth = month < 10 ? `0${month}` : month;
+            const day = currentTime.getDate();
+            const paddedDay = day < 10 ? `0${day}` : day;
+            // const response = await axiosClient.get(
+            //     `/sale/get/${currentTime.getFullYear()}-${paddedMonth}-${paddedDay}`
+            // );
+            const saleProducts: SaleProduct[] = [
+                { productId: 1, saleHour: 0, saleCount: 45, discountPercent: 12 },
+                { productId: 2, saleHour: 0, saleCount: 69, discountPercent: 28 },
+                { productId: 3, saleHour: 0, saleCount: 22, discountPercent: 25 },
+                { productId: 4, saleHour: 0, saleCount: 72, discountPercent: 49 },
+                { productId: 5, saleHour: 0, saleCount: 91, discountPercent: 37 },
+                { productId: 6, saleHour: 0, saleCount: 2, discountPercent: 41 }
+            ];
 
-    //         const itemInTabIndex0 = saleProducts.filter(
-    //             (saleProduct: SaleProduct) => saleProduct.saleHour === 0
-    //         );
-    //         const itemInTabIndex1 = saleProducts.filter(
-    //             (saleProduct: SaleProduct) => saleProduct.saleHour === 6
-    //         );
-    //         const itemInTabIndex2 = saleProducts.filter(
-    //             (saleProduct: SaleProduct) => saleProduct.saleHour === 12
-    //         );
-    //         const itemInTabIndex3 = saleProducts.filter(
-    //             (saleProduct: SaleProduct) => saleProduct.saleHour === 18
-    //         );
-    //         const saleProductsInTabIndex0: Product[] = await Promise.all(
-    //             itemInTabIndex0.map(async (item: SaleProduct) => {
-    //                 const product = await getProductById(item.productId);
-    //                 product.saleCount = item.saleCount;
-    //                 product.discount = item.discountPercent;
-    //                 return product;
-    //             })
-    //         );
-    //         const saleProductsInTabIndex1: Product[] = await Promise.all(
-    //             itemInTabIndex1.map(async (item: SaleProduct) => {
-    //                 const product = await getProductById(item.productId);
-    //                 product.saleCount = item.saleCount;
-    //                 product.discount = item.discountPercent;
-    //                 return product;
-    //             })
-    //         );
-    //         const saleProductsInTabIndex2: Product[] = await Promise.all(
-    //             itemInTabIndex2.map(async (item: SaleProduct) => {
-    //                 const product = await getProductById(item.productId);
-    //                 product.saleCount = item.saleCount;
-    //                 product.discount = item.discountPercent;
-    //                 return product;
-    //             })
-    //         );
-    //         const saleProductsInTabIndex3: Product[] = await Promise.all(
-    //             itemInTabIndex3.map(async (item: SaleProduct) => {
-    //                 const product = await getProductById(item.productId);
-    //                 product.saleCount = item.saleCount;
-    //                 product.discount = item.discountPercent;
-    //                 return product;
-    //             })
-    //         );
+            const itemInTabIndex0 = saleProducts.filter(
+                (saleProduct: SaleProduct) => saleProduct.saleHour === 0
+            );
+            const itemInTabIndex1 = saleProducts.filter(
+                (saleProduct: SaleProduct) => saleProduct.saleHour === 6
+            );
+            const itemInTabIndex2 = saleProducts.filter(
+                (saleProduct: SaleProduct) => saleProduct.saleHour === 12
+            );
+            const itemInTabIndex3 = saleProducts.filter(
+                (saleProduct: SaleProduct) => saleProduct.saleHour === 18
+            );
+            const saleProductsInTabIndex0: Product[] = (await Promise.all(
+                itemInTabIndex0.map(async (item: SaleProduct) => {
+                    const product = maleProducts.find(product => product.id === item.productId);
+                    if (product) {
+                        product.saleCount = item.saleCount;
+                        product.discount = item.discountPercent;
+                        return product;
+                    }
+                    return null;
+                })
+            )).filter((product): product is Product => product !== null);
+            const saleProductsInTabIndex1: Product[] = (await Promise.all(
+                itemInTabIndex1.map(async (item: SaleProduct) => {
+                    const product = maleProducts.find(product => product.id === item.productId);
+                    if (product) {
+                        product.saleCount = item.saleCount;
+                        product.discount = item.discountPercent;
+                        return product;
+                    }
+                    return null;
+                })
+            )).filter((product): product is Product => product !== null);
+            const saleProductsInTabIndex2: Product[] = (await Promise.all(
+                itemInTabIndex2.map(async (item: SaleProduct) => {
+                    const product = maleProducts.find(product => product.id === item.productId);
+                    if (product) {
+                        product.saleCount = item.saleCount;
+                        product.discount = item.discountPercent;
+                        return product;
+                    }
+                    return null;
+                })
+            )).filter((product): product is Product => product !== null);
+            const saleProductsInTabIndex3: Product[] = (await Promise.all(
+                itemInTabIndex3.map(async (item: SaleProduct) => {
+                    const product = maleProducts.find(product => product.id === item.productId);
+                    if (product) {
+                        product.saleCount = item.saleCount;
+                        product.discount = item.discountPercent;
+                        return product;
+                    }
+                    return null;
+                })
+            )).filter((product): product is Product => product !== null);
 
-    //         const productsCopy: Product[] = [...products];
-    //         if (0 <= currentTime.getHours() && currentTime.getHours() < 6) {
-    //             for (let item of itemInTabIndex0) {
-    //                 for (let product of productsCopy) {
-    //                     let typedProduct = product as Product;
-    //                     if (item.productId === typedProduct._id) {
-    //                         typedProduct.discount = item.discountPercent;
-    //                     }
-    //                 }
-    //             }
-    //         } else if (6 <= currentTime.getHours() && currentTime.getHours() < 12) {
-    //             for (let item of itemInTabIndex1) {
-    //                 for (let product of productsCopy) {
-    //                     let typedProduct = product as Product;
-    //                     if (item.productId === typedProduct._id) {
-    //                         typedProduct.discount = item.discountPercent;
-    //                     }
-    //                 }
-    //             }
-    //         } else if (12 <= currentTime.getHours() && currentTime.getHours() < 18) {
-    //             for (let item of itemInTabIndex2) {
-    //                 for (let product of productsCopy) {
-    //                     let typedProduct = product as Product;
-    //                     if (item.productId === typedProduct._id) {
-    //                         typedProduct.discount = item.discountPercent;
-    //                     }
-    //                 }
-    //             }
-    //         } else if (18 <= currentTime.getHours() && currentTime.getHours() < 24) {
-    //             for (let item of itemInTabIndex3) {
-    //                 for (let product of productsCopy) {
-    //                     let typedProduct = product as Product;
-    //                     if (item.productId === typedProduct._id) {
-    //                         typedProduct.discount = item.discountPercent;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         setOfficialProducts(productsCopy);
-    //         setSaleProductsInTabIndex([
-    //             saleProductsInTabIndex0,
-    //             saleProductsInTabIndex1,
-    //             saleProductsInTabIndex2,
-    //             saleProductsInTabIndex3,
-    //         ]);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
+            const productsCopy: Product[] = [...maleProducts];
+            if (0 <= currentTime.getHours() && currentTime.getHours() < 6) {
+                for (let item of itemInTabIndex0) {
+                    for (let product of productsCopy) {
+                        let typedProduct = product as Product;
+                        if (item.productId === typedProduct.id) {
+                            typedProduct.discount = item.discountPercent;
+                        }
+                    }
+                }
+            } else if (6 <= currentTime.getHours() && currentTime.getHours() < 12) {
+                for (let item of itemInTabIndex1) {
+                    for (let product of productsCopy) {
+                        let typedProduct = product as Product;
+                        if (item.productId === typedProduct.id) {
+                            typedProduct.discount = item.discountPercent;
+                        }
+                    }
+                }
+            } else if (12 <= currentTime.getHours() && currentTime.getHours() < 18) {
+                for (let item of itemInTabIndex2) {
+                    for (let product of productsCopy) {
+                        let typedProduct = product as Product;
+                        if (item.productId === typedProduct.id) {
+                            typedProduct.discount = item.discountPercent;
+                        }
+                    }
+                }
+            } else if (18 <= currentTime.getHours() && currentTime.getHours() < 24) {
+                for (let item of itemInTabIndex3) {
+                    for (let product of productsCopy) {
+                        let typedProduct = product as Product;
+                        if (item.productId === typedProduct.id) {
+                            typedProduct.discount = item.discountPercent;
+                        }
+                    }
+                }
+            }
+            setOfficialProducts(productsCopy);
+            setSaleProductsInTabIndex([
+                saleProductsInTabIndex0,
+                saleProductsInTabIndex1,
+                saleProductsInTabIndex2,
+                saleProductsInTabIndex3,
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     // const getProductById = async (productId: number) => {
     //     try {
@@ -367,142 +375,6 @@ export function Home() {
     //     setGymProducts(tmpProducts);
     // };
 
-    const tabItems = [
-        {
-            key: '0',
-            icon:
-                <div className="inline-block border-2 border-blue-cyan transition-all duration-300 w-10 h-10 rounded-full">
-                    <img
-                        className="border-0 max-w-full h-auto bg-transparent"
-                        src={tabImages[1]}
-                        alt="tab nam"
-                    />
-                </div>,
-            label: (
-                <div className={`inline-block text-base text-black cursor-pointer font-semibold relative w-4/12 mb-0 ${tabProductIndex === 0 ? "text-blue-cyan absolute" : ""}`}>
-                    <p>
-                        Thời trang Nam
-                        <span className="block text-xs text-gray-600 font-normal">{products ? maleProducts?.length : 0} sản phẩm</span>
-                    </p>
-                </div>
-            ),
-            children: (
-                <div className="p-0 m-2.5">
-                    <div className={`h-0 overflow-hidden ${tabProductIndex === 0 ? "opacity-100 visible h-auto" : "opacity-0 invisible"}`}>
-                        <div className="mx-auto relative overflow-hidden list-none p-0">
-                            <Swiper
-                                spaceBetween={10}
-                                slidesPerView={width > 768 ? 4 : 2}
-                                navigation
-                                modules={[Navigation]}
-                            >
-                                {products ? (
-                                    maleProducts?.map((product, index) => (
-                                        <SwiperSlide key={index} className="relative mb-4 bg-white p-2.5 rounded-md !w-1/4">
-                                            <Product
-                                                discount={!!product.discount}
-                                                product={product}
-                                            />
-                                        </SwiperSlide>
-                                    ))
-                                ) : null}
-                            </Swiper>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            key: '1',
-            icon:
-                <div className="inline-block border-2 border-blue-cyan transition-all duration-300 w-10 h-10 rounded-full">
-                    <img
-                        className="border-0 max-w-full h-auto bg-transparent"
-                        src={tabImages[2]}
-                        alt="tab nam"
-                    />
-                </div>,
-            label: (
-                <div className={`inline-block text-base text-black cursor-pointer font-semibold relative w-4/12 mb-0 ${tabProductIndex === 1 ? "text-blue-cyan absolute" : ""}`}>
-                    <p>
-                        Thời trang Nữ
-                        <span className="block text-xs text-gray-600 font-normal">{products ? femaleProducts?.length : 0} sản phẩm</span>
-                    </p>
-                </div>
-            ),
-            children: (
-                <div className="p-0 m-2.5">
-                    <div className={`h-0 overflow-hidden ${tabProductIndex === 0 ? "opacity-100 visible h-auto" : "opacity-0 invisible"}`}>
-                        <div className="mx-auto relative overflow-hidden list-none p-0">
-                            <Row>
-                                <Swiper
-                                    spaceBetween={10}
-                                    slidesPerView={width > 768 ? 4 : 2}
-                                    navigation
-                                    modules={[Navigation]}
-                                >
-                                    {products ? (
-                                        femaleProducts?.map((product, index) => (
-                                            <SwiperSlide key={index} className="relative mb-4 bg-white p-2.5 rounded-md !w-1/4">
-                                                <Product
-                                                    discount={!!product.discount}
-                                                    product={product}
-                                                />
-                                            </SwiperSlide>
-                                        ))
-                                    ) : null}
-                                </Swiper>
-                            </Row>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            key: '2',
-            icon: <div className="inline-block border-2 border-blue-cyan transition-all duration-300 w-10 h-10 rounded-full">
-                <img
-                    className="border-0 max-w-full h-auto bg-transparent"
-                    src={tabImages[3]}
-                    alt="tab gym"
-                />
-            </div>,
-            label: (
-                <div className={`inline-block text-base text-black cursor-pointer font-semibold relative w-4/12 mb-0 ${tabProductIndex === 2 ? "text-blue-cyan absolute" : ""}`}>
-                    <p>
-                        Thời trang Gym
-                        <span className="block text-xs text-gray-600 font-normal">{products ? gymProducts?.length : 0} sản phẩm</span>
-                    </p>
-                </div>
-            ),
-            children: (
-                <div className="p-0 m-2.5">
-                    <div className={`h-0 overflow-hidden ${tabProductIndex === 0 ? "opacity-100 visible h-auto" : "opacity-0 invisible"}`}>
-                        <div className="mx-auto relative overflow-hidden list-none p-0 ">
-                            <Swiper
-                                spaceBetween={10}
-                                slidesPerView={width > 768 ? 4 : 2}
-                                navigation
-                                modules={[Navigation]}
-                            >
-                                {products ? (
-                                    gymProducts?.map((product, index) => (
-                                        <SwiperSlide key={index} className="relative mb-4 bg-white p-2.5 rounded-md !w-1/4">
-                                            <Product
-                                                discount={!!product.discount}
-                                                product={product}
-                                            />
-                                        </SwiperSlide>
-                                    ))
-                                ) : null}
-                            </Swiper>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
-    ];
-
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth);
 
@@ -510,6 +382,9 @@ export function Home() {
 
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+    useEffect(() => {
+        getSaleProducts();
+    }, [])
     return (
         <div className="">
             <div className="relative w-full min-h-full mb-4">
@@ -544,27 +419,27 @@ export function Home() {
             </div>
             <div className="mb-7 md:mb-3.5">
                 <div className="container w-1200 mx-auto">
-                    <Row className="mx-2.5 flex justify-content-center">
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="text-center shadow-md min-h-[85px] pt-2 pb-1 rounded md:min-h-[85px] md:mb-1 lg:min-h-[60px] last:border-r-0">
+                    <Row className="flex justify-center">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-1">
+                            <div className="text-center shadow-md pt-2 pb-1 rounded md:min-h-24 md:mb-1 lg:min-h-16 last:border-r-0">
                                 <div className="mb-1 lg:inline-block lg:mb-0">
                                     <img
-                                        className="max-w-[36px] bg-transparent"
+                                        className="max-w-9 bg-transparent"
                                         src={serviceImages[0]}
                                         alt="delivery"
                                     />
                                 </div>
-                                <div className=" inline-block text-center font-normal mb-0 mt-0 text-blue-cyan lg:text-left lg:ml-2 md:text-md">
+                                <div className="inline-block text-center font-normal mb-0 mt-0 text-blue-cyan lg:text-left lg:ml-2 md:text-md">
                                     Vận chuyển <span className="font-semibold">Miễn phí</span> <br />
                                     Trong khu vực <span className="font-semibold">TP.HCM</span>
                                 </div>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="text-center shadow-md min-h-[85px] pt-2 pb-1 rounded md:min-h-[85px] md:mb-1 lg:min-h-[60px] last:border-r-0">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-1">
+                            <div className="text-center shadow-md pt-2 pb-1 rounded md:min-h-24 md:mb-1 lg:min-h-16 last:border-r-0">
                                 <div className="mb-1 lg:inline-block lg:mb-0">
                                     <img
-                                        className="max-w-[36px] bg-transparent"
+                                        className="max-w-9 bg-transparent"
                                         src={serviceImages[1]}
                                         alt="exchange"
                                     />
@@ -575,11 +450,11 @@ export function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="text-center shadow-md min-h-[85px] pt-2 pb-1 rounded md:min-h-[85px] md:mb-1 lg:min-h-[60px] last:border-r-0">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-1">
+                            <div className="text-center shadow-md pt-2 pb-1 rounded md:min-h-24 md:mb-1 lg:min-h-16 last:border-r-0">
                                 <div className="mb-1 lg:inline-block lg:mb-0">
                                     <img
-                                        className="max-w-[36px] bg-transparent"
+                                        className="max-w-9 bg-transparent"
                                         src={serviceImages[2]}
                                         alt="payment"
                                     />
@@ -590,11 +465,11 @@ export function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="text-center shadow-md min-h-[85px] pt-2 pb-1 rounded md:min-h-[85px] md:mb-1 lg:min-h-[60px] last:border-r-0">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-1">
+                            <div className="text-center shadow-md pt-2 pb-1 rounded md:min-h-24 md:mb-1 lg:min-h-16 last:border-r-0">
                                 <div className="mb-1 lg:inline-block lg:mb-0">
                                     <img
-                                        className="max-w-[36px] bg-transparent"
+                                        className="max-w-9 bg-transparent"
                                         src={serviceImages[3]}
                                         alt="refund"
                                     />
@@ -626,16 +501,13 @@ export function Home() {
                                 {products ? (
                                     maleProducts?.map((product: Product) => (
                                         <SwiperSlide
-                                            key={product._id}
+                                            key={product.id}
                                             className="relative mb-3.5 bg-white p-2.5 rounded"
                                         >
                                             <Product
                                                 product={product}
-                                                ranking={maleProducts.indexOf(product) + 1}
-                                                productCount={true}
-                                                // handleClickEye={() => handleClickEye(product)}
-                                                // handleClickCart={() => handleClickCart(product)}
-                                                discount={product.discount ? true : false}
+                                            // handleClickEye={() => handleClickEye(product)}
+                                            // handleClickCart={() => handleClickCart(product)}       
                                             />
                                         </SwiperSlide>
                                     ))
@@ -651,89 +523,98 @@ export function Home() {
                 <div className="container w-1200 mx-auto">
                     <div className="rounded border border-gray-300 pb-0 bg-amber-500 relative">
                         <div className="clearfix">
-                            {/* <Tabs activeKey={String(tabIndex)} onChange={(key) => setTabIndex(Number(key))}>
-                                <Row className="">
-                                    <div className="h-16 flex items-center justify-center rounded inline-block w-full text-center">
+                            <Tabs
+                                selectedIndex={tabIndex}
+                                onSelect={(index) => setTabIndex(index)}
+                            >
+                                <div className="block">
+                                    <TabList className="flex h-16 items-center justify-center rounded-t w-full text-center">
                                         {[0, 1, 2, 3].map((index) => (
-                                            <TabPane
-                                                tab={
-                                                    <div
-                                                        className={`p-1 mb-2.5 font-semibold h-16 rounded flex-1 cursor-pointer bg-white text-gray-400 relative mr-0 border-r border-gray-300
-                                                            ${tabIndex === index && "bg-red-700 text-white border-none"}
-                                                    `}>
-                                                        <div className="m-0 p-0 border-0 rounded-none opacity-100 bg-transparent text-inherit font-bold text-xl leading-7 overflow-hidden line-clamp-1 transition-colors duration-300 ease-in-out">
-                                                            {index === 0 && "00:00 - 06:00"}
-                                                            {index === 1 && "06:00 - 12:00"}
-                                                            {index === 2 && "12:00 - 18:00"}
-                                                            {index === 3 && "18:00 - 24:00"}
-                                                        </div>
-                                                        <div className="m-0 p-0 border-0 rounded-none opacity-100 bg-transparent text-inherit font-bold text-xl overflow-hidden line-clamp-1 transition-colors duration-300 ease-in-out md:text-base">
-                                                            {(index === 0 &&
-                                                                currentTime.getHours() >= 0 &&
-                                                                currentTime.getHours() < 6) ||
-                                                                (index === 1 &&
-                                                                    currentTime.getHours() >= 6 &&
-                                                                    currentTime.getHours() < 12) ||
-                                                                (index === 2 &&
-                                                                    currentTime.getHours() >= 12 &&
-                                                                    currentTime.getHours() < 18) ||
-                                                                (index === 3 &&
-                                                                    currentTime.getHours() >= 18 &&
-                                                                    currentTime.getHours() < 24)
-                                                                ? "Đang diễn ra"
-                                                                : status[index]
-                                                                    ? "Đã diễn ra"
-                                                                    : "Sắp diễn ra"}
-                                                        </div>
-                                                    </div>
-                                                }
+                                            <Tab
                                                 key={index}
-                                            />
+                                                className={`relative p-1 font-semibold h-16 rounded-t-lg flex-1 cursor-pointer mr-0  ${tabIndex === index ? "bg-red-800 text-white border-none outline-none" : "text-slate-800 bg-white border-r border-gray-600"}`}
+                                            >
+                                                <div className="m-0 p-0 border-none rounded-none border border-transparent opacity-100 bg-transparent text-inherit font-bold text-xl overflow-hidden inline-block line-clamp-1 transition-colors duration-300 ease-linear">
+                                                    {index === 0 && "00:00 - 06:00"}
+                                                    {index === 1 && "06:00 - 12:00"}
+                                                    {index === 2 && "12:00 - 18:00"}
+                                                    {index === 3 && "18:00 - 24:00"}
+                                                </div>
+                                                <div className="m-0 p-0 border-none rounded-none border border-transparent opacity-100 bg-transparent text-inherit font-medium text-sm overflow-hidden block line-clamp-1 transition-colors duration-300 ease-linear">
+                                                    {(index === 0 &&
+                                                        currentTime.getHours() >= 0 &&
+                                                        currentTime.getHours() < 6) ||
+                                                        (index === 1 &&
+                                                            currentTime.getHours() >= 6 &&
+                                                            currentTime.getHours() < 12) ||
+                                                        (index === 2 &&
+                                                            currentTime.getHours() >= 12 &&
+                                                            currentTime.getHours() < 18) ||
+                                                        (index === 3 &&
+                                                            currentTime.getHours() >= 18 &&
+                                                            currentTime.getHours() < 24)
+                                                        ? "Đang diễn ra"
+                                                        : status[index]
+                                                            ? "Đã diễn ra"
+                                                            : "Sắp diễn ra"}
+                                                </div>
+                                            </Tab>
                                         ))}
                                         <CountdownTimer />
-                                    </div>
-                                </Row>
+                                    </TabList>
+                                </div>
 
                                 {[0, 1, 2, 3].map((index) => (
-                                    <TabPane key={index} tab={null}>
-                                        <div className="p-[20px_20px_15px] md:p[75px_10px_15px_5px]">
-                                            <div className={`opacity-0 invisible h-0 overflow-hidden ${tabIndex === index ? "opacity-100 visible h-auto" : ""}`}>
-                                                <Row className="">
+                                    <TabPanel key={index}>
+                                        <div className="p-5">
+                                            <div
+                                                className={` overflow-hidden ${tabIndex === index ? "opacity-100 visible h-auto" : "opacity-0 invisible h-0"}`}
+                                            >
+                                                <div className="block">
                                                     {saleProductsInTabIndex ? (
-                                                        saleProductsInTabIndex[index].length > 0 ? (
+                                                        saleProductsInTabIndex[index]?.length > 0 ? (
                                                             <Swiper
                                                                 spaceBetween={10}
                                                                 slidesPerView={width > 768 ? 5 : 2}
                                                                 modules={[Navigation]}
                                                                 navigation
                                                             >
-                                                                {saleProductsInTabIndex[index].map((product : Product, productIndex) => (
-                                                                    <SwiperSlide key={productIndex} className="relative mb-4 bg-white p-4 rounded">
-                                                                        <Product
-                                                                            productCountSale={true}
-                                                                            product={product}
-                                                                            // handleClickCart={() => handleClickCart(product)}
-                                                                            // handleClickEye={() => handleClickEye(product)}
-                                                                            discount={!!product.discount}
-                                                                        />
-                                                                    </SwiperSlide>
-                                                                ))}
+                                                                {saleProductsInTabIndex[index].map(
+                                                                    (product, productIndex) => (
+                                                                        <SwiperSlide
+                                                                            key={productIndex}
+                                                                            className="relative mb-3 bg-white p-2.5 rounded-lg"
+                                                                        >
+                                                                            <Product
+                                                                                product={product}
+                                                                            />
+                                                                        </SwiperSlide>
+                                                                    )
+                                                                )}
                                                             </Swiper>
                                                         ) : (
-                                                            <div className="flex flex-col justify-center items-center">
-                                                                <FiInfo className="w-60 h-60 text-white" />
-                                                                <p className="text-white font-bold m-0 text-xl">Không có sản phẩm nào được giảm giá vào khung giờ này</p>
+                                                            <div className="flex flex-col justify-center items-center h-96">
+                                                                <span className="text-7xl text-white block">
+                                                                    {
+                                                                        icons.info
+                                                                    }
+
+                                                                </span>
+                                                                <span className="text-white text-xl mt-5">
+                                                                    Không có sản phẩm nào được giảm giá vào khung
+                                                                    giờ này
+                                                                </span>
                                                             </div>
                                                         )
                                                     ) : (
                                                         <></>
                                                     )}
-                                                </Row>
+                                                </div>
                                             </div>
                                         </div>
-                                    </TabPane>
+                                    </TabPanel>
                                 ))}
-                            </Tabs> */}
+                            </Tabs>
                         </div>
                     </div>
                 </div>
@@ -741,53 +622,53 @@ export function Home() {
             <section className="mb-7 md:mb-3.5">
                 <div className="container w-1200 mx-auto">
                     <Row className="flex justify-content-center">
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2">
+                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group before:absolute before:h-full before:w-full before:top-0 before:left-0 before:bg-white before:-skew-y-12  before:-translate-y-2/4">
                                 <img
                                     className="max-w-full scale-[1.1] group-hover:opacity-30 group-hover:scale-100 box-border transition-all duration-300 ease-in-out"
                                     src={categoryImages[0]}
                                     alt="Men"
                                 />
                                 <div className="absolute inset-0 box-border transition-all duration-300 ease-in-out">
-                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out">
+                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out -translate-y-2/4">
                                         Men's
                                     </p>
                                 </div>
                                 <Link to="/products?keyword=nam" className="absolute inset-0 cursor-pointer"></Link>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2">
+                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group before:absolute before:h-full before:w-full before:top-0 before:left-0 before:bg-white before:-skew-y-12  before:-translate-y-2/4">
                                 <img
                                     className="max-w-full scale-[1.1] group-hover:opacity-30 group-hover:scale-100 box-border transition-all duration-300 ease-in-out"
                                     src={categoryImages[1]}
                                     alt="Women"
                                 />
                                 <div className="absolute inset-0 box-border transition-all duration-300 ease-in-out">
-                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out">
+                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out -translate-y-2/4">
                                         Women's
                                     </p>
                                 </div>
                                 <Link to="/products?keyword=nam" className="absolute inset-0 cursor-pointer"></Link>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2">
+                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group before:absolute before:h-full before:w-full before:top-0 before:left-0 before:bg-white before:-skew-y-12  before:-translate-y-2/4">
                                 <img
                                     className="max-w-full scale-[1.1] group-hover:opacity-30 group-hover:scale-100 box-border transition-all duration-300 ease-in-out"
                                     src={categoryImages[2]}
                                     alt="Kids"
                                 />
                                 <div className="absolute inset-0 box-border transition-all duration-300 ease-in-out">
-                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out">
+                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out -translate-y-2/4">
                                         Kid's
                                     </p>
                                 </div>
                                 <Link to="/products?keyword=nam" className="absolute inset-0 cursor-pointer"></Link>
                             </div>
                         </div>
-                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12">
-                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group">
+                        <div className="lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2">
+                            <div className="bg-blue-cyan relative overflow-hidden w-full text-white text-center drop-shadow-md group before:absolute before:h-full before:w-full before:top-0 before:left-0 before:bg-white before:-skew-y-12  before:-translate-y-2/4">
                                 <img
                                     className="max-w-full scale-[1.1] group-hover:opacity-30 group-hover:bg-white group-hover:scale-100 box-border transition-all duration-300 ease-in-out"
                                     src={categoryImages[3]}
@@ -795,7 +676,7 @@ export function Home() {
                                 />
                                 {/* <div className="absolute inset-0 group-hover:opacity-30 group-hover:scale-100 group-hover:bg-white"></div> */}
                                 <div className="absolute inset-0 box-border transition-all duration-300 ease-in-out">
-                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out">
+                                    <p className="bg-blue-cyan absolute top-1/2 left-10 right-10 -skew-y-12 p-1.5 m-0 uppercase font-normal text-2xl mb-0 box-border transition-all duration-300 ease-in-out -translate-y-2/4">
                                         Gym's
                                     </p>
                                 </div>
@@ -816,22 +697,167 @@ export function Home() {
                         <div className="flex">
                             <div className="lg:flex-none lg:w-1/4 lg:max-w-1/4 block">
                                 <div className="relative overflow-hidden block">
-                                    <a className="">
+                                    <div className="">
                                         <img
                                             className="border-0 max-w-full h-auto bg-transparent"
                                             src={tabImages[0]}
                                             alt="banner tab"
                                         />
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex-none w-3/4 max-w-3/4 px-2.5">
                                 <Tabs
-                                    activeKey={tabProductIndex.toString()}
-                                    onChange={(key) => setProductTabIndex(Number(key))}
-                                    items={tabItems}
-                                    tabPosition="bottom"
-                                />;
+                                    selectedIndex={tabProductIndex}
+                                    onSelect={(index) => setProductTabIndex(index)}
+                                >
+                                    <TabPanel>
+                                        <div className="p-0 m-2.5">
+                                            <div
+                                                className={`${tabProductIndex === 0 ? "opacity-100 visible h-auto" : "opacity-0 invisible h-0 overflow-hidden"}`}
+                                            >
+                                                <div className="block">
+                                                    <Swiper
+                                                        spaceBetween={0}
+                                                        slidesPerView={width > 768 ? 4 : 2}
+                                                        modules={[Navigation]}
+                                                        navigation
+                                                    >
+                                                        {products ? (
+                                                            maleProducts?.map((product) => (
+                                                                <SwiperSlide
+                                                                    key={product.id}
+                                                                    className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
+                                                                >
+                                                                    <Product
+                                                                        product={product}
+                                                                    />
+                                                                </SwiperSlide>
+                                                            ))
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </Swiper>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <div className="p-0 m-2.5">
+                                            <div
+                                                className={`${tabProductIndex === 1 ? "opacity-100 visible h-auto" : "opacity-0 invisible h-0 overflow-hidden"}`}
+                                            >
+                                                <div className="block">
+                                                    <Swiper
+                                                        spaceBetween={0}
+                                                        slidesPerView={width > 768 ? 4 : 2}
+                                                        modules={[Navigation]}
+                                                        navigation
+                                                    >
+                                                        {products ? (
+                                                            maleProducts?.map((product) => (
+                                                                <SwiperSlide
+                                                                    key={product.id}
+                                                                    className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
+                                                                >
+                                                                    <Product
+                                                                        product={product}
+                                                                    />
+                                                                </SwiperSlide>
+                                                            ))
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </Swiper>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <div className="p-0 m-2.5">
+                                            <div
+                                                className={`${tabProductIndex === 2 ? "opacity-100 visible h-auto" : "opacity-0 invisible h-0 overflow-hidden"}`}
+                                            >
+                                                <div className="block">
+                                                    <Swiper
+                                                        spaceBetween={0}
+                                                        slidesPerView={width > 768 ? 4 : 2}
+                                                        modules={[Navigation]}
+                                                        navigation
+                                                    >
+                                                        {products ? (
+                                                            maleProducts?.map((product) => (
+                                                                <SwiperSlide
+                                                                    key={product.id}
+                                                                    className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
+                                                                >
+                                                                    <Product
+                                                                        product={product}
+                                                                    />
+                                                                </SwiperSlide>
+                                                            ))
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </Swiper>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TabPanel>
+                                    <TabList className="flex justify-between items-center m-0 border-b-0 border-t-2 border-t-blue-cyan pt-6">
+                                        <Tab
+                                            className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 ${tabProductIndex === 0 ? "text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white" : "text-black"}`}
+                                        >
+                                            <div className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 0 ? "border-blue-cyan" : "border-gray-500"}`}>
+                                                <img
+                                                    className="border-0 max-w-full h-auto bg-transparent"
+                                                    src={tabImages[1]}
+                                                    alt="tab nam"
+                                                />
+                                            </div>
+                                            <p className="my-0 leading-4">
+                                                Thời trang Nam
+                                                <span className="block text-xs text-left text-gray-500 font-normal">
+                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                </span>
+                                            </p>
+                                        </Tab>
+                                        <Tab
+                                            className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 ${tabProductIndex === 1 ? "text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white" : "text-black"}`}
+                                        >
+                                            <div className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 1 ? "border-blue-cyan" : "border-gray-500"}`}>
+                                                <img
+                                                    className="border-0 max-w-full h-auto bg-transparent"
+                                                    src={tabImages[2]}
+                                                    alt="tab nu"
+                                                />
+                                            </div>
+                                            <p className="my-0 leading-4">
+                                                Thời trang Nữ
+                                                <span className="block text-xs text-left text-gray-500 font-normal">
+                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                </span>
+                                            </p>
+                                        </Tab>
+                                        <Tab
+                                            className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 ${tabProductIndex === 2 ? "text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white" : "text-black"}`}
+                                        >
+                                            <div className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 2 ? "border-blue-cyan" : "border-gray-500"}`}>
+                                                <img
+                                                    className="border-0 max-w-full h-auto bg-transparent"
+                                                    src={tabImages[3]}
+                                                    alt="tab gym"
+                                                />
+                                            </div>
+                                            <p className="my-0 leading-4">
+                                                Thời trang Gym
+                                                <span className="block text-xs text-left text-gray-500 font-normal">
+                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                </span>
+                                            </p>
+                                        </Tab>
+                                    </TabList>
+                                </Tabs>
                             </div>
                         </div>
                     </Row>
@@ -865,10 +891,10 @@ export function Home() {
                             navigation
                         >
                             {maleProducts?.map((product) => (
-                                <SwiperSlide key={product._id} className='relative mb-4 bg-white p-2.5 rounded-md'>
+                                <SwiperSlide key={product.id} className='relative mb-4 bg-white p-2.5 rounded-md'>
                                     <Product
                                         product={product}
-                                        discount={product.discount ? true : false}
+
                                     // handleClickCart={() => handleClickCart(product)}
                                     // handleClickEye={() => handleClickEye(product)}
                                     />
@@ -927,7 +953,7 @@ export function Home() {
                         >
                             {brandImages.map((image) => (
                                 <SwiperSlide key={image.id}>
-                                    <Link to="">
+                                    <Link to="" className="min-h-24 relative overflow-hidden block before:hover:animate-shine before:absolute before:top-0 before:-left-full before:z-2 before:block before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:to-white-0.3 before:origin-top-left before:-skew-x-12">
                                         <img
                                             src={image.path}
                                             alt={`bean instagram ${image.id}`}
