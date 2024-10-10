@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { PATH } from '@/utils'
 import { DefaultLayout } from '@/layouts'
+import { Home } from '@/pages'
 import { CollabPolicies, ExchangePolicies, MembershipPolicies, PaymentPolicies, PurchasePolicies, SecurityPolicies, StockPolicies,
         Collaborator, ExchangeReturn, Gift, Inquiries, Payment, RetailAdvice, Size} from '@/components'
 import { Blog } from '@/pages'
@@ -11,6 +12,10 @@ export const router = createBrowserRouter([
     path: PATH.home,
     element: <DefaultLayout />,
     children: [{
+      path: PATH.home,
+      element: <Home />
+    },
+    {
       path: PATH.collab_pol,
       element: <CollabPolicies />,
       children: [{}]
