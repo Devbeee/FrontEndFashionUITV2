@@ -4,6 +4,7 @@ import { DefaultLayout } from '@/layouts'
 import { CollabPolicies, ExchangePolicies, MembershipPolicies, PaymentPolicies, PurchasePolicies, SecurityPolicies, StockPolicies,
         Collaborator, ExchangeReturn, Gift, Inquiries, Payment, RetailAdvice, Size} from '@/components'
 import { Blog } from '@/pages'
+import { BLogDetail } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -82,6 +83,11 @@ export const router = createBrowserRouter([
     {
       path: PATH.blog,
       element: <Blog /> ,
+      children: [{}]
+    },
+    {
+      path: PATH.blogDetail,
+      element: <BLogDetail /> ,
       children: [{}]
     }]
   }
