@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
+import { Button, Form, Input, Avatar, List, Typography } from 'antd';
 import { HotNews, Tags } from "@/components";
 import { icons } from "@/utils";
-import { Button, Form, Input, Avatar, List } from 'antd';
-import { Typography } from "antd";
+
 const { Title } = Typography;
 
 // data mẫu
@@ -75,7 +75,7 @@ const CommmentsData = [
 
 export function BLogDetail() {
     return (
-        <div className="flex flex-col items-center justify-center w-full bg-white-primary">
+        <div className="flex flex-col items-center justify-center w-full bg-white">
             <div className="flex flex-wrap flex-col-reverse md:flex-row gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
                 <div className="flex-[1]">
                     <Tags tags={tagsData} />
@@ -87,12 +87,12 @@ export function BLogDetail() {
                     </Title>
                     <div className="flex flex-row gap-4 justify-start">
                         <div className="flex flex-row items-center gap-1">
-                            <span className="text-gray400 text-lg">{icons.watch}</span>
-                            <span className="text-gray400">Thứ Ba, 05/04/2022</span>
+                            <span className="text-gray-400 text-lg">{icons.watch}</span>
+                            <span className="text-gray-400">Thứ Ba, 05/04/2022</span>
                         </div>
                         <div className="flex flex-row items-center gap-1">
-                            <span className="text-gray400 text-sm">{icons.faUser}</span>
-                            <span className="text-gray400">Bean Fashion</span>
+                            <span className="text-gray-400 text-sm">{icons.faUser}</span>
+                            <span className="text-gray-400">Bean Fashion</span>
                         </div>
                     </div>
                     <div className="flex flex-col items-start mt-2">
@@ -155,8 +155,8 @@ export function BLogDetail() {
                                         title={<Link to="" className="font-bold">{item.user}</Link>}
                                         description={
                                             <div className="flex flex-col">
-                                                <span className="text-gray400">{item.createAt}</span>
-                                                <span className="text-gray600">{item.content}</span>
+                                                <span className="text-gray-400">{item.createAt}</span>
+                                                <span className="text-gray-600">{item.content}</span>
                                             </div>
                                         }
                                         className="text-left"

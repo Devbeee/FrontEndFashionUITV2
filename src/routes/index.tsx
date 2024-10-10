@@ -84,6 +84,11 @@ export const router = createBrowserRouter([
       path: PATH.blog,
       element: <Blog /> ,
       children: [{}]
+    },
+    {
+      path: PATH.blogDetail,
+      element: <BLogDetail /> ,
+      children: [{}]
     }]
   }
 ])
