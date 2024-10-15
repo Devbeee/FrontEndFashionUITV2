@@ -136,11 +136,15 @@ export const AllProducts: React.FC = () => {
                     key={index}
                   >
                     <Checkbox
+                      id={`priceFilter-${index}`}
                       className={'mr-2'}
                       checked={selectedFilter.indexOf(item) !== -1 ? true : false}
                       onChange={() => handleFilterInputChange()}
                     ></Checkbox>
-                    <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
+                    <label
+                      htmlFor={`priceFilter-${index}`}
+                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                    ></label>
                   </li>
                 ))}
               </ul>
@@ -155,11 +159,15 @@ export const AllProducts: React.FC = () => {
                     key={index}
                   >
                     <Checkbox
+                      id={`typeFilter-${index}`}
                       className={'mr-2'}
                       checked={selectedFilter.indexOf(item) !== -1 ? true : false}
                       onChange={() => handleFilterInputChange()}
                     ></Checkbox>
-                    <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
+                    <label
+                      htmlFor={`typeFilter-${index}`}
+                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                    ></label>
                   </li>
                 ))}
               </ul>
@@ -174,11 +182,17 @@ export const AllProducts: React.FC = () => {
                     key={index}
                   >
                     <Checkbox
+                      id={`colorFilter-${index}`}
                       className={'mr-2'}
                       checked={selectedFilter.indexOf(item) !== -1 ? true : false}
                       onChange={() => handleFilterInputChange()}
                     ></Checkbox>
-                    <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
+                    <label
+                      htmlFor={`colorFilter-${index}`}
+                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                    >
+                      {item}
+                    </label>
                   </li>
                 ))}
               </ul>
@@ -193,11 +207,15 @@ export const AllProducts: React.FC = () => {
                     key={index}
                   >
                     <Checkbox
+                      id={`fabricTypeFilter-${index}`}
                       className={'mr-2'}
                       checked={selectedFilter.indexOf(item) !== -1 ? true : false}
                       onChange={() => handleFilterInputChange()}
                     ></Checkbox>
-                    <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
+                    <label
+                      htmlFor={`fabricTypeFilter-${index}`}
+                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                    ></label>
                   </li>
                 ))}
               </ul>

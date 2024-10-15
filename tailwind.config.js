@@ -13,6 +13,9 @@ export default {
       width: {
         1200: '1280px'
       },
+      maxWidth: {
+        1200: '1200px'
+      },
       screens: {
         xs: '480px'
       },
