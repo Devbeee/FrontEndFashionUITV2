@@ -1,52 +1,73 @@
+import React, { useState } from 'react'
+
+import { Select, Checkbox } from 'antd'
+import { useBoolean } from 'usehooks-ts'
+
 import { Product } from '@/components'
 import { icons, SORT_OPTION, FILTER_TITLES } from '@/utils'
-import React, { useState } from 'react'
-import { Select } from 'antd'
-
-interface ProductType {
-  _id: number
-  name: string
-  price: number
-  discount: number
-  sold: number
-  saleCount: number
-  images: { imgUrl: string }[]
-  slug: string
-}
+import { IProduct } from '@/interfaces'
 
 export const AllProducts: React.FC = () => {
-  const [sideBarVisible, setSideBarVisible] = useState(window.innerWidth > 980 ? true : false)
+  const sideBarVisible = useBoolean(window.innerWidth > 980)
 
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
-  const [products, setProducts] = useState<ProductType[]>([
+  const [products, setProducts] = useState<IProduct[]>([
     {
-      _id: 1,
+      id: 1,
       name: '123',
       price: 123,
       discount: 20,
       sold: 2,
       saleCount: 2,
       images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
-      slug: '123'
+      slug: '123',
+      category: {
+        sex: 'nam',
+        categoryDetail: '1123123'
+      }
     },
     {
-      _id: 2,
+      id: 2,
       name: '123',
       price: 123,
       discount: 20,
       sold: 2,
       saleCount: 2,
       images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
-      slug: '123'
+      slug: '123',
+      category: {
+        sex: 'nam',
+        categoryDetail: '1123123'
+      }
+    },
+    {
+      id: 3,
+      name: '123',
+      price: 123,
+      discount: 20,
+      sold: 2,
+      saleCount: 2,
+      images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
+      slug: '123',
+      category: {
+        sex: 'nam',
+        categoryDetail: '1123123'
+      }
     }
   ])
   const [keyword, setKeyWord] = useState('')
 
+  const handleFilterInputChange = () => {}
+  const handleFilterSelected = () => {}
+  const handleSortChange = () => {}
+  const handleClickCart = () => {}
+  const handleClickEye = () => {}
+
   return (
     <div className={'w-full flex justify-center mb-10 relative top-0'}>
-      {sideBarVisible ? (
+      {sideBarVisible.value ? (
         <div
-          onClick={(e) => setSideBarVisible(!sideBarVisible)}
+          onClick={() => sideBarVisible.toggle()}
           className={
             'transform translate-x-0 w-screen h-screen bg-opacity-70 z-10 fixed top-0 bg-black xl:hidden block'
           }
@@ -54,10 +75,10 @@ export const AllProducts: React.FC = () => {
       ) : undefined}
       <div className={'mt-10 w-1200 flex gap-5'}>
         <div
-          onClick={(e) => setSideBarVisible(!sideBarVisible)}
+          onClick={() => sideBarVisible.toggle()}
           className={
             'bg-text-dark-blue w-14 h-14 fixed top-56 flex justify-center items-center rounded-tr-xl rounded-br-xl z-10 transition-all duration-500 hover:cursor-pointer xl:hidden' +
-            (sideBarVisible ? ' left-80' : ' left-0')
+            (sideBarVisible.value ? ' left-80' : ' left-0')
           }
         >
           {icons.filter.white}
@@ -65,11 +86,11 @@ export const AllProducts: React.FC = () => {
 
         <div
           className={
-            ' h-[110vh] left-0 bg-white overflow-x-hidden transition-all duration-500 fixed top-[0] z-10 xl:w-1/4 xl:relative xl:h-auto' +
-            (sideBarVisible ? ' w-80 xl:p-0 p-2 ' : ' w-0 p-0')
+            ' h-screen top-0 left-0 bg-white overflow-x-hidden transition-all duration-500 fixed z-10 xl:w-1/4 xl:relative xl:h-auto' +
+            (sideBarVisible.value ? ' w-80 xl:p-0 p-2 ' : ' w-0 p-0')
           }
         >
-          <div className={'bg-off-white w-full h-auto p-2.5 px-5 rounded'}>
+          <div className={'bg-off-white border border-gray-300 w-full h-auto p-2.5 px-5 rounded'}>
             <div className={'text-black font-extrabold text-lg mb-2 select-none'}>DANH MỤC SẢN PHẨM</div>
             <ul className={''}>
               {FILTER_TITLES.collectionLinks.map((item, index) => (
@@ -83,11 +104,11 @@ export const AllProducts: React.FC = () => {
               ))}
             </ul>
           </div>
-          <div className={'mt-5 border-2 border-[#eeeeee] w-full h-auto p-2.5 px-5 rounded'}>
+          <div className={'mt-5 border  border-gray-300 w-full h-auto p-2.5 px-5 rounded'}>
             <div className={'w-full'}>
               <div className={'flex w-full justify-between mb-2.5'}>
                 <div className={'text-text-dark-blue font-extrabold text-xl'}>Đã chọn</div>
-                <div onClick={(e) => {}} className={'hover:cursor-pointer'}>
+                <div onClick={() => handleFilterSelected()} className={'hover:cursor-pointer'}>
                   <div className={'text-red-500 user-select-none font-medium'}>Clear</div>
                 </div>
               </div>
@@ -97,7 +118,7 @@ export const AllProducts: React.FC = () => {
                     className={'bg-text-dark-blue w-auto h-auto flex justify-between items-center p-1 rounded-lg'}
                     key={index}
                   >
-                    <div onClick={(e) => {}} className={'h-4 cursor-pointer'}>
+                    <div onClick={(e) => handleFilterSelected()} className={'h-4 cursor-pointer'}>
                       {icons.x}
                     </div>
                     <div className={'text-white font-medium h-4 text-base mb-1 ml-0 user-select-none'}>{item}</div>
@@ -110,16 +131,15 @@ export const AllProducts: React.FC = () => {
               <ul className={'max-h-40 overflow-x-hidden'}>
                 {FILTER_TITLES.priceFilter.map((item, index) => (
                   <li
-                    onClick={(e) => {}}
+                    onClick={() => handleFilterSelected()}
                     className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
                     key={index}
                   >
-                    <input
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                    <Checkbox
                       className={'mr-2'}
-                      type='checkbox'
-                      onChange={() => {}}
-                    ></input>
+                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                      onChange={() => handleFilterInputChange()}
+                    ></Checkbox>
                     <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
                   </li>
                 ))}
@@ -130,16 +150,15 @@ export const AllProducts: React.FC = () => {
               <ul className={'max-h-40 overflow-x-hidden'}>
                 {FILTER_TITLES.typeFilter.map((item, index) => (
                   <li
-                    onClick={(e) => {}}
+                    onClick={() => handleFilterSelected()}
                     className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
                     key={index}
                   >
-                    <input
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                    <Checkbox
                       className={'mr-2'}
-                      type='checkbox'
-                      onChange={() => {}}
-                    ></input>
+                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                      onChange={() => handleFilterInputChange()}
+                    ></Checkbox>
                     <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
                   </li>
                 ))}
@@ -150,16 +169,15 @@ export const AllProducts: React.FC = () => {
               <ul className={'max-h-40 overflow-x-hidden'}>
                 {FILTER_TITLES.colorFilter.map((item, index) => (
                   <li
-                    onClick={(e) => {}}
+                    onClick={() => handleFilterSelected()}
                     className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
                     key={index}
                   >
-                    <input
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                    <Checkbox
                       className={'mr-2'}
-                      type='checkbox'
-                      onChange={() => {}}
-                    ></input>
+                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                      onChange={() => handleFilterInputChange()}
+                    ></Checkbox>
                     <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
                   </li>
                 ))}
@@ -170,16 +188,15 @@ export const AllProducts: React.FC = () => {
               <ul className={'max-h-40 overflow-x-hidden'}>
                 {FILTER_TITLES.fabricTypeFilter.map((item, index) => (
                   <li
-                    onClick={(e) => {}}
+                    onClick={() => handleFilterSelected()}
                     className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
                     key={index}
                   >
-                    <input
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                    <Checkbox
                       className={'mr-2'}
-                      type='checkbox'
-                      onChange={() => {}}
-                    ></input>
+                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
+                      onChange={() => handleFilterInputChange()}
+                    ></Checkbox>
                     <p className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}>{item}</p>
                   </li>
                 ))}
@@ -190,7 +207,7 @@ export const AllProducts: React.FC = () => {
         <div className={'xl:w-3/4 w-full xl:mx-0 mx-2'}>
           <div
             className={
-              'flex justify-between bg-[#f7f8f9] items-center h-13 p-2.5 border border-[#f1f1f1] rounded-sm mb-5'
+              'flex justify-between bg-off-white items-center h-13 p-2.5 border border-gray-300 rounded-sm mb-5'
             }
           >
             <div className={'text-xl font-extrabold pl-7.5 md:pl-0'}>
@@ -201,7 +218,7 @@ export const AllProducts: React.FC = () => {
               <div className={'font-medium mx-2.5 ml-1 pb-1'}>Sắp xếp:</div>
 
               <Select
-                onChange={() => {}}
+                onChange={() => handleSortChange()}
                 defaultValue={SORT_OPTION.default}
                 style={{ width: 120 }}
                 options={SORT_OPTION.option}
@@ -209,13 +226,12 @@ export const AllProducts: React.FC = () => {
             </div>
           </div>
           <div className={'w-full flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}>
-            {products.map((product: ProductType) => (
-              <div className={'md:w-[23.5%] mt-2 w-[46%]'} key={product._id}>
+            {products.map((product: IProduct) => (
+              <div className={'md:w-[23.5%] mt-2 w-[46%]'} key={product.id}>
                 <Product
                   product={product}
-                  discount={product?.discount ? true : false}
-                  handleClickCart={() => {}}
-                  handleClickEye={() => {}}
+                  handleClickCart={() => handleClickCart()}
+                  handleClickEye={() => handleClickEye()}
                 />
               </div>
             ))}
