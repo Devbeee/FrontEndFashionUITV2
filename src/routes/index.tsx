@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { PATH } from '@/utils'
 import { DefaultLayout } from '@/layouts'
+import { Home } from '@/pages'
 import {
   CollabPolicies,
   ExchangePolicies,
@@ -18,6 +19,8 @@ import {
   Size
 } from '@/components'
 import { AllProducts } from '@/pages'
+import { Blog } from '@/pages'
+import { BLogDetail } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: PATH.products,
         element: <AllProducts />
+      },
+      {
+        path: PATH.home,
+        element: <Home />
       },
       {
         path: PATH.collab_pol,
@@ -96,6 +103,16 @@ export const router = createBrowserRouter([
       {
         path: PATH.size_sup,
         element: <Size />,
+        children: [{}]
+      },
+      {
+        path: PATH.blog,
+        element: <Blog />,
+        children: [{}]
+      },
+      {
+        path: PATH.blogDetail,
+        element: <BLogDetail />,
         children: [{}]
       }
     ]
