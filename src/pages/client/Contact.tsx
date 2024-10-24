@@ -1,35 +1,35 @@
 const { Title, Text } = Typography
-import { Typography } from "antd"
-import { useState } from "react"
+import { Typography,Input, Form } from "antd"
+import { CustomBtn, CustomInput } from "@/components"
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+
+interface IFormInputs {
+    fullName: string,
+    email: string,
+    phoneNumber: string,
+    content: string
+  }
+
+const schema = yup.object().shape({
+    fullName: yup.string().required('Please input your name!'),
+    email: yup.string().matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/,'Please input a valid email!').required('Please input your email!'),
+    phoneNumber: yup.string().matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, 'Please input a valid phone number!').required('Please input your phone number!'),
+    content: yup.string().required('Please input your content!')
+  })
 
 export const Contact = () => {
-    const [contactInfo, setContactInfo] = useState({
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        content: "",
-    });
-    const [error, setError] = useState({
-        hasError: false,
-        email: "",
-        phoneNumber: "",
-    });
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
-  
-    const handleSubmit = () => {
-        if (!emailRegex.test(contactInfo.email)) {
-            setError({...error, hasError: true, email: "Email không hợp lệ"})
-            return
-        }
-        if (!regexPhoneNumber.test(contactInfo.phoneNumber)) {
-            setError({...error, hasError: true, phoneNumber: "Số điện thoại không hợp lệ"})
-            return
-        }
-        if(error.hasError) {
-            
-        }
-    }
+      const {
+        control,
+        handleSubmit,
+        formState: { errors }
+      } = useForm({
+        resolver: yupResolver(schema)
+      })
+    
+      const onSubmit: SubmitHandler<IFormInputs> = data => console.log(data); //call api instead
+    
   return (
     <div className="flex flex-row w-full gap-4 justify-center">
         <div className="flex flex-col w-[30%] place-items-start text-left gap-4">
@@ -38,40 +38,55 @@ export const Contact = () => {
             <Text><span className="font-bold">Địa chỉ</span>: 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh</Text>
             <Text className="font-bold">Hotline<span className="text-yellow hover:text-blue-cyan font-semibold hover:cursor-pointer">: 1900 6750</span></Text>
             <Text className="font-bold">Email<span className="text-yellow hover:text-blue-cyan font-semibold hover:cursor-pointer">: support@sapo.vn</span></Text>
-            <form onSubmit={handleSubmit} className="w-full">
+            <Form className="w-full" onFinish={handleSubmit(onSubmit)}>
             <label>
                 <Title level={4} className="uppercase">Liên hệ với chúng tôi</Title>
             </label>
-            <div className="flex flex-col gap-4 text-sm w-full pb-5">
-                <div className="flex flex-row h-[40px] gap-4">
-                    <input className="w-[50%] border rounded-md p-4" type="text" placeholder="Họ và tên" value={contactInfo.fullName} required onChange={(e) => {
-                        setContactInfo({
-                            ...contactInfo,
-                            fullName: e.target.value
-                        })
-                    }}/>
-                    <input className="w-[50%] border rounded-md p-4" type="text" placeholder="Email" value={contactInfo.email} required onChange={(e)=> {
-                        setContactInfo({
-                            ...contactInfo,
-                            email: e.target.value
-                        })
-                    }}/>
-                </div>
-                <input className="w-full h-[40px] border rounded-md p-4" type="text" placeholder="Điện thoại" value={contactInfo.phoneNumber} onChange={(e) => {
-                    setContactInfo({
-                        ...contactInfo,
-                        phoneNumber: e.target.value
-                    })
-                }}/>
-                <textarea className="w-full h-[200px] border rounded-md p-4 resize-y" name="" id="" placeholder="Nội dung" value={contactInfo.content} onChange={(e) => {
-                    setContactInfo({
-                        ...contactInfo,
-                        content: e.target.value
-                    })
-                }}/>
-                <button type="submit" className="self-start border bg-blue-cyan text-white opacity-90 hover:bg-yellow rounded-md px-4 py-2">Gửi thông tin</button>
+            <div className="flex flex-col gap-2 text-sm w-full pb-5">
+                <div className="flex flex-row h-[40px] w-full gap-4">
+                    <CustomInput
+                      size='large'
+                      name="fullName"
+                      control={control}
+                      errors={errors}
+                      placeholder="Họ và tên"
+                    />
+                    <CustomInput
+                      size='large'
+                      name="email"
+                      control={control}
+                      errors={errors}
+                      placeholder="Email"
+                    />
+                </div>  
+                <CustomInput
+                    size='large'
+                    name="phoneNumber"
+                    control={control}
+                    errors={errors}
+                    placeholder="Điện thoại"
+                    className="mt-4"
+                />
+                <Form.Item
+                    name='message'
+                    validateStatus={errors['content'] ? 'error' : ''}
+                    help={errors['content']?.message}
+                >
+                    <Controller
+                    name='content'
+                    control={control}
+                    render={({ field }) => (
+                        <Input.TextArea
+                        {...field}
+                        rows={8}
+                        placeholder="Nội dung"
+                        />
+                    )}
+                    />
+                </Form.Item>
+                <CustomBtn type="primary" title="Gửi thông tin" htmlType='submit' className="self-start w-[24%]"></CustomBtn>
             </div>
-            </form> 
+            </Form> 
         </div>
         <div className="w-[35%]">
         <iframe

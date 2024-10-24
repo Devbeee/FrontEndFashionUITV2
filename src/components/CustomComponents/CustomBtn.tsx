@@ -1,0 +1,60 @@
+import { Button, Spin } from 'antd'
+import { Link } from 'react-router-dom'
+
+type ButtonProps = {
+  title: string
+  type?: 'default' | 'primary' | 'link' | 'text'
+  className?: string
+  to?: string
+  htmlType?: 'button' | 'submit' | 'reset' | undefined
+  onClick?: () => void
+  disabled?: boolean
+  loading?: boolean
+  backgroundColor?: string
+  children?: JSX.Element
+}
+// bg-blue-cyan text-white opacity-90 hover:bg-yellow
+
+export const CustomBtn = ({
+  title,
+  type = 'default',
+  className = '',
+  to = '',
+  htmlType,
+  onClick,
+  disabled = false,
+  loading = false,
+  backgroundColor,
+  children
+}: ButtonProps) => {
+  const btnClass = `w-fit h-fit text-sm rounded-md bg-blue-cyan bg-opacity-85 px-4 py-2 transition-none
+    ${type !== 'primary' ? 'bg-white !text-primary-800 border-primary-800' : 'text-white hover:!bg-yellow'} 
+    ${disabled ? 'disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed' : ''} 
+    ${className}`
+
+  return to ? (
+    <Button
+      htmlType={htmlType}
+      type={type}
+      className={btnClass}
+      onClick={onClick}
+      disabled={disabled}
+      style={{ backgroundColor }}
+    >
+      <Link to={to}>{loading ? <Spin className='text-rose-600' /> : title}</Link>
+      {children}
+    </Button>
+  ) : (
+    <Button
+      htmlType={htmlType}
+      type={type}
+      className={btnClass}
+      onClick={onClick}
+      disabled={disabled}
+      style={{ backgroundColor }}
+    >
+      {children}
+      {loading ? <Spin className='text-rose-600' /> : title}
+    </Button>
+  )
+}
