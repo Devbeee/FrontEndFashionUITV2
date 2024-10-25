@@ -8,7 +8,8 @@ export default {
         yellow: '#ffc107',
         primary: '#007bff',
         'off-white': '#f7f8f9',
-        'text-dark-blue': '#01567f'
+        'dark-blue': '#01567f',
+        'dark-blue-02': 'rgba(1, 86, 127, 0.02)'
       },
       width: {
         1200: '1280px'

@@ -97,7 +97,7 @@ export const AllProducts: React.FC = () => {
                 <li className={'flex w-full justify-between h-8 items-center hover:cursor-pointer group'} key={index}>
                   <div className={'flex h-7 items-center'}>
                     <div className={'group-hover:h-5 group-hover:bg-text-dark-blue'}></div>
-                    <p className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-text-dark-blue'}>{item}</p>
+                    <p className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}>{item}</p>
                   </div>
                   {icons.filter.darkBlue}
                 </li>
@@ -107,7 +107,7 @@ export const AllProducts: React.FC = () => {
           <div className={'mt-5 border  border-gray-300 w-full h-auto p-2.5 px-5 rounded'}>
             <div className={'w-full'}>
               <div className={'flex w-full justify-between mb-2.5'}>
-                <div className={'text-text-dark-blue font-extrabold text-xl'}>Đã chọn</div>
+                <div className={'text-dark-blue font-extrabold text-xl'}>Đã chọn</div>
                 <div onClick={() => handleFilterSelected()} className={'hover:cursor-pointer'}>
                   <div className={'text-red-500 user-select-none font-medium'}>Clear</div>
                 </div>
@@ -143,7 +143,7 @@ export const AllProducts: React.FC = () => {
                     ></Checkbox>
                     <label
                       htmlFor={`priceFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
                     ></label>
                   </li>
                 ))}
@@ -166,7 +166,7 @@ export const AllProducts: React.FC = () => {
                     ></Checkbox>
                     <label
                       htmlFor={`typeFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
                     ></label>
                   </li>
                 ))}
@@ -189,7 +189,7 @@ export const AllProducts: React.FC = () => {
                     ></Checkbox>
                     <label
                       htmlFor={`colorFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
                     >
                       {item}
                     </label>
@@ -214,7 +214,7 @@ export const AllProducts: React.FC = () => {
                     ></Checkbox>
                     <label
                       htmlFor={`fabricTypeFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-text-dark-blue'}
+                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
                     ></label>
                   </li>
                 ))}

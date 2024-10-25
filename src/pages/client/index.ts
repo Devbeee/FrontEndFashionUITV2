@@ -3,3 +3,4 @@ export * from './Products'
 
 export * from './Blog'
 export * from './BlogDetail'
+export * from './Cart'
