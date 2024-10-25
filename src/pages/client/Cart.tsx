@@ -1,18 +1,11 @@
-import { icons } from "@/utils";
-import { Breadcrumb, Button, Col, Row, Table, InputNumber, Image } from "antd";
 import { useState } from "react";
-import type { TableColumnsType, TableProps } from 'antd';
 import { Link } from "react-router-dom";
-import { IProduct } from "@/interfaces";
 
-interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
-    id: number;
-    size: string;
-    color: string;
-    quantity: number,
-    image: string,
-}
+import { Breadcrumb, Button, Col, Row, Table, InputNumber, Image } from "antd";
+import type { TableColumnsType, TableProps } from 'antd';
 
+import { icons } from "@/utils";
+import { ICartProduct } from "@/interfaces";
 
 export function Cart() {
     const columns: TableColumnsType<ICartProduct> = [

@@ -15,3 +15,11 @@ export interface IProductComp extends IProduct {
     productCount?: boolean; 
     productCountSale?: boolean;
 }
+
+export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
+    id: number;
+    size: string;
+    color: string;
+    quantity: number,
+    image: string,
+}
