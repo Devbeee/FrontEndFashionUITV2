@@ -4,6 +4,7 @@ export const PATH = {
   cart: '/cart',
   blog: '/blogs',
   blogDetail: '/blog-detail', 
+  contact: '/contact',
   productDetail: '/product-detail', 
   
   collab_pol: '/collab_pol', //chinh sach cong tac vien
