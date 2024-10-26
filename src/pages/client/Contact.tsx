@@ -4,6 +4,8 @@ import { CustomBtn, CustomInput } from "@/components"
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import {validationContact} from "@/utils"
+import {authFields} from "@/utils"
 
 interface IFormInputs {
     fullName: string,
@@ -14,8 +16,8 @@ interface IFormInputs {
 
 const schema = yup.object().shape({
     fullName: yup.string().required('Please input your name!'),
-    email: yup.string().matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/,'Please input a valid email!').required('Please input your email!'),
-    phoneNumber: yup.string().matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g, 'Please input a valid phone number!').required('Please input your phone number!'),
+    email: yup.string().email('Please input a valid email!').required('Please input your email!'),
+    phoneNumber: yup.string().matches(validationContact.PHONE_REGEX, 'Please input a valid phone number!').required('Please input your phone number!'),
     content: yup.string().required('Please input your content!')
   })
 
@@ -28,7 +30,8 @@ export const Contact = () => {
         resolver: yupResolver(schema)
       })
     
-      const onSubmit: SubmitHandler<IFormInputs> = data => console.log(data); //call api instead
+      const onSubmit: SubmitHandler<IFormInputs> = data => console.log(data); 
+      const iframeUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1959.7590851236018!2d106.65082804811797!3d10.771568590496535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec07488c543%3A0x7dc9617e924ddb50!2zNzAgxJAuIEzhu68gR2lh!5e0!3m2!1sen!2s!4v1729658600054!5m2!1sen!2s";
     
   return (
     <div className="flex flex-row w-full gap-4 justify-center">
@@ -44,34 +47,36 @@ export const Contact = () => {
             </label>
             <div className="flex flex-col gap-2 text-sm w-full pb-5">
                 <div className="flex flex-row h-[40px] w-full gap-4">
-                    <CustomInput
+                {authFields.map((field) => {
+                  if(field.name === 'fullName' || field.name === 'email') 
+                    return (
+                      <CustomInput
+                      key={field.name}
                       size='large'
-                      name="fullName"
+                      name={field.name}
                       control={control}
                       errors={errors}
-                      placeholder="Họ và tên"
-                    />
+                      placeholder={field.placeholder}/>
+                    )
+                })}
+                </div>
+                {authFields.map((field) => {
+                if(field.name === 'phoneNumber') 
+                  return (
                     <CustomInput
+                      key={field.name}
                       size='large'
-                      name="email"
+                      name={field.name}
                       control={control}
                       errors={errors}
-                      placeholder="Email"
-                    />
-                </div>  
-                <CustomInput
-                    size='large'
-                    name="phoneNumber"
-                    control={control}
-                    errors={errors}
-                    placeholder="Điện thoại"
-                    className="mt-4"
-                />
+                      placeholder={field.placeholder}
+                      className="mt-4"/>
+                  )
+                })}
                 <Form.Item
                     name='message'
                     validateStatus={errors['content'] ? 'error' : ''}
-                    help={errors['content']?.message}
-                >
+                    help={errors['content']?.message}>
                     <Controller
                     name='content'
                     control={control}
@@ -79,19 +84,17 @@ export const Contact = () => {
                         <Input.TextArea
                         {...field}
                         rows={8}
-                        placeholder="Nội dung"
-                        />
-                    )}
-                    />
+                        placeholder="Nội dung" />
+                    )}/>
                 </Form.Item>
-                <CustomBtn type="primary" title="Gửi thông tin" htmlType='submit' className="self-start w-[24%]"></CustomBtn>
+                <CustomBtn type="primary" title="Gửi thông tin" htmlType='submit' className="self-start w-[24%]"/>
             </div>
             </Form> 
         </div>
         <div className="w-[35%]">
         <iframe
             title="Map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1959.7590851236018!2d106.65082804811797!3d10.771568590496535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec07488c543%3A0x7dc9617e924ddb50!2zNzAgxJAuIEzhu68gR2lh!5e0!3m2!1sen!2s!4v1729658600054!5m2!1sen!2s"
+            src={iframeUrl}
             loading={"lazy"}
             referrerPolicy={"no-referrer-when-downgrade"}
             className="w-full h-[88%] border rounded-md"

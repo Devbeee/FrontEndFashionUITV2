@@ -119,7 +119,6 @@ export const router = createBrowserRouter([
       {
         path: PATH.contact,
         element: <Contact />,
-        children: [{}]
       }
     ]
   }

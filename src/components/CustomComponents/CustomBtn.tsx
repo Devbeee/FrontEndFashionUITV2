@@ -13,9 +13,7 @@ type ButtonProps = {
   backgroundColor?: string
   children?: JSX.Element
 }
-// bg-blue-cyan text-white opacity-90 hover:bg-yellow
-
-export const CustomBtn = ({
+export const CustomBtn: React.FC<ButtonProps> = ({
   title,
   type = 'default',
   className = '',
