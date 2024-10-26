@@ -115,7 +115,6 @@ export const router = createBrowserRouter([
       {
         path: PATH.cart,
         element: <Cart />,
-        children: [{}]
       }
     ]
   }
