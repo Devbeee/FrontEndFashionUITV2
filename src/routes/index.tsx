@@ -21,6 +21,7 @@ import {
 import { AllProducts } from '@/pages'
 import { Blog } from '@/pages'
 import { BLogDetail } from '@/pages'
+import { Contact } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -114,6 +115,10 @@ export const router = createBrowserRouter([
         path: PATH.blogDetail,
         element: <BLogDetail />,
         children: [{}]
+      },
+      {
+        path: PATH.contact,
+        element: <Contact />,
       }
     ]
   }

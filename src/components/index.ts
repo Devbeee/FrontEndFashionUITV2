@@ -18,3 +18,6 @@ export { default as Size } from './SupportLinks/Size'
 export * from './HotNews'
 export * from './NewsCard'
 export * from './Tags'
+
+export * from './CustomComponents/CustomBtn'
+export * from './CustomComponents/CustomInput'
