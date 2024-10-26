@@ -14,7 +14,9 @@ import { MdOutlineWatchLater } from 'react-icons/md'
 
 export const icons = {
   phone: <LiaPhoneSolid />,
+  phoneDarkBlue: <LiaPhoneSolid className='text-blue-cyan' />,
   location: <CiLocationOn />,
+  locationDarkBlue: <CiLocationOn className='text-blue-cyan' />,
   search: <BsSearch />,
   user: <SlUser />,
   shoppingBag: <HiOutlineShoppingBag />,
