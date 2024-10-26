@@ -51,6 +51,7 @@ export const Product: React.FC<ProductProps> = ({
                 <Button
                   className="!w-12 !h-12 text-xl cursor-pointer rounded-full p-2 hover:bg-white"
                   title="Preview"
+                  // onClick={handleClickEye}
                   onClick={handleClickEye}
                   icon={icons.eye}
                 />

@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --blue-cyan: #00354b;
+  }
+  
+  /* CSS tùy chỉnh cho Radio button khi được chọn */
+  .custom-radio-group .ant-radio-button-wrapper-checked {
+    background-color: var(--blue-cyan) !important;
+    border-color: var(--blue-cyan) !important;
+  }

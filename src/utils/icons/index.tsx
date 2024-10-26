@@ -5,10 +5,12 @@ import { SlUser } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift } from 'react-icons/fa6'
 import { CiSettings } from "react-icons/ci";
-import { IoEyeOutline } from "react-icons/io5";
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser } from 'react-icons/fa'
+import { IoEyeOutline, IoCaretForwardOutline } from "react-icons/io5";
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiInfo } from 'react-icons/fi'
 import { MdOutlineWatchLater } from "react-icons/md";
+import { BiSolidDiscount } from "react-icons/bi";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
 export const icons = {
   phone: <LiaPhoneSolid />,
@@ -25,5 +27,9 @@ export const icons = {
   eye: <IoEyeOutline />,
   info: <FiInfo />,
   faUser: <FaUser />,
-  watch: <MdOutlineWatchLater />
+  watch: <MdOutlineWatchLater />,
+  heart: <FaRegHeart />,
+  rightChevon: <IoCaretForwardOutline />,
+  discount: <BiSolidDiscount />,
+  close: <IoMdCloseCircleOutline />
 }

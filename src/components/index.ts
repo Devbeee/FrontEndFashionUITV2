@@ -17,3 +17,6 @@ export { default as Size } from './SupportLinks/Size';
 export * from "./HotNews";
 export * from "./NewsCard";
 export * from "./Tags"
+export * from "./ProductsList"
+export * from "./Vouchers"
+export * from "./QuickViewInfoPopUp"
