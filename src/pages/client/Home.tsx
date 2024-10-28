@@ -392,29 +392,13 @@ export function Home() {
         getSaleProducts();
     }, [])
     useEffect(() => {
-        const newStatus = [...status];
-    
-        if (currentTime.getHours() >= 0 && currentTime.getHours() < 6) {
-          setTabIndex(0);
-          newStatus[0] = true;
-        } else if (currentTime.getHours() >= 6 && currentTime.getHours() < 12) {
-          setTabIndex(1);
-          newStatus[0] = true;
-          newStatus[1] = true;
-        } else if (currentTime.getHours() >= 12 && currentTime.getHours() < 18) {
-          setTabIndex(2);
-          newStatus[0] = true;
-          newStatus[1] = true;
-          newStatus[2] = true;
-        } else if (currentTime.getHours() >= 18 && currentTime.getHours() < 24) {
-          setTabIndex(3);
-          newStatus[0] = true;
-          newStatus[1] = true;
-          newStatus[2] = true;
-          newStatus[3] = true;
-        }
+        const hours = currentTime.getHours();
+        const tabIndex = Math.floor(hours / 6);
+        const newStatus = Array(4).fill(false).map((_, index) => index <= tabIndex);
+        
+        setTabIndex(tabIndex);
         setStatus(newStatus);
-      }, []);
+        }, []);
     return (
         <div className="">
             <div className="relative w-full min-h-full mb-4">

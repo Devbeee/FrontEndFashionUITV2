@@ -13,46 +13,43 @@ export const AllProducts: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
   const [products, setProducts] = useState<IProduct[]>([
     {
-      id: 1,
+      id: "1",
       name: '123',
       price: 123,
       discount: 20,
-      sold: 2,
-      saleCount: 2,
       images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
       slug: '123',
       category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        gender: 'nam',
+        type: '1123123'
+      },
+      description: "123",
     },
     {
-      id: 2,
+      id: "2",
       name: '123',
       price: 123,
       discount: 20,
-      sold: 2,
-      saleCount: 2,
       images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
       slug: '123',
       category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        gender: 'nam',
+        type: '1123123'
+      },
+      description: "123",
     },
     {
-      id: 3,
+      id: "3",
       name: '123',
       price: 123,
       discount: 20,
-      sold: 2,
-      saleCount: 2,
       images: [{ imgUrl: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg' }],
       slug: '123',
       category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        gender: 'nam',
+        type: '1123123'
+      },
+      description: "123",
     }
   ])
   const [keyword, setKeyWord] = useState('')
@@ -97,7 +94,7 @@ export const AllProducts: React.FC = () => {
                 <li className={'flex w-full justify-between h-8 items-center hover:cursor-pointer group'} key={index}>
                   <div className={'flex h-7 items-center'}>
                     <div className={'group-hover:h-5 group-hover:bg-text-dark-blue'}></div>
-                    <p className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}>{item}</p>
+                    <div className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}>{item}</div>
                   </div>
                   {icons.filter.darkBlue}
                 </li>

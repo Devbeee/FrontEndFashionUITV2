@@ -12,7 +12,7 @@ export default {
         'dark-blue-02': '#01567f05'
       },
       width: {
-        1200: '1280px'
+        1200: '1200px'
       },
       maxWidth: {
         1200: '1200px'
