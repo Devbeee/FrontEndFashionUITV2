@@ -35,6 +35,6 @@ export const icons = {
   plus: <FaPlus />,
   filter: {
     white: <FaFilter className='text-white' />,
-    darkBlue: <FaFilter className='text-text-dark-blue' />
+    darkBlue: <FaFilter className='text-dark-blue' />
   }
 }

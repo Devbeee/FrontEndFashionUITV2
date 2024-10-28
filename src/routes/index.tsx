@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { PATH } from '@/utils'
 import { DefaultLayout } from '@/layouts'
-import { Home } from '@/pages'
+import { Home, Cart, AllProducts, Blog, BLogDetail } from '@/pages'
 import {
   CollabPolicies,
   ExchangePolicies,
@@ -18,10 +18,6 @@ import {
   RetailAdvice,
   Size
 } from '@/components'
-import { AllProducts } from '@/pages'
-import { Blog } from '@/pages'
-import { BLogDetail } from '@/pages'
-import { Contact } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -117,8 +113,8 @@ export const router = createBrowserRouter([
         children: [{}]
       },
       {
-        path: PATH.contact,
-        element: <Contact />,
+        path: PATH.cart,
+        element: <Cart />,
       }
     ]
   }

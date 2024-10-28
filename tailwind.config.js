@@ -8,10 +8,11 @@ export default {
         yellow: '#ffc107',
         primary: '#007bff',
         'off-white': '#f7f8f9',
-        'text-dark-blue': '#01567f'
+        'dark-blue': '#01567f',
+        'dark-blue-02': '#01567f05'
       },
       width: {
-        1200: '1280px'
+        1200: '1200px'
       },
       maxWidth: {
         1200: '1200px'

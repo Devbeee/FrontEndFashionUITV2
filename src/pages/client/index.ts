@@ -4,3 +4,4 @@ export * from './Contact'
 
 export * from './Blog'
 export * from './BlogDetail'
+export * from './Cart'
