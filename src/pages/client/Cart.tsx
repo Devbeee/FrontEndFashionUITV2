@@ -26,7 +26,7 @@ export function Cart() {
                         <CustomBtn
                             type="link"
                             title="Xóa"
-                            className="text-rose-600 hover:!text-rose-200"
+                            className="text-rose-600 hover:!text-rose-200 !bg-transparent"
                         />
                     </Col>
                 </Row>
@@ -165,7 +165,8 @@ export function Cart() {
                                 <Row align="bottom">
                                     <Col span={12}>
                                         <CustomBtn
-                                            className="my-2"
+                                            className={`my-2  ${!(checkoutItems.length === 0) && "text-rose-600 border-rose-600 hover:!border-rose-600 hover:!text-rose-600 hover:!text-opacity-50 hover:!border-opacity-50"
+                                                }`}
                                             type="default"
                                             disabled={checkoutItems.length === 0}
                                             onClick={handleDeleteCartItems}
