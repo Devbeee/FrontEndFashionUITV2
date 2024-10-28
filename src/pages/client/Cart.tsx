@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Breadcrumb, Button, Col, Row, Table, InputNumber, Image } from "antd";
+import { Col, Row, Table, InputNumber, Image } from "antd";
 import type { TableColumnsType, TableProps } from 'antd';
 
 import { icons } from "@/utils";
 import { ICartProduct } from "@/interfaces";
+import { CustomBtn } from "@/components";
+import { CustomBreadcrumb } from "@/components";
 
 export function Cart() {
     const columns: TableColumnsType<ICartProduct> = [
@@ -21,9 +23,11 @@ export function Cart() {
                     <Col span={18}>
                         <h3 className="font-semibold pl-4">{record.name}</h3>
                         <div className="pl-4">{record.color} / {record.size}</div>
-                        <Button type="link" danger>
-                            Xóa
-                        </Button>
+                        <CustomBtn
+                            type="link"
+                            title="Xóa"
+                            className="text-rose-600 hover:!text-rose-200"
+                        />
                     </Col>
                 </Row>
             ),
@@ -60,7 +64,7 @@ export function Cart() {
     ];
     const [cartItems, setCartItems] = useState<ICartProduct[]>([
         {
-            id: 1,
+            id: '1',
             image: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg",
             name: "123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd",
             color: "Đen",
@@ -70,7 +74,7 @@ export function Cart() {
             discount: 20,
         },
         {
-            id: 2,
+            id: '2',
             image: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg",
             name: "123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd",
             color: "Đen",
@@ -80,7 +84,7 @@ export function Cart() {
             discount: 20,
         },
         {
-            id: 3,
+            id: '3',
             image: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg",
             name: "123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd",
             color: "Đen",
@@ -98,7 +102,7 @@ export function Cart() {
             setCheckoutItems(selectedRows)
         },
     };
-    const handleChangeQuantity = (value: number | null, id: React.Key) => {
+    const handleChangeQuantity = (value: number | null, id: string) => {
         if (value !== null) {
             setCartItems(prevItems =>
                 prevItems.map(item =>
@@ -125,17 +129,16 @@ export function Cart() {
         setCheckoutItems([])
     };
 
+    const items = [
+        { title: <Link to="/">Trang chủ</Link>, },
+        { title: "Giỏ hàng" },
+    ]
+
     return (
         <div>
-            <div className="bg-gray-100">
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/home">Trang chủ</Link>, },
-                        { title: "Giỏ hàng" },
-                    ]}
-                    className="w-1200 mx-auto py-3"
-                />
-            </div>
+            <CustomBreadcrumb
+                items={items}
+            />
             <div className="w-1200 mx-auto my-2">
                 <h1 className="uppercase text-left font-bold p-3 bg-gray-100">
                     Giỏ hàng của bạn
@@ -148,24 +151,26 @@ export function Cart() {
                             dataSource={cartItems}
                             rowKey={(record) => record.id}
                         />
-                        <Row justify="space-between" align="middle">
+                        <Row justify="space-between" align="bottom">
                             <Col>
-                                <Button color="default" variant="link" icon={icons.prevPage} >
-                                    Tiếp tục mua hàng
-                                </Button>
+                                <CustomBtn
+                                    title="Tiếp tục mua hàng"
+                                    type="link"
+                                    to="/products"
+                                    icon={icons.prevPage}
+                                    className="text-black"
+                                />
                             </Col>
                             <Col span={10}>
                                 <Row align="bottom">
                                     <Col span={12}>
-                                        <Button
-                                            color="danger"
-                                            variant="outlined"
-                                            className="p-5 my-2"
+                                        <CustomBtn
+                                            className="my-2"
+                                            type="default"
                                             disabled={checkoutItems.length === 0}
                                             onClick={handleDeleteCartItems}
-                                        >
-                                            Xóa các mục đã chọn
-                                        </Button>
+                                            title="Xóa các mục đã chọn"
+                                        />
                                     </Col>
                                     <Col span={12}>
                                         <Row gutter={12} justify="space-between">
@@ -184,12 +189,13 @@ export function Cart() {
                                                 </div>
                                             </Col>
                                         </Row>
-                                        <Button
-                                            className={`${checkoutItems.length !== 0 && "hover:bg-white hover:text-blue-cyan hover:border-blue-cyan"} uppercase p-5 my-2 font-semibold bg-blue-cyan text-white w-full `}
+                                        <CustomBtn
+                                            className="p-5 my-2 uppercase w-full"
+                                            type="primary"
                                             disabled={checkoutItems.length === 0}
-                                        >
-                                            thanh toán
-                                        </Button>
+                                            onClick={handleDeleteCartItems}
+                                            title="thanh toán"
+                                        />
                                     </Col>
                                 </Row>
                             </Col>
@@ -219,9 +225,11 @@ export function Cart() {
                                         </div>
                                         <div className="p-1 mt-1 relative bg-gray-100 rounded flex justify-between items-center">
                                             <span className="mb-0 inline-block text-base uppercase font-semibold">BFAS10</span>
-                                            <Button className="float-right m-0 bg-blue-cyan text-white hover:!bg-white hover:!text-blue-cyan hover:!border-blue-cyan">
-                                                Copy
-                                            </Button>
+                                            <CustomBtn
+                                                className="float-right m-0"
+                                                type="primary"
+                                                title="Copy"
+                                            />
                                         </div>
                                     </div>
                                 ))

@@ -1,23 +1,27 @@
 export interface IProduct {
-    id: number;
+    id: string;
     name: string;
+    description: string;
     price: number;
-    discount: number;
-    sold: number;
-    saleCount: number;
-    images: { imgUrl: string }[];
     slug: string;
-    category: {}
+    images: { imgUrl: string }[];
+    discount: number;
+    category?: {
+        gender: string;
+        type: string;
+    }
 };
 
 export interface IProductComp extends IProduct {
     ranking?: number;
     productCount?: boolean; 
     productCountSale?: boolean;
+    sold?: number;
+    saleCount?: number;
 }
 
 export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
-    id: number;
+    id: string;
     size: string;
     color: string;
     quantity: number,

@@ -9,7 +9,7 @@ export default {
         primary: '#007bff',
         'off-white': '#f7f8f9',
         'dark-blue': '#01567f',
-        'dark-blue-02': 'rgba(1, 86, 127, 0.02)'
+        'dark-blue-02': '#01567f05'
       },
       width: {
         1200: '1280px'

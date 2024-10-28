@@ -13,16 +13,16 @@ import { Product } from "@/components";
 import axiosClient from "@/configs/axiosClient";
 import { CountdownTimer } from "@/components";
 import { icons } from "@/utils";
-import { IProduct } from "@/interfaces";
+import { IProductComp } from "@/interfaces";
 
 type SaleProduct = {
-    productId: number;
+    productId: string;
     saleHour: number;
     saleCount: number;
     discountPercent: number;
 }
 
-type Product = IProduct;
+type Product = IProductComp;
 
 const sliderImages = [
     'src/assets/images/slider_1.webp',
@@ -104,7 +104,7 @@ export function Home() {
     const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
     const [maleProducts, setMaleProducts] = useState<Product[]>([
         {
-            id: 1,
+            id: '1',
             name: "123",
             price: 123,
             discount: 20,
@@ -113,12 +113,13 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
         {
-            id: 2,
+            id: '2',
             name: "123",
             price: 123,
             discount: 20,
@@ -127,12 +128,13 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
         {
-            id: 3,
+            id: '3',
             name: "123",
             price: 123,
             discount: 20,
@@ -141,12 +143,13 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
         {
-            id: 4,
+            id: '4',
             name: "123",
             price: 123,
             discount: 20,
@@ -155,12 +158,13 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
         {
-            id: 5,
+            id: '5',
             name: "123",
             price: 123,
             discount: 20,
@@ -169,12 +173,13 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
         {
-            id: 6,
+            id: '6',
             name: "123",
             price: 123,
             discount: 20,
@@ -183,9 +188,10 @@ export function Home() {
             images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
             slug: "123",
             category: {
-                sex: 'nam',
-                categoryDetail: '1123123'
-            }
+                gender: 'nam',
+                type: '1123123'
+            },
+            description: "123"
         },
     ]);
     const [femaleProducts, setFemaleProducts] = useState<Product[]>([]);
@@ -219,12 +225,12 @@ export function Home() {
             //     `/sale/get/${currentTime.getFullYear()}-${paddedMonth}-${paddedDay}`
             // );
             const saleProducts: SaleProduct[] = [
-                { productId: 1, saleHour: 0, saleCount: 45, discountPercent: 12 },
-                { productId: 2, saleHour: 0, saleCount: 69, discountPercent: 28 },
-                { productId: 3, saleHour: 0, saleCount: 22, discountPercent: 25 },
-                { productId: 4, saleHour: 0, saleCount: 72, discountPercent: 49 },
-                { productId: 5, saleHour: 0, saleCount: 91, discountPercent: 37 },
-                { productId: 6, saleHour: 0, saleCount: 2, discountPercent: 41 }
+                { productId: '1', saleHour: 0, saleCount: 45, discountPercent: 12 },
+                { productId: '2', saleHour: 0, saleCount: 69, discountPercent: 28 },
+                { productId: '3', saleHour: 0, saleCount: 22, discountPercent: 25 },
+                { productId: '4', saleHour: 0, saleCount: 72, discountPercent: 49 },
+                { productId: '5', saleHour: 0, saleCount: 91, discountPercent: 37 },
+                { productId: '6', saleHour: 0, saleCount: 2, discountPercent: 41 }
             ];
 
             const itemInTabIndex0 = saleProducts.filter(
@@ -385,6 +391,30 @@ export function Home() {
     useEffect(() => {
         getSaleProducts();
     }, [])
+    useEffect(() => {
+        const newStatus = [...status];
+    
+        if (currentTime.getHours() >= 0 && currentTime.getHours() < 6) {
+          setTabIndex(0);
+          newStatus[0] = true;
+        } else if (currentTime.getHours() >= 6 && currentTime.getHours() < 12) {
+          setTabIndex(1);
+          newStatus[0] = true;
+          newStatus[1] = true;
+        } else if (currentTime.getHours() >= 12 && currentTime.getHours() < 18) {
+          setTabIndex(2);
+          newStatus[0] = true;
+          newStatus[1] = true;
+          newStatus[2] = true;
+        } else if (currentTime.getHours() >= 18 && currentTime.getHours() < 24) {
+          setTabIndex(3);
+          newStatus[0] = true;
+          newStatus[1] = true;
+          newStatus[2] = true;
+          newStatus[3] = true;
+        }
+        setStatus(newStatus);
+      }, []);
     return (
         <div className="">
             <div className="relative w-full min-h-full mb-4">

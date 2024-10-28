@@ -21,3 +21,4 @@ export * from './Tags'
 
 export * from './CustomComponents/CustomBtn'
 export * from './CustomComponents/CustomInput'
+export * from './CustomBreadcrumb'
