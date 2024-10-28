@@ -103,7 +103,7 @@ export function Cart() {
         },
     };
     const handleChangeQuantity = (value: number | null, id: string) => {
-        if (value !== null) {
+        if (value) {
             setCartItems(prevItems =>
                 prevItems.map(item =>
                     item.id === id
@@ -182,11 +182,13 @@ export function Cart() {
                                             </Col>
                                             <Col>
                                                 <div className="font-bold text-red-500 text-end">
-                                                    <span>{checkoutItems.length ? checkoutItems.reduce((acc, item) => {
-                                                        return (
-                                                            acc + (item.price - (item.price * item.discount) / 100) * item.quantity
-                                                        );
-                                                    }, 0).toLocaleString("de-DE") : 0}</span>đ
+                                                    <span>{checkoutItems.length
+                                                        ? checkoutItems
+                                                        .reduce((acc, item) =>
+                                                        acc + (item.price - (item.price * item.discount) / 100) * item.quantity, 0)
+                                                        .toLocaleString("de-DE")
+                                                        : 0}
+                                                    </span>đ
                                                 </div>
                                             </Col>
                                         </Row>
