@@ -1,7 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { PATH } from '@/utils'
 import { DefaultLayout } from '@/layouts'
-import { Home, Cart, AllProducts, Blog, BLogDetail } from '@/pages'
+import {
+  Home,
+  Cart,
+  AllProducts,
+  Blog,
+  BLogDetail,
+  Contact,
+  Register,
+  Login,
+  VerifyEmail,
+  ForgotPassword
+} from '@/pages'
 import {
   CollabPolicies,
   ExchangePolicies,
@@ -25,6 +36,22 @@ export const router = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       {
+        path: PATH.register,
+        element: <Register />
+      },
+      {
+        path: PATH.verifyEmail,
+        element: <VerifyEmail />
+      },
+      {
+        path: PATH.login,
+        element: <Login />
+      },
+      {
+        path: PATH.forgotPassword,
+        element: <ForgotPassword />
+      },
+      {
         path: PATH.products,
         element: <AllProducts />
       },
@@ -34,87 +61,75 @@ export const router = createBrowserRouter([
       },
       {
         path: PATH.collab_pol,
-        element: <CollabPolicies />,
-        children: [{}]
+        element: <CollabPolicies />
       },
       {
         path: PATH.exchange_pol,
-        element: <ExchangePolicies />,
-        children: [{}]
+        element: <ExchangePolicies />
       },
       {
         path: PATH.membership_pol,
-        element: <MembershipPolicies />,
-        children: [{}]
+        element: <MembershipPolicies />
       },
       {
         path: PATH.payment_pol,
-        element: <PaymentPolicies />,
-        children: [{}]
+        element: <PaymentPolicies />
       },
       {
         path: PATH.purchase_pol,
-        element: <PurchasePolicies />,
-        children: [{}]
+        element: <PurchasePolicies />
       },
       {
         path: PATH.security_pol,
-        element: <SecurityPolicies />,
-        children: [{}]
+        element: <SecurityPolicies />
       },
       {
         path: PATH.stock_pol,
-        element: <StockPolicies />,
-        children: [{}]
+        element: <StockPolicies />
       },
       {
         path: PATH.collab_sup,
-        element: <Collaborator />,
-        children: [{}]
+        element: <Collaborator />
       },
       {
         path: PATH.exchange_sup,
-        element: <ExchangeReturn />,
-        children: [{}]
+        element: <ExchangeReturn />
       },
       {
         path: PATH.gift_sup,
-        element: <Gift />,
-        children: [{}]
+        element: <Gift />
       },
       {
         path: PATH.inquiries_sup,
-        element: <Inquiries />,
-        children: [{}]
+        element: <Inquiries />
       },
       {
         path: PATH.payment_sup,
-        element: <Payment />,
-        children: [{}]
+        element: <Payment />
       },
       {
         path: PATH.retail_sup,
-        element: <RetailAdvice />,
-        children: [{}]
+        element: <RetailAdvice />
       },
       {
         path: PATH.size_sup,
-        element: <Size />,
-        children: [{}]
+        element: <Size />
       },
       {
         path: PATH.blog,
-        element: <Blog />,
-        children: [{}]
+        element: <Blog />
       },
       {
         path: PATH.blogDetail,
-        element: <BLogDetail />,
-        children: [{}]
+        element: <BLogDetail />
+      },
+      {
+        path: PATH.contact,
+        element: <Contact />
       },
       {
         path: PATH.cart,
-        element: <Cart />,
+        element: <Cart />
       }
     ]
   }
