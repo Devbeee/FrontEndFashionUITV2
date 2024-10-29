@@ -1,25 +1,21 @@
-import axios from 'axios'
+import axios from "axios";
 
-const axiosClient = axios.create({
-  baseURL: `${process.env.REACT_APP_API_BASE_URL}/api`
-})
+export const instance = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}`,
+});
 
-axiosClient.interceptors.request.use((config) => {
-  config.withCredentials = true
-  return config
-})
-
-axiosClient.interceptors.response.use(
-  (response) => {
-    return response
+instance.interceptors.request.use(
+  function (config) {
+    config.withCredentials = true;
+    return config;
   },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('TOKEN')
-      return Promise.reject(error)
-    }
-    throw error
-  }
-)
+);
 
-export default axiosClient
+instance.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);

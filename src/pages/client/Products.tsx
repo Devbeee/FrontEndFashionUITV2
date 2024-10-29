@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 
 import { Select, Checkbox } from 'antd'
-import { useBoolean } from 'usehooks-ts'
+
+import { useBoolean } from '@/hooks'
+
+import { IProduct } from '@/interfaces'
 
 import { Product } from '@/components'
-import { icons, SORT_OPTION, FILTER_TITLES } from '@/utils'
-import { IProduct } from '@/interfaces'
+
+import { icons, sortOptions, filterTiers, collectionLinks } from '@/utils'
 
 export const AllProducts: React.FC = () => {
   const sideBarVisible = useBoolean(window.innerWidth > 980)
@@ -13,7 +16,7 @@ export const AllProducts: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
   const [products, setProducts] = useState<IProduct[]>([
     {
-      id: "1",
+      id: '1',
       name: '123',
       price: 123,
       discount: 20,
@@ -23,10 +26,10 @@ export const AllProducts: React.FC = () => {
         gender: 'nam',
         type: '1123123'
       },
-      description: "123",
+      description: '123'
     },
     {
-      id: "2",
+      id: '2',
       name: '123',
       price: 123,
       discount: 20,
@@ -36,10 +39,10 @@ export const AllProducts: React.FC = () => {
         gender: 'nam',
         type: '1123123'
       },
-      description: "123",
+      description: '123'
     },
     {
-      id: "3",
+      id: '3',
       name: '123',
       price: 123,
       discount: 20,
@@ -49,7 +52,7 @@ export const AllProducts: React.FC = () => {
         gender: 'nam',
         type: '1123123'
       },
-      description: "123",
+      description: '123'
     }
   ])
   const [keyword, setKeyWord] = useState('')
@@ -89,12 +92,12 @@ export const AllProducts: React.FC = () => {
         >
           <div className={'bg-off-white border border-gray-300 w-full h-auto p-2.5 px-5 rounded'}>
             <div className={'text-black font-extrabold text-lg mb-2 select-none'}>DANH MỤC SẢN PHẨM</div>
-            <ul className={''}>
-              {FILTER_TITLES.collectionLinks.map((item, index) => (
+            <ul>
+              {collectionLinks.map((link, index) => (
                 <li className={'flex w-full justify-between h-8 items-center hover:cursor-pointer group'} key={index}>
                   <div className={'flex h-7 items-center'}>
-                    <div className={'group-hover:h-5 group-hover:bg-text-dark-blue'}></div>
-                    <div className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}>{item}</div>
+                    <div className={'group-hover:h-5 group-hover:bg-dark-blue'}></div>
+                    <div className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}>{link}</div>
                   </div>
                   {icons.filter.darkBlue}
                 </li>
@@ -116,107 +119,40 @@ export const AllProducts: React.FC = () => {
                     key={index}
                   >
                     <div onClick={(e) => handleFilterSelected()} className={'h-4 cursor-pointer'}>
-                      {icons.x}
+                      {icons.close}
                     </div>
                     <div className={'text-white font-medium h-4 text-base mb-1 ml-0 user-select-none'}>{item}</div>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className={'mb-3'}>
-              <div className={'text-black font-extrabold text-lg my-4'}>CHỌN MỨC GIÁ</div>
-              <ul className={'max-h-40 overflow-x-hidden'}>
-                {FILTER_TITLES.priceFilter.map((item, index) => (
-                  <li
-                    onClick={() => handleFilterSelected()}
-                    className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
-                    key={index}
-                  >
-                    <Checkbox
-                      id={`priceFilter-${index}`}
-                      className={'mr-2'}
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
-                      onChange={() => handleFilterInputChange()}
-                    ></Checkbox>
-                    <label
-                      htmlFor={`priceFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
-                    ></label>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={'mb-3'}>
-              <div className={'text-black font-extrabold text-lg my-4'}>LOẠI SẢN PHẨM</div>
-              <ul className={'max-h-40 overflow-x-hidden'}>
-                {FILTER_TITLES.typeFilter.map((item, index) => (
-                  <li
-                    onClick={() => handleFilterSelected()}
-                    className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
-                    key={index}
-                  >
-                    <Checkbox
-                      id={`typeFilter-${index}`}
-                      className={'mr-2'}
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
-                      onChange={() => handleFilterInputChange()}
-                    ></Checkbox>
-                    <label
-                      htmlFor={`typeFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
-                    ></label>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={'mb-3'}>
-              <div className={'text-black font-extrabold text-lg my-4'}>MÀU SẮC</div>
-              <ul className={'max-h-40 overflow-x-hidden'}>
-                {FILTER_TITLES.colorFilter.map((item, index) => (
-                  <li
-                    onClick={() => handleFilterSelected()}
-                    className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
-                    key={index}
-                  >
-                    <Checkbox
-                      id={`colorFilter-${index}`}
-                      className={'mr-2'}
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
-                      onChange={() => handleFilterInputChange()}
-                    ></Checkbox>
-                    <label
-                      htmlFor={`colorFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
+            {filterTiers.map((filterTier) => (
+              <div className={'mb-3'} key={filterTier.title}>
+                <div className={'text-black font-extrabold text-lg my-4'}>CHỌN MỨC GIÁ</div>
+                <ul className={'max-h-40 overflow-x-hidden'}>
+                  {filterTier.options.map((option) => (
+                    <li
+                      onClick={() => handleFilterSelected()}
+                      className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
+                      key={option}
                     >
-                      {item}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={'mb-3'}>
-              <div className={'text-black font-extrabold text-lg my-4'}>KIỂU VẢI</div>
-              <ul className={'max-h-40 overflow-x-hidden'}>
-                {FILTER_TITLES.fabricTypeFilter.map((item, index) => (
-                  <li
-                    onClick={() => handleFilterSelected()}
-                    className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
-                    key={index}
-                  >
-                    <Checkbox
-                      id={`fabricTypeFilter-${index}`}
-                      className={'mr-2'}
-                      checked={selectedFilter.indexOf(item) !== -1 ? true : false}
-                      onChange={() => handleFilterInputChange()}
-                    ></Checkbox>
-                    <label
-                      htmlFor={`fabricTypeFilter-${index}`}
-                      className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
-                    ></label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                      <Checkbox
+                        id={`priceFilter-${option}`}
+                        className={'mr-2'}
+                        checked={selectedFilter.indexOf(option) !== -1 ? true : false}
+                        onChange={() => handleFilterInputChange()}
+                      ></Checkbox>
+                      <label
+                        htmlFor={`priceFilter-${option}`}
+                        className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
+                      >
+                        {option}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
         <div className={'xl:w-3/4 w-full xl:mx-0 mx-2'}>
@@ -234,9 +170,9 @@ export const AllProducts: React.FC = () => {
 
               <Select
                 onChange={() => handleSortChange()}
-                defaultValue={SORT_OPTION.default}
+                defaultValue={sortOptions.default}
                 style={{ width: 120 }}
-                options={SORT_OPTION.option}
+                options={sortOptions.option}
               ></Select>
             </div>
           </div>

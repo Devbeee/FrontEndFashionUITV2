@@ -27,9 +27,9 @@ export const CustomBtn: React.FC<ButtonProps> = ({
   children,
   icon,
 }: ButtonProps) => {
-  const btnClass = `w-fit h-fit text-sm rounded-md bg-blue-cyan bg-opacity-85 px-4 py-2 transition-none
-    ${type !== 'primary' ? 'bg-white !text-primary-800 border-primary-800' : !disabled && 'text-white hover:!bg-yellow '} 
-    ${disabled ? 'disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed ' : ''} 
+  const btnClass = `w-full h-12 text-lg mt-4 font-semibold rounded-md bg-dark-blue transition
+    ${type !== 'primary' ? 'bg-white !text-dark-blue border-dark-blue' : 'text-white hover:!bg-blue-cyan hover:opacity-90'} 
+    ${disabled ? 'disabled:bg-blue-cyan disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white' : ''} 
     ${className}`
 
   return to ? (
