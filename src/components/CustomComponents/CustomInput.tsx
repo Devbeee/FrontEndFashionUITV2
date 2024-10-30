@@ -33,7 +33,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
 }) => {
   return control ? (
     <Form.Item
-      className='w-full mb-2 border-0 mt-2 text-sm font-normal'
+      className='w-full border-0 mt-4 mb-0 text-lg font-normal text-left'
       validateStatus={errors[name] ? 'error' : ''}
       help={errors[name]?.message}
     >
@@ -47,7 +47,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
-              className={`text-sm font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
+              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
             />
           ) : (
             <Input.Password
@@ -55,7 +55,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
-              className={`text-sm font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
+              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
             />
           )
         }}
@@ -69,7 +69,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       onChange={onChange}
       onKeyDown={onKeyDown}
       placeholder={placeholder}
-      className={`text-sm font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom ${className}`}
+      className={`text-sm font-medium border-1 border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue ${className}`}
     />
   )
 }

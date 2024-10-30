@@ -1,12 +1,15 @@
 export const PATH = {
-  home: '/', 
-  products: '/products', 
+  home: '/',
+  register: '/register',
+  login: '/login',
+  products: '/products',
   cart: '/cart',
   blog: '/blogs',
-  blogDetail: '/blog-detail', 
+  blogDetail: '/blog-detail',
   contact: '/contact',
   productDetail: '/product-detail', 
-  
+  verifyEmail: '/verify-email/:userId',
+  forgotPassword: '/forgot-password',
   collab_pol: '/collab_pol', //chinh sach cong tac vien
   exchange_pol: '/exchange_pol', //chinh sach doi san pham
   membership_pol: '/membership_pol', //chinh sach thanh vien
@@ -20,6 +23,5 @@ export const PATH = {
   inquiries_sup: '/inquiries_sup', //giai dap thac mac
   payment_sup: '/payment_sup', //huong dan thanh toan
   retail_sup: '/retail_sup', //tu van ban si
-  size_sup: '/size_sup', //huong dan chon size
-  // ........
+  size_sup: '/size_sup' //huong dan chon size
 }

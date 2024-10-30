@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   * {
+    font-family: 'Inter', sans-serif;
   }
   body {
   }
@@ -12,13 +15,9 @@
   }
 }
 
-
-:root {
-    --blue-cyan: #00354b;
-  }
-  
-  /* CSS tùy chỉnh cho Radio button khi được chọn */
-  .custom-radio-group .ant-radio-button-wrapper-checked {
-    background-color: var(--blue-cyan) !important;
-    border-color: var(--blue-cyan) !important;
-  }
+.ant-dropdown-menu-item:hover {
+  background-color: #01567f !important;
+}
+.ant-dropdown-menu-item:hover .ant-dropdown-menu-title-content {
+  color: #fff !important;
+}
