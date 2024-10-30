@@ -4,7 +4,7 @@ import { Typography } from 'antd';
 import { IProduct } from "@/interfaces"
 import { icons } from '@/utils';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 type ProductsListProps = {
     title: string,
@@ -20,8 +20,8 @@ export function ProductsList({ title, products }: ProductsListProps) {
                 </Link>
             </Title>
             <div>
-                {products.slice(0, 4).map((product, index) => (
-                    <div key={index} className="flex mb-3 border-b border-dashed border-gray-200 pb-2">
+                {products.slice(0, 4).map((product) => (
+                    <div key={product.id} className="flex mb-3 border-b border-dashed border-gray-200 pb-2">
                         <div className="w-14 h-20 mr-3 object-scale-down">
                             <Link to={product.slug} title={product.name} className="block">
                                 <img
@@ -38,12 +38,12 @@ export function ProductsList({ title, products }: ProductsListProps) {
                                 </Link>
                             </h3>
                             <div className='flex flex-row flex-wrap gap-2 justify-start items-center'>
-                                <Paragraph className="text-sm text-left text-red-500 mb-0">
+                                <span className="text-sm text-left text-red-500 mb-0">
                                     {((product?.price - (product?.price * product?.discount) / 100) * 1000).toLocaleString("de-DE")}₫
-                                </Paragraph>
-                                <Paragraph className="text-xs text-left line-through text-gray-400 mb-0">
+                                </span>
+                                <span className="text-xs text-left line-through text-gray-400 mb-0">
                                     {(product?.price * 1000).toLocaleString("de-DE")}₫
-                                </Paragraph>
+                                </span>
                             </div>
                         </div>
                     </div>

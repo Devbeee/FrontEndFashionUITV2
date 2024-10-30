@@ -1,69 +1,65 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Button, Divider, Image, Radio, Typography, Input, RadioChangeEvent } from 'antd';
+import { Tabs, Button, Divider, Image, Typography, Input } from 'antd';
 import type { TabsProps } from 'antd';
 
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import { Product, Vouchers, ProductsList, QuickViewInfoPopUp } from "@/components";
+import { Product, Vouchers, ProductsList, QuickViewProduct } from "@/components";
 import { icons } from '@/utils';
-import { IProduct } from '@/interfaces';
+import { IProduct, IColor, ISize, IImage } from '@/interfaces';
 
 const { Title } = Typography
 type Product = IProduct;
-type Image = {
-  imgUrl: string
-}
-type ColorOption = {
-  label: string,
-  color: string
-}
 
 export function ProductDetail() {
-  const [activedColor, setActivedColor] = useState(0);
-  const [activedSize, setActivedSize] = useState(0);
-  const [count, setCount] = useState(1);
-  const handleColorChange = (index : number) => {
-    setActivedColor(index);
+  const [activedColorIndex, setActivedColorIndex] = useState<number>(0);
+  const [activedSizeIndex, setActivedSizeIndex] = useState<number>(0);
+  const [count, setCount] = useState<number>(1);
+  const handleColorChange = (index: number) => () => {
+      setActivedColorIndex(index);
   }
-  const handleSizeChange = (e: RadioChangeEvent) => {
-    const selectedSize = e.target.value;
-    const selectedIndex = sizeOptions.findIndex(option => option.value === selectedSize);
-    setActivedSize(selectedIndex);
+  const handleSizeChange = (index : number) => () => {
+      setActivedSizeIndex(index);
   };
   const handleDecrease = () => {
-    if (count > 1) {
-      setCount(count - 1)
-    }
+      if (count > 1) {
+          setCount(count - 1)
+      }
   }
   const handleIncrease = () => {
-    if (count < 100) {
-      setCount(count + 1)
-    }
+      if (count < 1000) {
+          setCount(count + 1)
+      }
   }
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value >= 1) {
-      setCount(value); // Cập nhật giá trị nếu lớn hơn hoặc bằng 1
-    } else {
-      setCount(1); // Đặt giá trị về 1 nếu giá trị nhập nhỏ hơn 1
-    }
+  const handleInputChange = (newCount : string) => {
+      let value = parseInt(newCount, 10);
+      if (!isNaN(value) && value >= 1) {
+          setCount(value);
+      } else {
+          setCount(1);
+      }
   };
-  const sizeOptions = [
-    { label: 'M', value: 'M' },
-    { label: 'L', value: 'L' },
-    { label: 'XL', value: 'XL' },
+  const sizeOptions : ISize[] = [
+      {size: 'M'},
+      {size: 'L'},
+      {size: 'XL'},
   ];
-  const colorOptions : ColorOption[] = [
-    { label: 'Đen', color: '#000000' },
-    { label: 'Trắng', color: '#ffffff' },
-    { label: 'Xám', color: '#9ca3af' },
+  const colorOptions: IColor[] = [
+      { colorName: 'Đen', colorHex: '#000000' },
+      { colorName: 'Trắng', colorHex: '#ffffff' },
+      { colorName: 'Xám', colorHex: '#9ca3af' },
   ]
+
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const handleMainImageChange = (index: number) => () => {
+      setSelectedImageIndex(index);
+  }
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: <p className='font-bold text-blue-cyan uppercase'>Mô tả sản phẩm</p>,
+      label: <span className='font-bold text-blue-cyan uppercase'>Mô tả sản phẩm</span>,
       children: (
         <div className='flex flex-col justify-start items-start gap-3'>
           <p className='text-left'>- Được dệt từ sợi bông cao cấp</p>
@@ -81,7 +77,7 @@ export function ProductDetail() {
     },
     {
       key: '2',
-      label: <p className='font-bold text-blue-cyan uppercase'>Chính sách đổi trả</p>,
+      label: <span className='font-bold text-blue-cyan uppercase'>Chính sách đổi trả</span>,
       children: (
         <div className='flex flex-col justify-start items-start'>
           <p className='text-left'>+ Sản phẩm lỗi, hỏng do quá trình sản xuất hoặc vận chuyện</p>
@@ -102,9 +98,8 @@ export function ProductDetail() {
   ];
 
   
-  const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState<number>(window.innerWidth);
 
-  //Example data
   const [products, setProducts] = useState<Product[]>([
     {
       id: 1,
@@ -208,15 +203,10 @@ export function ProductDetail() {
     },
   ]);
 
-  const [selectedImage, setSelectedImage] = useState(0);
-  const handleMainImageChange = (index : number) => {
-    setSelectedImage(index);
-  }
-
   //Trạng thái của QuickViewPopup============
   const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
-  const [showQuickView, setShowQuickView] = useState(false);
-  const handleClickEye = (product : Product) => {
+  const [showQuickView, setShowQuickView] = useState<boolean>(false);
+  const handleClickEye = (product : Product) => () => {
     setQuickViewProduct(product);
     setShowQuickView(true);
   }
@@ -234,92 +224,90 @@ export function ProductDetail() {
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white">
       {/* QuickViewPopup */}
-      {showQuickView && quickViewProduct && (<QuickViewInfoPopUp product={quickViewProduct} handleClosePopup={handleClosePopup} />)}
+      {showQuickView && quickViewProduct && (<QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />)}
       <div className="flex flex-col flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5 lg:flex-row">
         <div className='flex-[3] flex flex-col gap-4'>
           <div className='flex flex-col gap-4 md:flex-row'>
-            <div className='flex-1 overflow-hidden'>
-              <Image src={products[0].images[selectedImage].imgUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
-              <Swiper
-                spaceBetween={0}
-                slidesPerView={4}
-                modules={[Navigation]}
-                navigation
-                className='w-[25rem]'
-              >
-                {products[0].images.map((img: Image, index : number) => (
-                  <SwiperSlide key={index}>
-                  <div style={selectedImage == index ? {borderWidth: '1px', borderColor: 'gray'} : {}} className='w-[90px] h-[115px] flex justify-center items-center object-scale-down bg-gray-200 cursor-pointer overflow-hidden hover:border hover:border-gray-500'>
-                    <img onClick={() => handleMainImageChange(index)} src={img.imgUrl} />
-                  </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-            <div className='flex-1 flex flex-col items-start gap-2'>
-              <Title level={2} className='text-left'>
-                {products[0].name}
-              </Title>
-              <p>Mã:  <span className='text-left text-primary'>BEANFS4001</span></p>
-              <div className='flex flex-col gap-3 md:flex-row'>
-                <p className='text-left'>Thương hiệu: <span className='text-left text-primary'>Bean Fashion</span></p>
-                <div className='border-l border-gray-300 hidden md:block'></div>
-                <p className='text-left'>Tình trạng:  <span className='text-left text-primary'>Còn hàng</span></p>
-              </div>
-              <div className='flex flex-row gap-2 items-end'>
-                <span className='text-left text-red-500 font-bold text-2xl'>
-                  {((products[0]?.price - (products[0]?.price * products[0]?.discount) / 100) * 1000).toLocaleString("de-DE")}₫
-                </span>
-                <span className='text-left text-gray-400 line-through text-base'>
-                  {(products[0]?.price * 1000).toLocaleString("de-DE")}₫
-                </span>
-              </div>
-              <Divider className='border-gray-200' />
-              <p className='text-left'>
-                Cotton co dãn tốt, thấm hút mồ hôi hiệu quả, thoáng mát.
-                Thiết kế trẻ trung, năng động kết hợp với các loại quần jeans, quần âu, chân váy xếp ly, chân váy midi,..
-              </p>
-              <div className=''>
-                <p className='text-left'>Màu sắc: <span className='text-left text-primary'>{colorOptions[activedColor].label}</span></p>
-                <div className='flex flex-row items-start gap-4 mt-1'>
-                  {colorOptions.map((e : ColorOption, index : number) => 
-                    <button key={index} onClick={() => handleColorChange(index)}>
-                      <div style={{ backgroundColor: e.color }} className='w-6 h-6 border border-gray-200 rounded-full flex justify-end items-start'>
-                        {
-                          activedColor == index &&
-                          (<div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>)
-                        }
-                      </div>
-                    </button>
-                  )}
+                <div className='flex-1 overflow-hidden'>
+                    <Image src={products[0].images[selectedImageIndex].imgUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
+                    <Swiper
+                        spaceBetween={10}
+                        slidesPerView={4}
+                        modules={[Navigation]}
+                        navigation
+                        className='w-[350px]'
+                    >
+                        {products[0].images.map((img: IImage, index: number) => (
+                            <SwiperSlide key={img.imgUrl}>
+                                <div className={`w-[80px] h-[110px] ${selectedImageIndex === index && 'border border-blue-cyan' } flex justify-center items-center object-scale-down bg-gray-200 cursor-pointer overflow-hidden hover:border hover:border-blue-cyan`}>
+                                    <img onClick={handleMainImageChange(index)} src={img.imgUrl} />
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </div>
-              </div>
-              <div className=''>
-                <p className='text-left'>Kích thước: <span className='text-left text-primary'>{sizeOptions[activedSize].label}</span></p>
-                <div className='flex flex-row items-start space-x-4 mt-1'>
-                  <Radio.Group
-                    block
-                    options={sizeOptions}
-                    value= {sizeOptions[activedSize].value}
-                    optionType="button"
-                    buttonStyle="solid"
-                    className='space-x-4 custom-radio-group'
-                    onChange={handleSizeChange}
-                  />
+                <div className='flex-1 flex flex-col items-start gap-2'>
+                    <Title level={2} className='text-left'>
+                        {products[0].name}
+                    </Title>
+                    <span>Mã:  <span className='text-left text-primary'>BEANFS4001</span></span>
+                    <div className='flex flex-col gap-3 md:flex-row'>
+                        <span className='text-left'>Thương hiệu: <span className='text-left text-primary'>Bean Fashion</span></span>
+                        <div className='border-l border-gray-300 hidden md:block'></div>
+                        <span className='text-left'>Tình trạng:  <span className='text-left text-primary'>Còn hàng</span></span>
+                    </div>
+                    <div className='flex flex-row gap-2 items-end'>
+                        <span className='text-left text-red-500 font-bold text-2xl'>
+                            {((products[0]?.price - (products[0]?.price * products[0]?.discount) / 100) * 1000).toLocaleString("de-DE")}₫
+                        </span>
+                        <span className='text-left text-gray-400 line-through text-base'>
+                            {(products[0]?.price * 1000).toLocaleString("de-DE")}₫
+                        </span>
+                    </div>
+                    <Divider className='border-gray-200 my-2' />
+                    <p className='text-left'>
+                        Cotton co dãn tốt, thấm hút mồ hôi hiệu quả, thoáng mát.
+                        Thiết kế trẻ trung, năng động kết hợp với các loại quần jeans, quần âu, chân váy xếp ly, chân váy midi,..
+                    </p>
+                    <div className='flex flex-col'>
+                        <span className='text-left'>Màu sắc: <span className='text-left text-primary'>{colorOptions[activedColorIndex].colorName}</span></span>
+                        <div className='flex flex-row items-start gap-4 mt-1'>
+                            {colorOptions.map((color: IColor, index: number) =>
+                                <button key={color.colorHex} onClick={handleColorChange(index)}>
+                                    <div className={`w-7 h-7 bg-[${color.colorHex}] border border-gray-200 rounded-full flex justify-end items-start`}>
+                                        {
+                                            activedColorIndex == index &&
+                                                (<div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>)
+                                        }
+                                    </div>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <div className='flex flex-col'>
+                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{sizeOptions[activedSizeIndex].size}</span></span>
+                        <div className='flex flex-row items-start space-x-4 mt-1'>
+                            {sizeOptions.map((size : ISize, index : number) => (
+                                <button key={size.size} onClick={handleSizeChange(index)}>
+                                    <div className={`w-7 h-7 ${activedSizeIndex === index ? 'bg-blue-cyan text-white' : 'bg-white text-blue-cyan'} border border-gray-200 flex justify-center items-center rounded`}>
+                                        {size.size}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='flex flex-col gap-4 md:flex-row mt-4'>
+                        <div className='flex flex-row gap-1'>
+                            <Button shape="circle" onClick={handleDecrease} className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'>-</Button>
+                            <Input placeholder="" value={count} onChange={(e) => handleInputChange(e.target.value)} className='w-20 border border-blue-cyan text-center' />
+                            <Button shape="circle" onClick={handleIncrease} className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'>+</Button>
+                        </div>
+                        <div className='flex flex-row gap-1'>
+                            <Button className='bg-blue-cyan text-white uppercase'>Thêm vào giỏ hàng</Button>
+                            <Button className='bg-blue-cyan text-white uppercase text-xl w-fit'>{icons.heart}</Button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div className='flex flex-col gap-4 md:flex-row mt-4'>
-                <div className='flex flex-row gap-1'>
-                  <Button shape="circle" onClick={() => handleDecrease()} className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'>-</Button>
-                  <Input placeholder="" value={count} onChange={handleInputChange} className='w-20 border border-blue-cyan text-center' />
-                  <Button shape="circle" onClick={() => handleIncrease()} className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'>+</Button>
-                </div>
-                <div className='flex flex-row gap-1'>
-                  <Button className='bg-blue-cyan text-white uppercase'>Thêm vào giỏ hàng</Button>
-                  <Button className='bg-blue-cyan text-white uppercase text-xl w-fit'>{icons.heart}</Button>
-                </div>
-              </div>
-            </div>
           </div>
           <div>
             <Tabs defaultActiveKey="1" items={tabItems} />
@@ -342,7 +330,7 @@ export function ProductDetail() {
                   >
                     <Product
                       product={product}
-                    handleClickEye={() => handleClickEye(product)}
+                    handleClickEye={handleClickEye(product)}
                     // handleClickCart={() => handleClickCart(product)}       
                     />
                   </SwiperSlide>

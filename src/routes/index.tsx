@@ -122,8 +122,7 @@ export const router = createBrowserRouter([
       },
     {
       path: PATH.productDetail,
-      element: <ProductDetail /> ,
-      children: [{}]
+      element: <ProductDetail />
     }
     ]
   }
