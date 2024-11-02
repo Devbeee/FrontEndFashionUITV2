@@ -8,6 +8,7 @@ import { CustomBtn, CustomInput } from '@/components'
 
 import { contactFields, validationRegex } from '@/utils'
 import { IContact } from '@/interfaces/contact.interface'
+import axios from 'axios'
 
 const { Title, Text } = Typography
 
@@ -32,23 +33,23 @@ export const Contact: React.FC = () => {
   })
 
   const onSubmit: SubmitHandler<IContact> = (data) => {
-    fetch('http://localhost:3000/api/contact', {
-      method: 'POST',
-      headers: {
-      'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then((response) => {
-      if (response.ok) {
+    try {
+      axios.post('http://localhost:3000/api/contact', data)
+        .then((response) => {
+      if (response.status === 200) {
         reset();
       } else {
         throw new Error('Failed to send contact information');
       }
     })
-    .catch((error) => {
-      throw new Error(error);
-    });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message);
+      } else {
+        throw new Error('An unknown error occurred');
+      }
+    }
+    
   }
   const iframeUrl =
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1959.7590851236018!2d106.65082804811797!3d10.771568590496535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec07488c543%3A0x7dc9617e924ddb50!2zNzAgxJAuIEzhu68gR2lh!5e0!3m2!1sen!2s!4v1729658600054!5m2!1sen!2s'
