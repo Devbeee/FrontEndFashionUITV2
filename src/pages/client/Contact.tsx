@@ -9,6 +9,7 @@ import { CustomBtn, CustomInput } from '@/components'
 import { contactFields, validationRegex } from '@/utils'
 import { IContact } from '@/interfaces/contact.interface'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const { Title, Text } = Typography
 
@@ -23,6 +24,21 @@ const contactSchema = yup.object().shape({
 })
 
 export const Contact: React.FC = () => {
+  const [userId, setUserId] = useState<string>('');
+  useEffect(() => {
+    async () => {
+      try {
+        axios.get('http://localhost:3000/api/currentUser')
+          .then((response) => setUserId(response.data.id));
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          throw new Error(error.response.data.message);
+        } else {
+          throw new Error('An unknown error occurred');
+        }
+      }
+    }
+  }, [])
   const {
     control,
     handleSubmit,
@@ -34,7 +50,8 @@ export const Contact: React.FC = () => {
 
   const onSubmit: SubmitHandler<IContact> = (data) => {
     try {
-      axios.post('http://localhost:3000/api/contact', data)
+      const contactData = { ...data, userId: userId };
+      axios.post('http://localhost:3000/api/contact', contactData)
         .then((response) => {
       if (response.status === 200) {
         reset();
