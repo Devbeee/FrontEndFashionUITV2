@@ -8,10 +8,10 @@ import 'swiper/css';
 
 import { Product, Vouchers, ProductsList, QuickViewProduct } from "@/components";
 import { icons } from '@/utils';
-import { IProduct, IColor, ISize, IImage } from '@/interfaces';
+import { IProductComp, IColor, ISize, IImage } from '@/interfaces';
 
 const { Title } = Typography
-type Product = IProduct;
+type Product = IProductComp;
 
 export function ProductDetail() {
   const [activedColorIndex, setActivedColorIndex] = useState<number>(0);
@@ -102,7 +102,7 @@ export function ProductDetail() {
 
   const [products, setProducts] = useState<Product[]>([
     {
-      id: 1,
+      id: '1',
       name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
       price: 123,
       discount: 20,
@@ -127,84 +127,90 @@ export function ProductDetail() {
       ],
       slug: "123",
       category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        gender: 'nam',
+        type: '1123123'
+      },
+        description: "123"
     },
     {
-      id: 2,
-      name: "AÁo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-      price: 123,
-      discount: 20,
-      sold: 2,
-      saleCount: 2,
-      images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-      slug: "123",
-      category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        id: '2',
+        name: "123",
+        price: 123,
+        discount: 20,
+        sold: 2,
+        saleCount: 2,
+        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+        slug: "123",
+        category: {
+            gender: 'nam',
+            type: '1123123'
+        },
+        description: "123"
     },
     {
-      id: 3,
-      name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-      price: 123,
-      discount: 20,
-      sold: 2,
-      saleCount: 2,
-      images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-      slug: "123",
-      category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        id: '3',
+        name: "123",
+        price: 123,
+        discount: 20,
+        sold: 2,
+        saleCount: 2,
+        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+        slug: "123",
+        category: {
+            gender: 'nam',
+            type: '1123123'
+        },
+        description: "123"
     },
     {
-      id: 4,
-      name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-      price: 123,
-      discount: 20,
-      sold: 2,
-      saleCount: 2,
-      images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-      slug: "123",
-      category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        id: '4',
+        name: "123",
+        price: 123,
+        discount: 20,
+        sold: 2,
+        saleCount: 2,
+        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+        slug: "123",
+        category: {
+            gender: 'nam',
+            type: '1123123'
+        },
+        description: "123"
     },
     {
-      id: 5,
-      name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-      price: 123,
-      discount: 20,
-      sold: 2,
-      saleCount: 2,
-      images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-      slug: "123",
-      category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        id: '5',
+        name: "123",
+        price: 123,
+        discount: 20,
+        sold: 2,
+        saleCount: 2,
+        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+        slug: "123",
+        category: {
+            gender: 'nam',
+            type: '1123123'
+        },
+        description: "123"
     },
     {
-      id: 6,
-      name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-      price: 123,
-      discount: 20,
-      sold: 2,
-      saleCount: 2,
-      images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-      slug: "123",
-      category: {
-        sex: 'nam',
-        categoryDetail: '1123123'
-      }
+        id: '6',
+        name: "123",
+        price: 123,
+        discount: 20,
+        sold: 2,
+        saleCount: 2,
+        images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
+        slug: "123",
+        category: {
+            gender: 'nam',
+            type: '1123123'
+        },
+        description: "123"
     },
   ]);
 
   //Trạng thái của QuickViewPopup============
-  const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<IProductComp | null>(null);
   const [showQuickView, setShowQuickView] = useState<boolean>(false);
   const handleClickEye = (product : Product) => () => {
     setQuickViewProduct(product);
@@ -274,7 +280,7 @@ export function ProductDetail() {
                         <div className='flex flex-row items-start gap-4 mt-1'>
                             {colorOptions.map((color: IColor, index: number) =>
                                 <button key={color.colorHex} onClick={handleColorChange(index)}>
-                                    <div className={`w-7 h-7 bg-[${color.colorHex}] border border-gray-200 rounded-full flex justify-end items-start`}>
+                                    <div style={{ backgroundColor: color.colorHex }} className={`w-7 h-7 border border-gray-200 rounded-full flex justify-end items-start`}>
                                         {
                                             activedColorIndex == index &&
                                                 (<div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>)

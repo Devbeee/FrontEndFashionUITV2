@@ -1,4 +1,4 @@
-import { useCopyToClipboard } from 'usehooks-ts'
+import { useCopyToClipboard } from '@/hooks';
 import { Button, List, message  } from 'antd';
 
 import { icons } from '@/utils';
@@ -6,9 +6,14 @@ import { IVoucher } from '@/interfaces';
 
 export function Vouchers() {
     const [copiedText, copy] = useCopyToClipboard();
-    const handleCopy = (voucher : string) => () => {
-        copy(voucher);
-        message.success(`Copied: ${voucher}`);
+    const handleCopy = (text : string) => async () => {
+        const success = await copy(text);
+        if (success) {
+            message.success(`Copied: ${text}`);
+        }
+        else {
+            message.error(`Failed to copy text: ${text}`)
+        }
     }
     const vouchers :IVoucher[] = [
         {
@@ -44,13 +49,13 @@ export function Vouchers() {
                         <span className='text-red-500 text-lg'>{icons.gift}</span>
                         <span className='uppercase font-bold'>Mã giảm giá</span>
                     </div>
-                    {vouchers.map((voucher : IVoucher) => (
+                    {vouchers.map((voucher : IVoucher, index : number) => (
                         <List.Item key={voucher.id} className='bg-white px-0 mt-4 border border-gray-100 shadow-md'>
                             <div className='w-full px-0 flex flex-col justify-start items-start'>
                                 <div className='flex w-full justify-between'>
                                     <div className='flex justify-start items-start gap-3'>
                                         <span className='rounded-full text-blue-cyan font-bold uppercase'>{voucher.discount * 100} off</span>
-                                        <span className='rounded-full px-3 py-1 bg-orange-100 text-xs text-orange-400'>Top Code</span>
+                                        {index === 0 &&(<span className='rounded-full px-3 py-1 bg-orange-100 text-xs text-orange-400'>Top Code</span>)}
                                     </div>
                                     <div className='flex justify-center items-center gap-1'>
                                         <span className='text-blue-cyan'>{voucher.discount * 100}%</span>

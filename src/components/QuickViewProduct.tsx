@@ -108,7 +108,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                 <div className='flex flex-row items-start gap-4 mt-1'>
                                     {colorOptions.map((color: IColor, index : number) =>
                                         <button key={color.colorHex} onClick={handleColorChange(index)}>
-                                            <div className={`w-7 h-7 bg-[${color.colorHex}] border border-gray-200 rounded-full flex justify-end items-start`}>
+                                            <div style={{ backgroundColor: color.colorHex }} className={`w-7 h-7 border border-gray-200 rounded-full flex justify-end items-start`}>
                                                 {
                                                     activedColorIndex == index &&
                                                     (<div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>)
