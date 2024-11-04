@@ -2,7 +2,8 @@ import { CustomBtn, CustomInput } from '@/components'
 import { contactFields, validationRegex } from '@/utils'
 import { useAuthStore } from '@/stores'
 import { useApi } from '@/hooks'
-import { IContact } from '@/interfaces/contact.interface'
+
+import { IContact } from '@/interfaces'
 import { contactApi } from '@/apis'
 
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -41,7 +42,6 @@ export const Contact: React.FC = () => {
     resetMessage()
     callApiSendContact(async () => {
       const sendData = {...contactData, userId: currentUser?.id}
-      console.log(sendData)
       const {data} = await contactApi.sendContact(sendData);
       if (data) {
         resetContactForm()
