@@ -1,15 +1,16 @@
-import { Typography, Input, Form } from 'antd'
+import { CustomBtn, CustomInput } from '@/components'
+import { contactFields, validationRegex } from '@/utils'
+import { useAuthStore } from '@/stores'
+import { useApi } from '@/hooks'
+import { IContact } from '@/interfaces/contact.interface'
+import { contactApi } from '@/apis'
+
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 
-import { CustomBtn, CustomInput } from '@/components'
-
-import { contactFields, validationRegex } from '@/utils'
-import { IContact } from '@/interfaces/contact.interface'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { Typography, Input, Form, message } from 'antd'
 
 const { Title, Text } = Typography
 
@@ -24,50 +25,33 @@ const contactSchema = yup.object().shape({
 })
 
 export const Contact: React.FC = () => {
-  const [userId, setUserId] = useState<string>('');
-  useEffect(() => {
-    async () => {
-      try {
-        axios.get('http://localhost:3000/api/currentUser')
-          .then((response) => setUserId(response.data.id));
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          throw new Error(error.response.data.message);
-        } else {
-          throw new Error('An unknown error occurred');
-        }
-      }
-    }
-  }, [])
+  const {currentUser, resetMessage} = useAuthStore();
+  const { loading, errorMessage, callApi: callApiSendContact } = useApi<void>()
+ 
   const {
     control,
     handleSubmit,
-    reset,
+    reset: resetContactForm,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(contactSchema)
   })
 
-  const onSubmit: SubmitHandler<IContact> = (data) => {
-    try {
-      const contactData = { ...data, userId: userId };
-      axios.post('http://localhost:3000/api/contact', contactData)
-        .then((response) => {
-      if (response.status === 200) {
-        reset();
+  const handleSendContact = async (contactData: IContact) => {
+    resetMessage()
+    callApiSendContact(async () => {
+      const sendData = {...contactData, userId: currentUser?.id}
+      console.log(sendData)
+      const {data} = await contactApi.sendContact(sendData);
+      if (data) {
+        resetContactForm()
+        message.success('Gửi thông tin thành công')
       } else {
-        throw new Error('Failed to send contact information');
+        message.error('Gửi thông tin thất bại')
       }
     })
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error('An unknown error occurred');
-      }
-    }
-    
   }
+
   const iframeUrl =
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1959.7590851236018!2d106.65082804811797!3d10.771568590496535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec07488c543%3A0x7dc9617e924ddb50!2zNzAgxJAuIEzhu68gR2lh!5e0!3m2!1sen!2s!4v1729658600054!5m2!1sen!2s'
 
@@ -89,7 +73,7 @@ export const Contact: React.FC = () => {
           Email
           <span className='text-yellow hover:text-blue-cyan font-semibold hover:cursor-pointer'>: support@sapo.vn</span>
         </Text>
-        <Form className='w-full' onFinish={handleSubmit(onSubmit)}>
+        <Form className='w-full' onFinish={handleSubmit(handleSendContact)}>
           <label>
         <Title level={4} className='uppercase'>
           Liên hệ với chúng tôi
@@ -142,7 +126,8 @@ export const Contact: React.FC = () => {
                 )}
               />
             </Form.Item>
-            <CustomBtn type='primary' title='Gửi thông tin' htmlType='submit' className='self-start w-[24%] !mt-0' />
+            {errorMessage && <span className='text-red-500 mb-2 text-lg'>{errorMessage}</span>}
+            <CustomBtn type='primary' title='Gửi thông tin' htmlType='submit' className='self-start w-[24%] !mt-0' disabled={loading} loading={loading}/>
           </div>
         </Form>
       </div>

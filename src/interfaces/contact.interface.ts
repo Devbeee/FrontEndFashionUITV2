@@ -3,4 +3,5 @@ export interface IContact {
     email: string
     phoneNumber: string
     description: string
+    userId?: string
 }
