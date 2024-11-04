@@ -1,19 +1,17 @@
-import { Typography, Input, Form } from 'antd'
+import { CustomBtn, CustomInput } from '@/components'
+import { contactFields, validationRegex } from '@/utils'
+import { useAuthStore } from '@/stores'
+import { useApi } from '@/hooks'
+
+import { IContact } from '@/interfaces'
+import { contactApi } from '@/apis'
+
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 
-import { CustomBtn, CustomInput } from '@/components'
-
-import { contactFields, validationRegex } from '@/utils'
-
-type ContactData = {
-  fullName: string
-  email: string
-  phoneNumber: string
-  content: string
-}
+import { Typography, Input, Form, message } from 'antd'
 
 const { Title, Text } = Typography
 
@@ -24,19 +22,36 @@ const contactSchema = yup.object().shape({
     .string()
     .matches(validationRegex.PHONE_REGEX, 'Số điện thoại không hợp lệ!')
     .required('Vui lòng nhập số điện thoại!'),
-  content: yup.string().required('Vui lòng nhập nội dung!')
+  description: yup.string().required('Vui lòng nhập nội dung!')
 })
 
-export const Contact = () => {
+export const Contact: React.FC = () => {
+  const {currentUser, resetMessage} = useAuthStore();
+  const { loading, errorMessage, callApi: callApiSendContact } = useApi<void>()
+ 
   const {
     control,
     handleSubmit,
+    reset: resetContactForm,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(contactSchema)
   })
 
-  const onSubmit: SubmitHandler<ContactData> = (data) => console.log(data)
+  const handleSendContact = async (contactData: IContact) => {
+    resetMessage()
+    callApiSendContact(async () => {
+      const sendData = {...contactData, userId: currentUser?.id}
+      const {data} = await contactApi.sendContact(sendData);
+      if (data) {
+        resetContactForm()
+        message.success('Gửi thông tin thành công')
+      } else {
+        message.error('Gửi thông tin thất bại')
+      }
+    })
+  }
+
   const iframeUrl =
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1959.7590851236018!2d106.65082804811797!3d10.771568590496535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec07488c543%3A0x7dc9617e924ddb50!2zNzAgxJAuIEzhu68gR2lh!5e0!3m2!1sen!2s!4v1729658600054!5m2!1sen!2s'
 
@@ -58,11 +73,11 @@ export const Contact = () => {
           Email
           <span className='text-yellow hover:text-blue-cyan font-semibold hover:cursor-pointer'>: support@sapo.vn</span>
         </Text>
-        <Form className='w-full' onFinish={handleSubmit(onSubmit)}>
+        <Form className='w-full' onFinish={handleSubmit(handleSendContact)}>
           <label>
-            <Title level={4} className='uppercase'>
-              Liên hệ với chúng tôi
-            </Title>
+        <Title level={4} className='uppercase'>
+          Liên hệ với chúng tôi
+        </Title>
           </label>
           <div className='flex flex-col gap-2 text-sm w-full pb-5'>
             <div className='flex flex-row w-full gap-4'>
@@ -95,11 +110,11 @@ export const Contact = () => {
             })}
             <Form.Item
               name='message'
-              validateStatus={errors['content'] ? 'error' : ''}
-              help={errors['content']?.message}
+              validateStatus={errors['description'] ? 'error' : ''}
+              help={errors['description']?.message}
             >
               <Controller
-                name='content'
+                name='description'
                 control={control}
                 render={({ field }) => (
                   <Input.TextArea
@@ -111,7 +126,8 @@ export const Contact = () => {
                 )}
               />
             </Form.Item>
-            <CustomBtn type='primary' title='Gửi thông tin' htmlType='submit' className='self-start w-[24%] !mt-0' />
+            {errorMessage && <span className='text-red-500 mb-2 text-lg'>{errorMessage}</span>}
+            <CustomBtn type='primary' title='Gửi thông tin' htmlType='submit' className='self-start w-[24%] !mt-0' disabled={loading} loading={loading}/>
           </div>
         </Form>
       </div>
