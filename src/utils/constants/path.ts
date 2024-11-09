@@ -7,6 +7,7 @@ export const PATH = {
   blog: '/blogs',
   blogDetail: '/blog-detail',
   contact: '/contact',
+  productDetail: '/product-detail', 
   verifyEmail: '/verify-email/:userId',
   forgotPassword: '/forgot-password',
   collab_pol: '/collab_pol', 

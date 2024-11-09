@@ -11,7 +11,8 @@ import {
   Register,
   Login,
   VerifyEmail,
-  ForgotPassword
+  ForgotPassword,
+  ProductDetail,
 } from '@/pages'
 import {
   CollabPolicies,
@@ -130,7 +131,11 @@ export const router = createBrowserRouter([
       {
         path: PATH.cart,
         element: <Cart />
-      }
+      },
+    {
+      path: PATH.productDetail,
+      element: <ProductDetail />
+    }
     ]
   }
 ])

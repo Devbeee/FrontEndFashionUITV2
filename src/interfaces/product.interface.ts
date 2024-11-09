@@ -27,3 +27,25 @@ export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discoun
     quantity: number,
     image: string,
 }
+
+
+export interface IImage {
+    imgUrl: string
+}
+
+export interface IColor {
+    colorName: string,
+    colorHex: string
+}
+
+export interface ISize {
+    size: string
+}
+
+export interface IVoucher {
+    id: string,
+    name: string,
+    discount: number,
+    description: string,
+    quantity: number
+}
