@@ -6,3 +6,6 @@ export * from './Blog'
 export * from './BlogDetail'
 export * from './Cart'
 export * from './ProductDetail'
+
+export * from './Profile'
+export * from './ChangePassword'

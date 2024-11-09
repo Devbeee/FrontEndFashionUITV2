@@ -36,3 +36,9 @@ export interface IChangePassWordData {
 export interface IForgotPasswordData {
   email: string
 }
+
+export interface ChangePassWordData {
+  currentPassword: string
+  newPassword: string
+}
+

@@ -30,10 +30,16 @@ export const useApi = <T>(): UseApiRequestReturn<T> => {
       setShowSuccess()
     } catch (error: unknown) {
       const axiosError = error as AxiosError<ErrorResponseData>
+
       const errorCode = axiosError.response?.data?.errorCode
-      setErrorMessage(
-        errorCode && errorResponseCases[errorCode] ? errorResponseCases[errorCode] : errorResponseCases['All']
-      )
+      const errorStatus = axiosError.response?.data?.status
+      if (errorStatus === 429) {
+        setErrorMessage('Bạn đang gửi yêu cầu lên server quá nhiều!!!')
+      } else {
+        setErrorMessage(
+          errorCode && errorResponseCases[errorCode] ? errorResponseCases[errorCode] : errorResponseCases['All']
+        )
+      }
     } finally {
       setUnloading()
       setTimeout(() => {

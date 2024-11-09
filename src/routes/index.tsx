@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { PATH } from '@/utils'
-import { DefaultLayout } from '@/layouts'
+import { PATH, Role } from '@/utils'
+import { DefaultLayout, ProfileLayout } from '@/layouts'
 import {
   Home,
   Cart,
@@ -13,6 +13,8 @@ import {
   VerifyEmail,
   ForgotPassword,
   ProductDetail,
+  Profile,
+  ChangePassword
 } from '@/pages'
 import {
   CollabPolicies,
@@ -30,6 +32,8 @@ import {
   RetailAdvice,
   Size
 } from '@/components'
+
+import { ProtectedRoute } from './ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +63,24 @@ export const router = createBrowserRouter([
       {
         path: PATH.home,
         element: <Home />
+      },
+      {
+        path: '/',
+        element: (
+          <ProtectedRoute role={Role.User}>
+            <ProfileLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: PATH.profile,
+            element: <Profile />
+          },
+          {
+            path: PATH.changePassword,
+            element: <ChangePassword />
+          }
+        ]
       },
       {
         path: PATH.collab_pol,

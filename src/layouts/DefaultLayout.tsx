@@ -16,10 +16,10 @@ const { Content } = Layout
 
 export const DefaultLayout = () => {
   const { setCurrentUser } = useAuthStore()
-  const { callApi: callApiLogin } = useApi<void>()
+  const { callApi: callApiGetCurrentUser } = useApi<void>()
 
   const handleGetCurrentUser = () => {
-    callApiLogin(async () => {
+    callApiGetCurrentUser(async () => {
       const { data } = await userApi.getCurrentUser()
       if (data) {
         setCurrentUser(data)

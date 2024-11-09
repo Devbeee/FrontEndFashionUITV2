@@ -30,7 +30,7 @@ export function Header() {
       key: 'profile',
       label: (
         <span className='text-base'>
-          <Link to='#' className='flex justify-between items-center hover:text-white'>
+          <Link to={PATH.profile} className='flex justify-between items-center hover:text-white'>
             <span className='text-xl mr-2'>{icons.register}</span>
             Tài khoản
           </Link>

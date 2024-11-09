@@ -10,6 +10,8 @@ export const PATH = {
   productDetail: '/product-detail', 
   verifyEmail: '/verify-email/:userId',
   forgotPassword: '/forgot-password',
+  profile: '/profile',
+  changePassword: '/change-password',
   collab_pol: '/collab_pol', 
   exchange_pol: '/exchange_pol', 
   membership_pol: '/membership_pol', 

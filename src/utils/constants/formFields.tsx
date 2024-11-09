@@ -34,3 +34,21 @@ export const authFields = [
     type: 'password'
   }
 ]
+
+export const changePasswordFields = [
+  {
+    name: 'currentPassword',
+    placeholder: 'Enter your current password',
+    type: 'password'
+  },
+  {
+    name: 'newPassword',
+    placeholder: 'Enter your new password',
+    type: 'password'
+  },
+  {
+    name: 'confirmPassword',
+    placeholder: 'Enter your password again',
+    type: 'password'
+  }
+]
