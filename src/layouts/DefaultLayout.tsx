@@ -19,7 +19,7 @@ export const DefaultLayout = () => {
   const { currentUser, setCurrentUser } = useAuthStore()
   const { callApi: callApiGetCurrentUser } = useApi<void>()
 
-  const { setQuantity } = useCartStore()
+  const { setQuantity, resetCart } = useCartStore()
   const { callApi: callApiGetQuantityInCart } = useApi<void>()
 
   const handleGetCurrentUser = () => {
@@ -37,19 +37,18 @@ export const DefaultLayout = () => {
       if (data) {
         setQuantity(data.cartProducts?.length)
       }
-      else {
-        setQuantity(0)
-      }
     })
   }
 
   useEffect(() => {
     handleGetCurrentUser()
-
   }, [])
 
   useEffect(() => {
-    handleGetQuantityInCart()
+    if (currentUser)
+      handleGetQuantityInCart()
+    else 
+      resetCart()
   }, [currentUser])
   return (
     <Layout className='w-full max-w-full min-h-screen overflow-hidden bg-white'>
