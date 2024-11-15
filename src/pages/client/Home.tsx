@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 import "react-tabs/style/react-tabs.css";
 
 import { Product } from "@/components";
-import axiosClient from "@/configs/axiosClient";
+
 import { CountdownTimer } from "@/components";
 import { icons } from "@/utils";
 import { IProductComp } from "@/interfaces";
@@ -610,7 +610,7 @@ export function Home() {
                                                             <div className="flex flex-col justify-center items-center h-96">
                                                                 <span className="text-7xl text-white block">
                                                                     {
-                                                                        icons.info
+                                                                        icons.info.white
                                                                     }
 
                                                                 </span>

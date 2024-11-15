@@ -10,5 +10,6 @@ export const errorResponseCases: Record<ErrorCode | string, string> = {
   [ErrorCode.INVALID_LINK_EMAIL_VERIFICATION]: 'Liên kết xác nhận không hợp lệ!',
   [ErrorCode.EMAIL_DEACTIVATED]: 'Email đã bị hủy kích hoạt!',
   [ErrorCode.INVITATION_NOT_FOUND]: 'Không tìm thấy lời mời!',
+  [ErrorCode.CART_PRODUCT_NOT_FOUND]: 'Không tìm thấy sản phẩm!',
   All: 'Đã có lỗi xảy ra. Vui lòng kiểm tra lại'
 }

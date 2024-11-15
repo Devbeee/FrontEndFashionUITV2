@@ -20,15 +20,6 @@ export interface IProductComp extends IProduct {
     saleCount?: number;
 }
 
-export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
-    id: string;
-    size: string;
-    color: string;
-    quantity: number,
-    image: string,
-}
-
-
 export interface IImage {
     imgUrl: string
 }
