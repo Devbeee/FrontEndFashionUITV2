@@ -21,6 +21,8 @@ export * from './Tags'
 
 export * from './CustomComponents/CustomBtn'
 export * from './CustomComponents/CustomInput'
+export * from './CustomComponents/Map'
+
 export * from './CustomBreadcrumb'
 export * from './ProductsList'
 export * from './Vouchers'

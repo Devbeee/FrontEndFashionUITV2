@@ -17,8 +17,8 @@ export const menuSidebar = [
     linkTo: PATH.changePassword
   },
   {
-    key: 'addresses',
+    key: 'address',
     title: 'Sổ địa chỉ',
-    linkTo: '/addresses'
+    linkTo: '/address'
   }
 ]
