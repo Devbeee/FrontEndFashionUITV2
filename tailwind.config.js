@@ -8,10 +8,16 @@ export default {
         yellow: '#ffc107',
         primary: '#007bff',
         'off-white': '#f7f8f9',
-        'text-dark-blue': '#01567f'
+        'dark-blue': '#01567f',
+        'green-success': '#52c41a',
+        'dark-blue-02': '#01567f05'
+      },
+      boxShadow: {
+        'dark-blue': '0 0 0 1px #01567f',
+        error: '0 0 0 1px #ff4d4f'
       },
       width: {
-        1200: '1280px'
+        1200: '1200px'
       },
       maxWidth: {
         1200: '1200px'
@@ -56,12 +62,22 @@ export default {
           '100%': {
             left: '125%'
           }
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)' },
+          '100%': { transform: 'translateY(0)' }
         }
       },
       animation: {
         pulsate: 'pulsate 1s ease-out infinite',
         aniName: 'aniName 3s infinite',
-        shine: 'shine 1.1s'
+        shine: 'shine 1.1s',
+        fadeIn: 'fadeIn 0.5s ease-in-out',
+        slideUp: 'slideUp 0.5s ease-in-out'
       },
       backgroundImage: {
         fire: "url('@/assets/images/fire.png')",

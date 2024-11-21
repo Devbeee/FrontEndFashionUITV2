@@ -1,16 +1,16 @@
 import { LiaPhoneSolid } from 'react-icons/lia'
-import { CiLocationOn } from 'react-icons/ci'
+import { CiLocationOn, CiSettings } from 'react-icons/ci'
 import { BsSearch, BsSortDown } from 'react-icons/bs'
-import { SlUser } from 'react-icons/sl'
+import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift, FaPlus, FaFilter } from 'react-icons/fa6'
-import { CiSettings } from 'react-icons/ci'
-import { IoEyeOutline } from 'react-icons/io5'
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser } from 'react-icons/fa'
-import { FiX } from 'react-icons/fi'
+import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
+import { FiX, FiInfo } from 'react-icons/fi'
 import { GrNext, GrPrevious } from 'react-icons/gr'
-import { FiInfo } from 'react-icons/fi'
 import { MdOutlineWatchLater } from 'react-icons/md'
+import { BiSolidDiscount } from "react-icons/bi";
+import { PiUserPlus } from 'react-icons/pi'
 
 export const icons = {
   phone: <LiaPhoneSolid />,
@@ -30,13 +30,19 @@ export const icons = {
   info: <FiInfo />,
   faUser: <FaUser />,
   watch: <MdOutlineWatchLater />,
+  heart: <FaRegHeart />,
+  rightChevon: <IoCaretForwardOutline />,
+  discount: <BiSolidDiscount />,
   sortDecreasing: <BsSortDown />,
-  x: <FiX />,
+  close: <FiX />,
   nextPage: <GrNext />,
   prevPage: <GrPrevious />,
   plus: <FaPlus />,
+  login: <SlLogin />,
+  logout: <SlLogout />,
+  register: <PiUserPlus />,
   filter: {
     white: <FaFilter className='text-white' />,
-    darkBlue: <FaFilter className='text-text-dark-blue' />
+    darkBlue: <FaFilter className='text-dark-blue' />
   }
 }

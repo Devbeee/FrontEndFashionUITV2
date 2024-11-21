@@ -10,7 +10,7 @@ export const footerInfo = [
       { text: 'Trẻ em', to: '' },
       { text: 'Sản phẩm', to: '' },
       { text: 'Tin tức', to: '' },
-      { text: 'Liên hệ', to: '' }
+      { text: 'Liên hệ', to: '/contact' }
     ]
   },
   {
