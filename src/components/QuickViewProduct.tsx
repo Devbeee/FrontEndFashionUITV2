@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import { icons } from '@/utils';
-import { IProduct, IColor, ISize, IImage, IProductDetail } from "@/interfaces"
+import { IProduct, ISize, IImage, IProductDetail } from "@/interfaces"
 
 const { Title } = Typography
 
@@ -14,7 +14,6 @@ type QuickViewProductProps = {
     product: IProduct,
     handleClosePopup: () => void
 }
-
 
 export function QuickViewProduct({ product, handleClosePopup }: QuickViewProductProps) {
     const [activedColorIndex, setActivedColorIndex] = useState<number>(0);
@@ -44,16 +43,6 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
             setCount(1);
         }
     };
-    const sizeOptions: ISize[] = [
-        { size: 'M' },
-        { size: 'L' },
-        { size: 'XL' },
-    ];
-    const colorOptions: IColor[] = [
-        { colorName: 'Đen', colorHex: '#000000' },
-        { colorName: 'Trắng', colorHex: '#ffffff' },
-        { colorName: 'Xám', colorHex: '#9ca3af' },
-    ]
 
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
     const handleMainImageChange = (index: number) => () => {
@@ -61,7 +50,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
     }
     return (
         <div className='flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 top-0 left-0 bottom-0 right-0 fixed overflow-auto'>
-            <div className='flex flex-col w-full max-w-5xl gap-4 md:flex-row bg-white rounded-lg p-1 top-10 bottom-10'>
+            <div className='flex flex-col w-full max-w-5xl gap-4 md:flex-row bg-white rounded-lg p-5 top-10 bottom-10'>
                         <div className='flex-[10] overflow-hidden'>
                             <Image src={product.productDetails[selectedImageIndex].imgUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
                             <Swiper
@@ -92,44 +81,14 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                             </div>
                             <div className='flex flex-row gap-2 items-end'>
                                 <span className='text-left text-red-500 font-bold text-2xl'>
-                                    {((product?.price - (product?.price * product?.discount) / 100) * 1000).toLocaleString("de-DE")}₫
+                                    {(product?.price - (product?.price * product?.discount) / 100).toLocaleString("de-DE")}₫
                                 </span>
                                 <span className='text-left text-gray-400 line-through text-base'>
-                                    {(product?.price * 1000).toLocaleString("de-DE")}₫
+                                    {product?.price.toLocaleString("de-DE")}₫
                                 </span>
                             </div>
                             <Divider className='border-gray-200' />
-                            <p className='text-left'>
-                                Cotton co dãn tốt, thấm hút mồ hôi hiệu quả, thoáng mát.
-                                Thiết kế trẻ trung, năng động kết hợp với các loại quần jeans, quần âu, chân váy xếp ly, chân váy midi,..
-                            </p>
-                            {/* <div className='flex flex-col'>
-                                <span className='text-left'>Màu sắc: <span className='text-left text-primary'>{colorOptions[activedColorIndex].colorName}</span></span>
-                                <div className='flex flex-row items-start gap-4 mt-1'>
-                                    {colorOptions.map((color: IColor, index : number) =>
-                                        <button key={color.colorHex} onClick={handleColorChange(index)}>
-                                            <div style={{ backgroundColor: color.colorHex }} className={`w-7 h-7 border border-gray-200 rounded-full flex justify-end items-start`}>
-                                                {
-                                                    activedColorIndex == index &&
-                                                    (<div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>)
-                                                }
-                                            </div>
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                            <div className='flex flex-col'>
-                                <span className='text-left'>Kích thước: <span className='text-left text-primary'>{sizeOptions[activedSizeIndex].size}</span></span>
-                                <div className='flex flex-row items-start space-x-4 mt-1'>
-                                    {sizeOptions.map((size: ISize, index : number) => (
-                                        <button key={size.size} onClick={handleSizeChange(index)}>
-                                            <div className={`w-7 h-7 ${activedSizeIndex === index ? 'bg-blue-cyan text-white' : 'bg-white text-blue-cyan'} border border-gray-200 flex justify-center items-center rounded`}>
-                                                {size.size}
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div> */}
+                            <p className='text-left' dangerouslySetInnerHTML={{ __html: product.description }}></p>
                             <div className='flex flex-col'>
                                 <span className='text-left'>Màu sắc:
                                 <span className='text-left text-primary'>

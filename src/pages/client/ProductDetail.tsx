@@ -8,7 +8,7 @@ import 'swiper/css';
 
 import { Product, Vouchers, ProductsList, QuickViewProduct } from "@/components";
 import { icons } from '@/utils';
-import { IProduct, IColor, ISize, IImage, IProductDetail } from '@/interfaces';
+import { IProduct, ISize, IImage, IProductDetail } from '@/interfaces';
 import { productApi } from '@/apis';
 import { useApi } from '@/hooks';
 
@@ -46,39 +46,23 @@ export function ProductDetail() {
       setCount(1);
     }
   };
-  const sizeOptions: ISize[] = [
-    { size: 'M' },
-    { size: 'L' },
-    { size: 'XL' },
-  ];
-  const colorOptions: IColor[] = [
-    { colorName: 'Đen', colorHex: '#000000' },
-    { colorName: 'Trắng', colorHex: '#ffffff' },
-    { colorName: 'Xám', colorHex: '#9ca3af' },
-  ]
 
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const handleMainImageChange = (index: number) => () => {
     setSelectedImageIndex(index);
   }
+
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
       label: <span className='font-bold text-blue-cyan uppercase'>Mô tả sản phẩm</span>,
       children: (
-        <div className='flex flex-col justify-start items-start gap-3'>
-          <p className='text-left'>- Được dệt từ sợi bông cao cấp</p>
-          <p className='text-left'>- Loại sợi được sản xuất từ công nghệ kéo sợi Cotton tiên tiến nhất hiện nay</p>
-          <p className='text-left'>+ Sợi Cotton Compact khắc phục được hạn chế xù lông của sợi thông thường giúp cho bề mặt vải mềm mịn và độ bền tăng cao</p>
-          <p className='text-left'>+ Sợi ít bị mài mòn trong quá trình sử dụng, hạn chế tối đa hiện tượng xù lông</p>
-          <p className='text-left'>+ Thấm hút mồ hôi cực tốt, thoáng mát rất thích hợp với thời tiết nóng ẩm của Việt Nam.</p>
-          <p className='text-left flex flex-wrap'>
-            <img data-thumb="original" original-height="480" original-width="370" src="//bizweb.dktcdn.net/100/423/358/products/ao-cotton-dang-om-free-size-vien-co-phoi-mau-in-hoa-tiet-chu-1b.jpg?v=1648384254460" />
-            <img data-thumb="original" src="//bizweb.dktcdn.net/100/423/358/products/ao-cotton-dang-om-free-size-vien-co-phoi-mau-in-hoa-tiet-chu-1a.jpg?v=1648384253973" />
-            <img data-thumb="original" original-height="480" original-width="370" src="//bizweb.dktcdn.net/100/423/358/products/ao-cotton-dang-om-free-size-vien-co-phoi-mau-in-hoa-tiet-chu-2a.jpg?v=1648384255420" />
-            <img data-thumb="original" original-height="480" original-width="370" src="//bizweb.dktcdn.net/100/423/358/products/ao-cotton-dang-om-free-size-vien-co-phoi-mau-in-hoa-tiet-chu-2b.jpg?v=1648384256027" /></p>
-        </div>
-      ),
+        mainProduct?.description ? (
+          <div className='text-left' dangerouslySetInnerHTML={{ __html: mainProduct?.description }}></div>
+        ) : (
+          <p>Không có mô tả</p>
+        )
+      )
     },
     {
       key: '2',
@@ -104,115 +88,6 @@ export function ProductDetail() {
 
 
   const [width, setWidth] = useState<number>(window.innerWidth);
-
-  // const [products, setProducts] = useState<Product[]>([
-  //   {
-  //     id: '1',
-  //     name: "Áo cotton dáng ôm free size viền cổ phối màu in họa tiết chữ",
-  //     price: 123,
-  //     discount: 20,
-  //     sold: 2,
-  //     saleCount: 2,
-  //     images: [
-  //       { 
-  //         imgUrl: "https://bizweb.dktcdn.net/100/423/358/files/4-kieu-trang-phuc-demin-hot-nhat-1.jpg?v=1646494601635" 
-  //       },
-  //       { 
-  //         imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" 
-  //       },
-  //       { 
-  //         imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" 
-  //       },
-  //       { 
-  //         imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" 
-  //       },
-  //       { 
-  //         imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" 
-  //       },
-  //     ],
-  //     slug: "123",
-  //     category: {
-  //       gender: 'nam',
-  //       type: '1123123'
-  //     },
-  //       description: "123"
-  //   },
-  //   {
-  //       id: '2',
-  //       name: "123",
-  //       price: 123,
-  //       discount: 20,
-  //       sold: 2,
-  //       saleCount: 2,
-  //       images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-  //       slug: "123",
-  //       category: {
-  //           gender: 'nam',
-  //           type: '1123123'
-  //       },
-  //       description: "123"
-  //   },
-  //   {
-  //       id: '3',
-  //       name: "123",
-  //       price: 123,
-  //       discount: 20,
-  //       sold: 2,
-  //       saleCount: 2,
-  //       images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-  //       slug: "123",
-  //       category: {
-  //           gender: 'nam',
-  //           type: '1123123'
-  //       },
-  //       description: "123"
-  //   },
-  //   {
-  //       id: '4',
-  //       name: "123",
-  //       price: 123,
-  //       discount: 20,
-  //       sold: 2,
-  //       saleCount: 2,
-  //       images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-  //       slug: "123",
-  //       category: {
-  //           gender: 'nam',
-  //           type: '1123123'
-  //       },
-  //       description: "123"
-  //   },
-  //   {
-  //       id: '5',
-  //       name: "123",
-  //       price: 123,
-  //       discount: 20,
-  //       sold: 2,
-  //       saleCount: 2,
-  //       images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-  //       slug: "123",
-  //       category: {
-  //           gender: 'nam',
-  //           type: '1123123'
-  //       },
-  //       description: "123"
-  //   },
-  //   {
-  //       id: '6',
-  //       name: "123",
-  //       price: 123,
-  //       discount: 20,
-  //       sold: 2,
-  //       saleCount: 2,
-  //       images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-  //       slug: "123",
-  //       category: {
-  //           gender: 'nam',
-  //           type: '1123123'
-  //       },
-  //       description: "123"
-  //   },
-  // ]);
 
   //Trạng thái của QuickViewPopup============
   const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
@@ -289,17 +164,14 @@ export function ProductDetail() {
                   </div>
                   <div className='flex flex-row gap-2 items-end'>
                     <span className='text-left text-red-500 font-bold text-2xl'>
-                      {((mainProduct.price - (mainProduct.price * mainProduct.discount) / 100) * 1000).toLocaleString("de-DE")}₫
+                      {(mainProduct.price - (mainProduct.price * mainProduct.discount) / 100).toLocaleString("de-DE")}₫
                     </span>
                     <span className='text-left text-gray-400 line-through text-base'>
-                      {(mainProduct.price * 1000).toLocaleString("de-DE")}₫
+                      {mainProduct.price.toLocaleString("de-DE")}₫
                     </span>
                   </div>
                   <Divider className='border-gray-200 my-2' />
-                  <p className='text-left'>
-                    Cotton co dãn tốt, thấm hút mồ hôi hiệu quả, thoáng mát.
-                    Thiết kế trẻ trung, năng động kết hợp với các loại quần jeans, quần âu, chân váy xếp ly, chân váy midi,..
-                  </p>
+                  <p className='text-left line-clamp-2' dangerouslySetInnerHTML={{ __html: mainProduct.description }}></p>
                   <div className='flex flex-col'>
                     <span className='text-left'>Màu sắc:
                       <span className='text-left text-primary'>
