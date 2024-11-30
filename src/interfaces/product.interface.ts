@@ -20,6 +20,14 @@ export interface IProduct {
     productDetails: IProductDetail[];
 }
 
+export interface IProductComp extends IProduct {
+    ranking?: number;
+    productCount?: boolean; 
+    productCountSale?: boolean;
+    sold?: number;
+    saleCount?: number;
+}
+
 export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
     id: string;
     size: string;
