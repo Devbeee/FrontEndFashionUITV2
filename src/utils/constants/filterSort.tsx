@@ -19,12 +19,6 @@ export const filterTiers = [
     typeFilter: 'color',
     title: 'CHỌN MÀU SẮC',
     options: ['Xanh lá', 'Đen', 'Trắng', 'Hồng', 'Đỏ', 'Cam', 'Vàng', 'Tím']
-  },
-
-  {
-    typeFilter: 'fabric',
-    title: 'CHỌN KIỂU VẢI',
-    options: ['Cotton', 'Kaki', 'Kate', 'Jean', 'Len']
   }
 ]
 
@@ -32,8 +26,8 @@ export const sortOptions = {
   default: 'default',
   option: [
     { value: 'default', label: 'Mặc định' },
-    { value: 'A-Z', label: 'A → Z' },
-    { value: 'Z-A', label: 'Z → A' },
+    { value: 'nameIncrease', label: 'A → Z' },
+    { value: 'nameDecrease', label: 'Z → A' },
     { value: 'priceIncrease', label: 'Giá tăng dần' },
     { value: 'priceDecrease', label: 'Giá giảm dần' },
     { value: 'oldest', label: 'Cũ nhất' },
