@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import { icons } from '@/utils';
-import { IProduct, IColor, ISize, IImage } from "@/interfaces"
+import { IProduct, IColor, ISize, IImage, IProductDetail } from "@/interfaces"
 
 const { Title } = Typography
 
@@ -63,7 +63,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
         <div className='flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 top-0 left-0 bottom-0 right-0 fixed overflow-auto'>
             <div className='flex flex-col w-full max-w-5xl gap-4 md:flex-row bg-white rounded-lg p-1 top-10 bottom-10'>
                         <div className='flex-[10] overflow-hidden'>
-                            <Image src={product.images[selectedImageIndex].imgUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
+                            <Image src={product.productDetails[selectedImageIndex].imgUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
                             <Swiper
                                 spaceBetween={10}
                                 slidesPerView={4}
@@ -71,7 +71,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                 navigation
                                 className='w-[350px]'
                             >
-                                {product.images.map((img: IImage, index: number) => (
+                                {product.productDetails.map((img: IImage, index: number) => (
                                     <SwiperSlide key={img.imgUrl}>
                                         <div className={`w-[80px] h-[110px] ${selectedImageIndex === index && 'border border-blue-cyan'} flex justify-center items-center object-scale-down bg-gray-200 cursor-pointer overflow-hidden hover:border hover:border-blue-cyan`}>
                                             <img onClick={handleMainImageChange(index)} src={img.imgUrl} />
@@ -103,7 +103,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                 Cotton co dãn tốt, thấm hút mồ hôi hiệu quả, thoáng mát.
                                 Thiết kế trẻ trung, năng động kết hợp với các loại quần jeans, quần âu, chân váy xếp ly, chân váy midi,..
                             </p>
-                            <div className='flex flex-col'>
+                            {/* <div className='flex flex-col'>
                                 <span className='text-left'>Màu sắc: <span className='text-left text-primary'>{colorOptions[activedColorIndex].colorName}</span></span>
                                 <div className='flex flex-row items-start gap-4 mt-1'>
                                     {colorOptions.map((color: IColor, index : number) =>
@@ -128,6 +128,59 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                             </div>
                                         </button>
                                     ))}
+                                </div>
+                            </div> */}
+                            <div className='flex flex-col'>
+                                <span className='text-left'>Màu sắc:
+                                <span className='text-left text-primary'>
+                                    {product.productDetails
+                                    .filter(
+                                        (item, index, self) =>
+                                        index === self.findIndex((t) => t.color === item.color)
+                                    )[activedColorIndex].colorName}
+                                </span>
+                                </span>
+                                <div className='flex flex-row items-start gap-4 mt-1'>
+                                {product.productDetails
+                                    .filter(
+                                    (item, index, self) =>
+                                        index === self.findIndex((t) => t.color === item.color)
+                                    )
+                                    .map((productDetail : IProductDetail, index: number) => (
+                                    <button
+                                        key={productDetail.color}
+                                        onClick={handleColorChange(index)}
+                                    >
+                                        <div
+                                        style={{ backgroundColor: productDetail.color }}
+                                        className={`w-7 h-7 border border-gray-200 rounded-full flex justify-end items-start`}
+                                        >
+                                        {activedColorIndex === index && (
+                                            <div className="w-2 h-2 bg-green-500 rounded-full border border-gray-200"></div>
+                                        )}
+                                        </div>
+                                    </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='flex flex-col'>
+                                <span className='text-left'>Kích thước: <span className='text-left text-primary'>{[...new Set(product.productDetails.map((product: ISize) => product.size))][activedSizeIndex]}</span></span>
+                                <div className='flex flex-row items-start space-x-4 mt-1'>
+                                {[...new Set(product.productDetails.map((product: ISize) => product.size))].map((size: string, index: number) => (
+                                    <button
+                                    key={size}
+                                    onClick={handleSizeChange(index)}
+                                    >
+                                    <div
+                                        className={`w-7 h-7 ${activedSizeIndex === index
+                                        ? 'bg-blue-cyan text-white'
+                                        : 'bg-white text-blue-cyan'
+                                        } border border-gray-200 flex justify-center items-center rounded`}
+                                    >
+                                        {size}
+                                    </div>
+                                    </button>
+                                ))}
                                 </div>
                             </div>
                             <div className='flex flex-col gap-4 md:flex-row mt-4'>
