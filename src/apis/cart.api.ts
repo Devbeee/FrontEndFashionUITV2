@@ -10,7 +10,7 @@ export const cartApi = {
             cartProduct: addToCartData
         })
     },
-    updateCartItem: async (cartProductId: string, updateCartData : Omit<IAddToCartData, 'cartProductId'>) => {
+    updateCartItem: async (cartProductId: string, updateCartData : Omit<IAddToCartData, 'productDetailId'>) => {
         return axiosClient.patch(`/cart/${cartProductId}`, {
             cartProduct: updateCartData
         })

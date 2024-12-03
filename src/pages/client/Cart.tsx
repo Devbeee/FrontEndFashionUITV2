@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Col, Row, Table, InputNumber, Image, Modal, message } from 'antd'
+import { Col, Row, Table, Image, Modal, message, Button, Input } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
 import { useCartStore } from '@/stores'
@@ -36,6 +36,7 @@ export function Cart() {
       title: <h2 className='uppercase font-bold text-center'>Thông tin sản phẩm</h2>,
       key: 'informations',
       dataIndex: 'informations',
+      width: 390,
       render: (_, record) => (
         <>
           <Row gutter={8}>
@@ -43,8 +44,8 @@ export function Cart() {
               <Image src={record.image} alt={record.name} />
             </Col>
             <Col span={18} className='pl-4'>
-              <h3 className='text-base font-semibold'>{record.name}</h3>
-              <div className='text-base'>
+              <h6 className='text-sm font-medium line-clamp-2'>{record.name}</h6>
+              <div className='text-xs capitalize'>
                 {record.color} / {record.size}
               </div>
               <button
@@ -95,6 +96,7 @@ export function Cart() {
       title: <h2 className='uppercase font-bold text-center'>Đơn giá</h2>,
       dataIndex: 'price',
       key: 'price',
+      width: 150,
       render: (_, record) => (
         <div className='text-red-600 font-bold text-center p-2'>
           {(record.price * (1 - record.discount / 100)).toLocaleString('de-DE')}đ
@@ -105,14 +107,30 @@ export function Cart() {
       title: <h2 className='uppercase font-bold text-center'>Số lượng</h2>,
       dataIndex: 'quantity',
       key: 'quantity',
+      width: 150,
       render: (_, record) => (
-        <div className='text-center'>
-          <InputNumber
+        <div className="relative flex items-center max-w-[8rem]">
+          <Button
+            className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+            onClick={() => handleChangeQuantity((record.quantity - 1).toString(), record.id)}
+            disabled={record.quantity <= 1}
+          >
+            {icons.minus}
+          </Button>
+          <Input
+            maxLength={2}
             min={1}
             max={record.stock < 99 ? record.stock : 99}
             value={record.quantity}
-            onChange={(value: number | null) => handleChangeQuantity(value, record.id)}
-          />
+            onChange={(e) => handleChangeQuantity(e.target.value, record.id)}
+            className="bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2 rounded-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="99" required />
+          <Button
+            className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-none rounded-e-lg p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+            onClick={() => handleChangeQuantity((record.quantity + 1).toString(), record.id)}
+            disabled={record.quantity >= record.stock || record.quantity >= 99}
+          >
+            {icons.plus}
+          </Button>
         </div>
       )
     },
@@ -162,11 +180,28 @@ export function Cart() {
     500
   )
 
-  const handleChangeQuantity = (value: number | null, id: string) => {
+  const handleChangeQuantity = (inputValue: string, id: string) => {
+    const value = parseInt(inputValue, 10);
+    if (!value) return;
     if (value) {
-      setCartItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: value } : item)))
-      setCheckoutItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: value } : item)))
-      debouncedCallback(id, value)
+      setCartItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ?
+          {
+            ...item,
+            quantity: value <= 99 ? value < item.stock ? value : item.stock : 99
+          } : item
+        )))
+      setCheckoutItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ?
+          {
+            ...item,
+            quantity: value <= 99 ? value < item.stock ? value : item.stock : 99
+          } : item
+        )))
+      if (value <= 99)
+        debouncedCallback(id, value)
+      else
+        message.error("Đã đạt số lượng tối đa")
     }
   }
 
@@ -265,17 +300,21 @@ export function Cart() {
               rowSelection={{ type: 'checkbox', ...rowSelection }}
               dataSource={cartItems}
               rowKey={(record) => record.id}
-              scroll={{ y: 100 * 5, x: 'max-content' }}
+              scroll={
+                columns.length > 0
+                  ? { y: cartItems.length > 5 ? 100 * 5 : undefined, x: 'max-content' }
+                  : undefined
+              }
             />
             <Row justify='space-between' align='bottom'>
-              <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0' >
+              <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0 ' >
                 <CustomBtn title='Tiếp tục mua hàng' to='/products' icon={icons.prevPage} className='w-full' />
               </Col>
               <Col className='w-full xs:w-1/2 md:w-1/3 xl:w-1/2'>
-                <div className='flex flex-col-reverse xl:flex-row items-end w-full xl:gap-3 xs:mb-2'>
+                <div className='flex flex-col-reverse xl:flex-row items-end w-full xs:mb-2'>
                   <Col span={width > 1024 ? 12 : 24} className='px-5 w-full xs:p-0'>
                     <CustomBtn
-                      className={`w-full ${!(checkoutItems.length === 0) &&
+                      className={`w-[97%] ${!(checkoutItems.length === 0) &&
                         '!text-rose-500 !border-rose-500 hover:!border-rose-500 hover:!text-rose-500 hover:!text-opacity-50 hover:!border-opacity-50'
                         }`}
                       disabled={checkoutItems.length === 0}
@@ -308,7 +347,7 @@ export function Cart() {
                       </Col>
                     </Row>
                     <CustomBtn
-                      className='w-full'
+                      className='w-[97%]'
                       type='primary'
                       disabled={checkoutItems.length === 0}
                       title='Thanh toán'

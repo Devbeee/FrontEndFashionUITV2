@@ -28,5 +28,5 @@ export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discoun
 
 export interface IAddToCartData {
     quantity: number;
-    cartProductId: string;
+    productDetailId: string | undefined;
 }

@@ -9,18 +9,18 @@ import "swiper/css"
 import "swiper/css/navigation";
 import "react-tabs/style/react-tabs.css";
 
-import { Product } from "@/components";
-
-import { CountdownTimer } from "@/components";
+import { Product, CountdownTimer, QuickViewProduct } from "@/components";
+import { useApi } from "@/hooks";
+import { productApi } from "@/apis";
 import { icons } from "@/utils";
 import { IProductComp } from "@/interfaces";
 
-type SaleProduct = {
-    productId: string;
-    saleHour: number;
-    saleCount: number;
-    discountPercent: number;
-}
+// type SaleProduct = {
+//     productId: string;
+//     saleHour: number;
+//     saleCount: number;
+//     discountPercent: number;
+// }
 
 type Product = IProductComp;
 
@@ -100,286 +100,33 @@ export function Home() {
     const [tabIndex, setTabIndex] = useState<number>(0);
     const [tabProductIndex, setProductTabIndex] = useState<number>(0);
     const [products, setProducts] = useState<Product[]>([]);
-    const [officialProducts, setOfficialProducts] = useState<Product[]>([]);
-    const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
-    const [maleProducts, setMaleProducts] = useState<Product[]>([
-        {
-            id: '1',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-        {
-            id: '2',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-        {
-            id: '3',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-        {
-            id: '4',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-        {
-            id: '5',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-        {
-            id: '6',
-            name: "123",
-            price: 123,
-            discount: 20,
-            sold: 2,
-            saleCount: 2,
-            images: [{ imgUrl: "/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg" }],
-            slug: "123",
-            category: {
-                gender: 'nam',
-                type: '1123123'
-            },
-            description: "123"
-        },
-    ]);
-    const [femaleProducts, setFemaleProducts] = useState<Product[]>([]);
-    const [gymProducts, setGymProducts] = useState<Product[]>([]);
+    // const [officialProducts, setOfficialProducts] = useState<Product[]>([]);
+    // const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
+    // const [maleProducts, setMaleProducts] = useState<Product[]>([]);
+    // const [femaleProducts, setFemaleProducts] = useState<Product[]>([]);
+    // const [gymProducts, setGymProducts] = useState<Product[]>([]);
     const [saleProductsInTabIndex, setSaleProductsInTabIndex] = useState<Product[][]>([]);
     const currentTime = new Date();
     const [status, setStatus] = useState<boolean[]>([false, false, false, false]);
     const [width, setWidth] = useState(window.innerWidth);
+    const { callApi: callProductApi } = useApi<void>()
 
-    // pagination
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [currentLimit, setCurrentLimit] = useState(10);
-    // const getProducts = async () => {
-    //     await axiosClient
-    //         .get(`/products?page=${currentPage}&limit=${currentLimit}`)
-    //         .then(({ data }) => {
-    //             setProducts(data.data);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    // };
-
-    const getSaleProducts = async () => {
-        try {
-            const month = currentTime.getMonth() + 1;
-            const paddedMonth = month < 10 ? `0${month}` : month;
-            const day = currentTime.getDate();
-            const paddedDay = day < 10 ? `0${day}` : day;
-            // const response = await axiosClient.get(
-            //     `/sale/get/${currentTime.getFullYear()}-${paddedMonth}-${paddedDay}`
-            // );
-            const saleProducts: SaleProduct[] = [
-                { productId: '1', saleHour: 0, saleCount: 45, discountPercent: 12 },
-                { productId: '2', saleHour: 0, saleCount: 69, discountPercent: 28 },
-                { productId: '3', saleHour: 0, saleCount: 22, discountPercent: 25 },
-                { productId: '4', saleHour: 0, saleCount: 72, discountPercent: 49 },
-                { productId: '5', saleHour: 0, saleCount: 91, discountPercent: 37 },
-                { productId: '6', saleHour: 0, saleCount: 2, discountPercent: 41 }
-            ];
-
-            const itemInTabIndex0 = saleProducts.filter(
-                (saleProduct: SaleProduct) => saleProduct.saleHour === 0
-            );
-            const itemInTabIndex1 = saleProducts.filter(
-                (saleProduct: SaleProduct) => saleProduct.saleHour === 6
-            );
-            const itemInTabIndex2 = saleProducts.filter(
-                (saleProduct: SaleProduct) => saleProduct.saleHour === 12
-            );
-            const itemInTabIndex3 = saleProducts.filter(
-                (saleProduct: SaleProduct) => saleProduct.saleHour === 18
-            );
-            const saleProductsInTabIndex0: Product[] = (await Promise.all(
-                itemInTabIndex0.map(async (item: SaleProduct) => {
-                    const product = maleProducts.find(product => product.id === item.productId);
-                    if (product) {
-                        product.saleCount = item.saleCount;
-                        product.discount = item.discountPercent;
-                        return product;
-                    }
-                    return null;
-                })
-            )).filter((product): product is Product => product !== null);
-            const saleProductsInTabIndex1: Product[] = (await Promise.all(
-                itemInTabIndex1.map(async (item: SaleProduct) => {
-                    const product = maleProducts.find(product => product.id === item.productId);
-                    if (product) {
-                        product.saleCount = item.saleCount;
-                        product.discount = item.discountPercent;
-                        return product;
-                    }
-                    return null;
-                })
-            )).filter((product): product is Product => product !== null);
-            const saleProductsInTabIndex2: Product[] = (await Promise.all(
-                itemInTabIndex2.map(async (item: SaleProduct) => {
-                    const product = maleProducts.find(product => product.id === item.productId);
-                    if (product) {
-                        product.saleCount = item.saleCount;
-                        product.discount = item.discountPercent;
-                        return product;
-                    }
-                    return null;
-                })
-            )).filter((product): product is Product => product !== null);
-            const saleProductsInTabIndex3: Product[] = (await Promise.all(
-                itemInTabIndex3.map(async (item: SaleProduct) => {
-                    const product = maleProducts.find(product => product.id === item.productId);
-                    if (product) {
-                        product.saleCount = item.saleCount;
-                        product.discount = item.discountPercent;
-                        return product;
-                    }
-                    return null;
-                })
-            )).filter((product): product is Product => product !== null);
-
-            const productsCopy: Product[] = [...maleProducts];
-            if (0 <= currentTime.getHours() && currentTime.getHours() < 6) {
-                for (let item of itemInTabIndex0) {
-                    for (let product of productsCopy) {
-                        let typedProduct = product as Product;
-                        if (item.productId === typedProduct.id) {
-                            typedProduct.discount = item.discountPercent;
-                        }
-                    }
-                }
-            } else if (6 <= currentTime.getHours() && currentTime.getHours() < 12) {
-                for (let item of itemInTabIndex1) {
-                    for (let product of productsCopy) {
-                        let typedProduct = product as Product;
-                        if (item.productId === typedProduct.id) {
-                            typedProduct.discount = item.discountPercent;
-                        }
-                    }
-                }
-            } else if (12 <= currentTime.getHours() && currentTime.getHours() < 18) {
-                for (let item of itemInTabIndex2) {
-                    for (let product of productsCopy) {
-                        let typedProduct = product as Product;
-                        if (item.productId === typedProduct.id) {
-                            typedProduct.discount = item.discountPercent;
-                        }
-                    }
-                }
-            } else if (18 <= currentTime.getHours() && currentTime.getHours() < 24) {
-                for (let item of itemInTabIndex3) {
-                    for (let product of productsCopy) {
-                        let typedProduct = product as Product;
-                        if (item.productId === typedProduct.id) {
-                            typedProduct.discount = item.discountPercent;
-                        }
-                    }
-                }
-            }
-            setOfficialProducts(productsCopy);
-            setSaleProductsInTabIndex([
-                saleProductsInTabIndex0,
-                saleProductsInTabIndex1,
-                saleProductsInTabIndex2,
-                saleProductsInTabIndex3,
-            ]);
-        } catch (error) {
-            console.error(error);
-        }
+    const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
+    const [showQuickView, setShowQuickView] = useState<boolean>(false);
+    const handleClickEye = (product: Product) => () => {
+        setQuickViewProduct(product);
+        setShowQuickView(true);
+    }
+    const handleClosePopup = () => {
+        setShowQuickView(false);
+    }
+    const getProducts = async () => {
+        callProductApi(async () => {
+            const { data } = await productApi.findAllProducts();
+            setProducts(data)
+        })
     };
 
-    // const getProductById = async (productId: number) => {
-    //     try {
-    //         const response = await axiosClient.get(`/getProductById/${productId}`);
-    //         // console.log(response.data)
-    //         return response.data;
-    //     } catch (error) {
-    //         console.error(error);
-    //         return null;
-    //     }
-    // };
-
-    // const getBestSellerProduct = () => {
-    //     const productsCopy = [...officialProducts];
-    //     const sortedProducts = productsCopy.sort((a: Product, b: Product) => b.sold - a.sold);
-    //     setBestSellerProducts(sortedProducts.slice(0, 6));
-    // };
-
-    // const getMaleProducts = () => {
-    //     const productsCopy = [...officialProducts];
-    //     const tmpProducts = productsCopy.filter(
-    //         (product: Product) => product.category.sex.toLowerCase() === "nam"
-    //     );
-    //     setMaleProducts(tmpProducts);
-    // };
-
-    // const getFemaleProducts = () => {
-    //     const productsCopy = [...officialProducts];
-    //     const tmpProducts = productsCopy.filter(
-    //         (product) => product.category.sex.toLowerCase() === "nữ"
-    //     );
-    //     setFemaleProducts(tmpProducts);
-    // };
-
-    // const getGymProducts = () => {
-    //     const productsCopy = [...officialProducts];
-    //     const tmpProducts = productsCopy.filter((product) =>
-    //         product.category.categoryDetail.toLowerCase().includes("gym")
-    //     );
-    //     setGymProducts(tmpProducts);
-    // };
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth);
@@ -389,18 +136,19 @@ export function Home() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
     useEffect(() => {
-        getSaleProducts();
+        getProducts();
     }, [])
     useEffect(() => {
         const hours = currentTime.getHours();
         const tabIndex = Math.floor(hours / 6);
         const newStatus = Array(4).fill(false).map((_, index) => index <= tabIndex);
-        
+
         setTabIndex(tabIndex);
         setStatus(newStatus);
-        }, []);
+    }, []);
     return (
         <div className="">
+            {showQuickView && quickViewProduct && (<QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />)}
             <div className="relative w-full min-h-full mb-4">
                 <div className="">
                     <div className="">
@@ -512,15 +260,15 @@ export function Home() {
                                 modules={[Navigation]}
                                 navigation
                             >
-                                {products ? (
-                                    maleProducts?.map((product: Product) => (
+                                {products.length ? (
+                                    products?.map((product: Product) => (
                                         <SwiperSlide
                                             key={product.id}
                                             className="relative mb-3.5 bg-white p-2.5 rounded"
                                         >
                                             <Product
                                                 product={product}
-                                            // handleClickEye={() => handleClickEye(product)}
+                                                handleClickEye={handleClickEye(product)}
                                             // handleClickCart={() => handleClickCart(product)}       
                                             />
                                         </SwiperSlide>
@@ -737,8 +485,8 @@ export function Home() {
                                                         modules={[Navigation]}
                                                         navigation
                                                     >
-                                                        {products ? (
-                                                            maleProducts?.map((product) => (
+                                                        {products.length ? (
+                                                            products?.map((product) => (
                                                                 <SwiperSlide
                                                                     key={product.id}
                                                                     className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
@@ -768,8 +516,8 @@ export function Home() {
                                                         modules={[Navigation]}
                                                         navigation
                                                     >
-                                                        {products ? (
-                                                            maleProducts?.map((product) => (
+                                                        {products.length ? (
+                                                            products?.map((product) => (
                                                                 <SwiperSlide
                                                                     key={product.id}
                                                                     className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
@@ -799,8 +547,8 @@ export function Home() {
                                                         modules={[Navigation]}
                                                         navigation
                                                     >
-                                                        {products ? (
-                                                            maleProducts?.map((product) => (
+                                                        {products.length ? (
+                                                            products?.map((product) => (
                                                                 <SwiperSlide
                                                                     key={product.id}
                                                                     className="relative mb-3 bg-white p-2.5 rounded-lg !w-1/4"
@@ -832,7 +580,7 @@ export function Home() {
                                             <p className="my-0 leading-4">
                                                 Thời trang Nam
                                                 <span className="block text-xs text-left text-gray-500 font-normal">
-                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                    {products.length ? products?.length : 0} sản phẩm
                                                 </span>
                                             </p>
                                         </Tab>
@@ -849,7 +597,7 @@ export function Home() {
                                             <p className="my-0 leading-4">
                                                 Thời trang Nữ
                                                 <span className="block text-xs text-left text-gray-500 font-normal">
-                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                    {products.length ? products?.length : 0} sản phẩm
                                                 </span>
                                             </p>
                                         </Tab>
@@ -866,7 +614,7 @@ export function Home() {
                                             <p className="my-0 leading-4">
                                                 Thời trang Gym
                                                 <span className="block text-xs text-left text-gray-500 font-normal">
-                                                    {products ? maleProducts?.length : 0} sản phẩm
+                                                    {products.length ? products?.length : 0} sản phẩm
                                                 </span>
                                             </p>
                                         </Tab>
@@ -904,7 +652,7 @@ export function Home() {
                             slidesPerView={width > 768 ? 4 : 2}
                             navigation
                         >
-                            {maleProducts?.map((product) => (
+                            {products.length && products.map((product) => (
                                 <SwiperSlide key={product.id} className='relative mb-4 bg-white p-2.5 rounded-md'>
                                     <Product
                                         product={product}
@@ -980,25 +728,6 @@ export function Home() {
                     </Row>
                 </div>
             </section>
-            {/* {showPopupQuickView && (
-          <QuickViewPopup
-            product={quickViewProduct}
-            togglePopupQuickView={() =>
-              setShowPopupQuickView((prevState) => !prevState)
-            }
-            addToCartSuccess={show}
-            addToCartFail={error}
-          />
-        )}
-        {!hidePopup && <div className={cx("cart-popup-backdrop")}></div>}
-        {!hidePopup && (
-          <AddToCartPopup
-            product={cartProduct}
-            togglePopup={() => setHidePopup((prevState) => !prevState)}
-            addToCartSuccess={show}
-            addToCartFail={error}
-          />
-        )} */}
         </div>
     );
 }

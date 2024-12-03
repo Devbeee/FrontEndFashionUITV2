@@ -23,7 +23,7 @@ export const Product: React.FC<ProductProps> = ({
             <div className="absolute w-full h-full bg-gray-300 opacity-0 z-0 top-0 right-0 ease-in-out duration-150 group-hover:opacity-70"></div>
               <img
                 className="bg-transparent w-auto rounded max-h-full top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity"
-                src={product?.productDetails[0].imgUrl}
+                src={product?.productDetails[0]?.imgUrl}
                 alt={product?.name}
               />
             {product.discount && (
@@ -77,15 +77,15 @@ export const Product: React.FC<ProductProps> = ({
               {product.discount ? (
                 <>
                   <span className="pr-1 font-bold">
-                    {((product?.price - (product?.price * product?.discount) / 100) * 1000).toLocaleString("de-DE")}
+                    {(product?.price - (product?.price * product?.discount) / 100).toLocaleString("de-DE")}
                     ₫
                   </span>
                   <span className="line-through text-gray-500 leading-5 text-xs font-medium">
-                    {(product?.price * 1000).toLocaleString("de-DE")}₫
+                    {product?.price.toLocaleString("de-DE")}₫
                   </span>
                 </>
               ) : (
-                <span className="pr-1 font-bold">{(product?.price * 1000).toLocaleString("de-DE")}₫</span>
+                <span className="pr-1 font-bold">{product?.price.toLocaleString("de-DE")}₫</span>
               )}
             </div>
             {product.productCount && (

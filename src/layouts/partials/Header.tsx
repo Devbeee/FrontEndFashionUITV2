@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import type { MenuProps } from 'antd'
 import { Input, Menu, Dropdown, Badge } from 'antd'
@@ -124,12 +124,15 @@ export function Header() {
             </button>
           </Dropdown>
 
-          <button className='flex flex-col justify-center items-center relative text-center group'>
+          <Link
+            to={'/cart'}
+            className='flex flex-col justify-center items-center relative text-center group'
+          >
             <Badge count={productCount} showZero className='p-3 rounded-full border border-gray-300'>
               <span>{icons.shoppingBag}</span>
             </Badge>
             <span className='group-hover:text-dark-blue'>Giỏ hàng</span>
-          </button>
+          </Link>
         </div>
       </header>
     </div>

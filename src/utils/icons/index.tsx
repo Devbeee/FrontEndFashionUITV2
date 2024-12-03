@@ -3,7 +3,7 @@ import { CiLocationOn, CiSettings } from 'react-icons/ci'
 import { BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
-import { FaGift, FaPlus, FaFilter  } from 'react-icons/fa6'
+import { FaGift, FaPlus, FaFilter, FaMinus  } from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
 import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
@@ -38,6 +38,7 @@ export const icons = {
   close: <FiX />,
   nextPage: <GrNext />,
   prevPage: <GrPrevious />,
+  minus: <FaMinus />,
   plus: <FaPlus />,
   login: <SlLogin />,
   logout: <SlLogout />,
