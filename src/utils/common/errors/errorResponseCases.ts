@@ -11,5 +11,6 @@ export const errorResponseCases: Record<ErrorCode | string, string> = {
   [ErrorCode.EMAIL_DEACTIVATED]: 'Email đã bị hủy kích hoạt!',
   [ErrorCode.INVITATION_NOT_FOUND]: 'Không tìm thấy lời mời!',
   [ErrorCode.CART_PRODUCT_NOT_FOUND]: 'Không tìm thấy sản phẩm!',
+  [ErrorCode.OUT_OF_STOCK]: 'Số lượng sản phẩm trong kho không đủ!',
   All: 'Đã có lỗi xảy ra. Vui lòng kiểm tra lại'
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Col, Row, Table, Image, Modal, message, Button, Input } from 'antd'
+import { Col, Row, Table, Image, Modal, message } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
 import { useCartStore } from '@/stores'
@@ -14,23 +14,28 @@ import { icons } from '@/utils'
 
 import { ICartProduct, IFetchedCartItem } from '@/interfaces'
 
-import { CustomBtn, CustomBreadcrumb } from '@/components'
+import { CustomBtn, CustomBreadcrumb, CustomInput } from '@/components'
 
 export function Cart() {
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
-  const { value: isOpenDeleteMultipleModal, setTrue: openDeleteMultipleModal, setFalse: closeDeleteMultipleModal } = useBoolean()
+  const {
+    value: isOpenDeleteMultipleModal,
+    setTrue: openDeleteMultipleModal,
+    setFalse: closeDeleteMultipleModal
+  } = useBoolean()
   const [cartItems, setCartItems] = useState<ICartProduct[]>([])
   const [checkoutItems, setCheckoutItems] = useState<ICartProduct[]>([])
   const { productCount, removeFromCart } = useCartStore()
-  const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState(window.innerWidth)
   const openDeleteModal = (id: string) => {
-    setSelectedRowId(id);
-  };
+    setSelectedRowId(id)
+  }
 
   const closeDeleteModal = () => {
-    setSelectedRowId(null);
-  };
+    setSelectedRowId(null)
+  }
+
   const columns: TableColumnsType<ICartProduct> = [
     {
       title: <h2 className='uppercase font-bold text-center'>Thông tin sản phẩm</h2>,
@@ -48,35 +53,33 @@ export function Cart() {
               <div className='text-xs capitalize'>
                 {record.color} / {record.size}
               </div>
-              <button
-                type='button'
+              <CustomBtn
+                type='text'
                 title='Xóa'
-                className='text-rose-600 text-base hover:underline !bg-transparent'
+                className='!text-rose-600 !text-base !hover:underline !bg-transparent !border-none !w-fit !mt-0 !p-0 !h-fit'
                 onClick={() => openDeleteModal(record.id)}
-              >
-                Xoá
-              </button>
+              />
             </Col>
           </Row>
           <Modal
             className='bg-inherit'
             open={selectedRowId === record.id}
-            title="Xóa"
+            title='Xóa'
             onClose={closeDeleteModal}
             onCancel={closeDeleteModal}
             footer={() => (
               <div className='flex justify-end'>
                 <div className='flex w-fit gap-3'>
                   <CustomBtn
-                    key="cancel"
-                    title="Hủy"
+                    key='cancel'
+                    title='Hủy'
                     onClick={closeDeleteModal}
                     type='default'
                     className='px-5 py-1 !w-fit !h-9'
                   />
                   <CustomBtn
-                    key="delete"
-                    title="Xóa"
+                    key='delete'
+                    title='Xóa'
                     onClick={() => handleDeleteCartItem(record.id)}
                     loading={loading}
                     disabled={loading}
@@ -109,28 +112,34 @@ export function Cart() {
       key: 'quantity',
       width: 150,
       render: (_, record) => (
-        <div className="relative flex items-center max-w-[8rem]">
-          <Button
-            className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-            onClick={() => handleChangeQuantity((record.quantity - 1).toString(), record.id)}
+        <div className='relative flex items-center max-w-[8rem]'>
+          <CustomBtn
+            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            onClick={() => {
+              handleChangeQuantity(Math.max(record.quantity - 1, 1), record)
+            }}
             disabled={record.quantity <= 1}
-          >
-            {icons.minus}
-          </Button>
-          <Input
-            maxLength={2}
-            min={1}
-            max={record.stock < 99 ? record.stock : 99}
+            children={icons.minus}
+          />
+          <CustomInput
+            name={record.name}
+            size='small'
+            placeholder='Nhập số lượng'
+            type='text'
             value={record.quantity}
-            onChange={(e) => handleChangeQuantity(e.target.value, record.id)}
-            className="bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2 rounded-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="99" required />
-          <Button
-            className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-none rounded-e-lg p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-            onClick={() => handleChangeQuantity((record.quantity + 1).toString(), record.id)}
+            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            onChange={(e) => {
+              handleChangeQuantity(parseInt(e.target.value, 10) || 1, record)
+            }}
+          />
+          <CustomBtn
+            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-none rounded-e-lg !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            onClick={() => {
+              handleChangeQuantity(Math.min(record.quantity + 1, record.stock), record)
+            }}
             disabled={record.quantity >= record.stock || record.quantity >= 99}
-          >
-            {icons.plus}
-          </Button>
+            children={icons.plus}
+          />
         </div>
       )
     },
@@ -161,8 +170,8 @@ export function Cart() {
           quantity: item.quantity,
           image: item.productDetail.imgUrl,
           stock: item.productDetail.stock
-        }));
-        setCartItems(cartProducts);
+        }))
+        setCartItems(cartProducts)
       }
     })
   }
@@ -173,47 +182,32 @@ export function Cart() {
     }
   }
 
-  const { debouncedCallback } = useDebouncedCallback(
-    async (id: string, value: number) => {
-      await cartApi.updateCartItem(id, { quantity: value });
-    },
-    500
-  )
+  const { debouncedCallback } = useDebouncedCallback(async (id: string, value: number) => {
+    await cartApi.updateCartItem(id, { quantity: value })
+  }, 500)
 
-  const handleChangeQuantity = (inputValue: string, id: string) => {
-    const value = parseInt(inputValue, 10);
-    if (!value) return;
+  const handleChangeQuantity = (value: number, cartItem: ICartProduct) => {
     if (value) {
       setCartItems((prevItems) =>
-        prevItems.map((item) => (item.id === id ?
-          {
-            ...item,
-            quantity: value <= 99 ? value < item.stock ? value : item.stock : 99
-          } : item
-        )))
+        prevItems.map((item) => (item.id === cartItem.id ? { ...item, quantity: value } : item))
+      )
       setCheckoutItems((prevItems) =>
-        prevItems.map((item) => (item.id === id ?
-          {
-            ...item,
-            quantity: value <= 99 ? value < item.stock ? value : item.stock : 99
-          } : item
-        )))
-      if (value <= 99)
-        debouncedCallback(id, value)
-      else
-        message.error("Đã đạt số lượng tối đa")
+        prevItems.map((item) => (item.id === cartItem.id ? { ...item, quantity: value } : item))
+      )
+      if (value <= Math.min(99, cartItem.stock)) debouncedCallback(cartItem.id, value)
+      else message.error('Vượt quá số lượng tối đa')
     }
   }
 
   const handleDeleteCartItem = async (id: string) => {
-    const updatedCartItems = cartItems.filter(cartItem => cartItem.id !== id)
-    const updatedCheckoutItems = checkoutItems.filter(checkoutItem => checkoutItem.id !== id)
+    const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== id)
+    const updatedCheckoutItems = checkoutItems.filter((checkoutItem) => checkoutItem.id !== id)
     await callCartApi(async () => {
       const { data } = await cartApi.deleteCartItem(id)
       if (data) {
         message.success('Xóa sản phẩm thành công')
         setCartItems(updatedCartItems)
-        removeFromCart(1);
+        removeFromCart(1)
         setCheckoutItems(updatedCheckoutItems)
         closeDeleteModal()
       }
@@ -225,13 +219,13 @@ export function Cart() {
       (cartItem) => !checkoutItems.some((checkoutItem) => cartItem.id === checkoutItem.id)
     )
 
-    const deleteIds = checkoutItems.map(item => item.id)
+    const deleteIds = checkoutItems.map((item) => item.id)
 
     await callCartApi(async () => {
       const { data } = await cartApi.deleteMultipleCartItems(deleteIds)
       if (data) {
         message.success('Xóa sản phẩm thành công')
-        removeFromCart(checkoutItems.length);
+        removeFromCart(checkoutItems.length)
         setCartItems(updatedCartItems)
         setCheckoutItems([])
         closeDeleteMultipleModal()
@@ -246,39 +240,38 @@ export function Cart() {
   }, [productCount])
 
   useEffect(() => {
-    if (errorMessage)
-      message.error(errorMessage)
+    if (errorMessage) message.error(errorMessage)
   }, [errorMessage])
 
   useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
+    const handleResize = () => setWidth(window.innerWidth)
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize)
 
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <div>
       <CustomBreadcrumb items={items} />
       <Modal
         open={isOpenDeleteMultipleModal}
-        title="Xóa"
+        title='Xóa'
         onClose={closeDeleteMultipleModal}
         onCancel={closeDeleteMultipleModal}
         footer={() => (
           <div className='flex justify-end'>
             <div className='flex w-fit gap-3'>
               <CustomBtn
-                key="cancel"
-                title="Hủy"
+                key='cancel'
+                title='Hủy'
                 onClick={closeDeleteMultipleModal}
                 type='default'
                 className='px-5 py-1 !w-fit !h-9'
               />
               <CustomBtn
-                key="delete"
-                title="Xóa"
+                key='delete'
+                title='Xóa'
                 onClick={handleDeleteMultipleCartItems}
                 loading={loading}
                 disabled={loading}
@@ -301,28 +294,30 @@ export function Cart() {
               dataSource={cartItems}
               rowKey={(record) => record.id}
               scroll={
-                columns.length > 0
-                  ? { y: cartItems.length > 5 ? 100 * 5 : undefined, x: 'max-content' }
-                  : undefined
+                columns.length > 0 ? { y: cartItems.length > 5 ? 100 * 5 : undefined, x: 'max-content' } : undefined
               }
             />
             <Row justify='space-between' align='bottom'>
-              <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0 ' >
+              <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0 '>
                 <CustomBtn title='Tiếp tục mua hàng' to='/products' icon={icons.prevPage} className='w-full' />
               </Col>
               <Col className='w-full xs:w-1/2 md:w-1/3 xl:w-1/2'>
                 <div className='flex flex-col-reverse xl:flex-row items-end w-full xs:mb-2'>
                   <Col span={width > 1024 ? 12 : 24} className='px-5 w-full xs:p-0'>
                     <CustomBtn
-                      className={`w-[97%] ${!(checkoutItems.length === 0) &&
+                      className={`w-[97%] ${
+                        !(checkoutItems.length === 0) &&
                         '!text-rose-500 !border-rose-500 hover:!border-rose-500 hover:!text-rose-500 hover:!text-opacity-50 hover:!border-opacity-50'
-                        }`}
+                      }`}
                       disabled={checkoutItems.length === 0}
                       onClick={openDeleteMultipleModal}
                       title='Xóa các mục đã chọn'
                     />
                   </Col>
-                  <Col span={width > 1024 ? 12 : 24} className='w-full fixed bottom-0 bg-white z-10 rounded p-5 xs:static xs:bg-inherit xs:p-0 xs:rounded-none'>
+                  <Col
+                    span={width > 1024 ? 12 : 24}
+                    className='w-full fixed bottom-0 bg-white z-10 rounded p-5 xs:static xs:bg-inherit xs:p-0 xs:rounded-none'
+                  >
                     <Row gutter={12} justify='space-between'>
                       <Col>
                         <div className='font-bold uppercase w-full text-base'>
@@ -334,12 +329,12 @@ export function Cart() {
                           <span>
                             {checkoutItems.length
                               ? checkoutItems
-                                .reduce(
-                                  (acc, item) =>
-                                    acc + (item.price - (item.price * item.discount) / 100) * item.quantity,
-                                  0
-                                )
-                                .toLocaleString('de-DE')
+                                  .reduce(
+                                    (acc, item) =>
+                                      acc + (item.price - (item.price * item.discount) / 100) * item.quantity,
+                                    0
+                                  )
+                                  .toLocaleString('de-DE')
                               : 0}
                           </span>
                           đ
