@@ -1,31 +1,58 @@
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import { Button, Form, Modal, Select } from 'antd'
+import { Button, ConfigProvider, Form, Modal, Select } from 'antd'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { IAddressFieldData, IAddressFilterReturn, IUseBoolean } from '@/interfaces'
-import { getDistricts, getProvinces, getWards, icons, phoneRegExp } from '@/utils'
+import { IAddress, IAddressFieldData, IUseBoolean } from '@/interfaces'
+import { getDistricts, getWards, icons, phoneRegExp } from '@/utils'
 import { useBoolean } from '@/hooks'
 import { CustomInput } from '@/components/CustomComponents/CustomInput'
 import { Map } from '@/components/CustomComponents/Map'
+import { useProvincesStore } from '@/stores'
+
+interface IAddressDefault extends IAddress {
+  id: string
+}
 
 type AddressModalProps = {
   modalControl: IUseBoolean
+  loadingSubmit: boolean
+  onSubmit: (addressData: IAddress) => void
+  title: string
+  defaultData?: IAddressDefault
 }
-type AddressFields = 'name' | 'phoneNumber' | 'province' | 'district' | 'ward' | 'addressDetail'
+type AddressFields =
+  | 'name'
+  | 'phoneNumber'
+  | 'province'
+  | 'district'
+  | 'ward'
+  | 'addressDetail'
+  | 'longitude'
+  | 'latitude'
+
 const addressSchema = yup.object().shape({
   name: yup.string().required('Vui lòng nhập họ tên!'),
   phoneNumber: yup.string().matches(phoneRegExp, 'Số điện thoại không hợp lệ').required('Vui lòng nhập mật khẩu!'),
   province: yup.string().required('Vui lòng chọn tỉnh!'),
   district: yup.string().required('Vui lòng chọn thành phố!'),
   ward: yup.string().required('Vui lòng chọn huyện, xã!'),
-  addressDetail: yup.string().required('Vui lòng nhập địa chỉ!')
+  addressDetail: yup.string().required('Vui lòng nhập địa chỉ!'),
+  longitude: yup.string(),
+  latitude: yup.string()
 })
 
-export const AddressModal: React.FC<AddressModalProps> = ({ modalControl }) => {
-  const [provinces, setProvinces] = useState<IAddressFieldData[]>()
+export const AddressModal: React.FC<AddressModalProps> = ({
+  modalControl,
+  loadingSubmit,
+  title,
+  defaultData,
+  onSubmit
+}) => {
+  const { currentProvinces } = useProvincesStore()
+
   const [districts, setDistricts] = useState<IAddressFieldData[]>()
   const [wards, setWards] = useState<IAddressFieldData[]>()
   const mapVisible = useBoolean(false)
@@ -40,6 +67,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({ modalControl }) => {
     label: 'Khác',
     id: ''
   }
+  const addressFields: AddressFields[] = ['province', 'district', 'ward', 'addressDetail']
   const {
     control,
     handleSubmit,
@@ -48,17 +76,12 @@ export const AddressModal: React.FC<AddressModalProps> = ({ modalControl }) => {
     setValue,
     resetField,
     clearErrors,
-    formState: { errors }
+    formState: { errors, isDirty }
   } = useForm({
+    defaultValues: defaultData ? (({ id, ...rest }) => rest)(defaultData) : {},
     shouldUnregister: false,
     resolver: yupResolver(addressSchema)
   })
-
-  const fetchProvinces = async (): Promise<IAddressFieldData[]> => {
-    const provinceData = await getProvinces()
-    setProvinces(provinceData)
-    return provinceData
-  }
   const fetchDistricts = async (provinceID: string): Promise<IAddressFieldData[]> => {
     const districtData = await getDistricts(provinceID)
     setDistricts(districtData)
@@ -69,277 +92,280 @@ export const AddressModal: React.FC<AddressModalProps> = ({ modalControl }) => {
     setWards([...wardData, defaultWardData])
     return wardData
   }
-  const resetAddressFields = (fields: AddressFields[]) => {
+
+  const emptyAddressFields = (fields: AddressFields[]) => {
     fields.forEach((field) => resetField(field))
   }
 
-  useEffect(() => {
-    fetchProvinces()
-  }, [])
-  const addressFields: AddressFields[] = ['province', 'district', 'ward', 'addressDetail']
-  const handleSelectProvince = async (provinceParam: string) => {
-    resetAddressFields(['district', 'ward', 'addressDetail'])
-    const province = provinces?.find((item) => item.value === provinceParam)
-    if (province) {
-      await fetchDistricts(province.id)
-    } else {
-      resetAddressFields(addressFields)
+  const fetchDefaultData = async () => {
+    if (defaultData) {
+      const province = currentProvinces?.find((item) => item.value.includes(defaultData.province))
+      if (province) {
+        const districtsList = await fetchDistricts(province.id)
+        const district = districtsList?.find((item) => item.value.includes(defaultData.district))
+        if (district) {
+          await fetchWards(district.id)
+        }
+      }
     }
+  }
+
+  useEffect(() => {
+    fetchDefaultData()
+  }, [])
+
+  const handleSelectProvince = async (provinceParam: string) => {
+    emptyAddressFields(['district', 'ward', 'addressDetail', 'latitude', 'longitude'])
+    fetchDistrictByProvicename(provinceParam)
   }
 
   const handleSelectDistrict = async (districtParam: string) => {
-    resetAddressFields(['ward', 'addressDetail'])
-    const district = districts?.find((item) => item.value === districtParam)
+    emptyAddressFields(['ward', 'addressDetail', 'latitude', 'longitude'])
+    fetchWardByDistrictName(districtParam)
+  }
+
+  const fetchDistrictByProvicename = async (provinceName: string) => {
+    const province = currentProvinces?.find((item) => item.value.includes(provinceName))
+    if (province) {
+      await fetchDistricts(province.id)
+    } else {
+      emptyAddressFields(addressFields)
+    }
+  }
+  const fetchWardByDistrictName = async (districtName: string) => {
+    const district = districts?.find((item) => item.value.includes(districtName))
     if (district) {
       await fetchWards(district.id)
     } else {
-      resetAddressFields(['district', 'ward', 'addressDetail'])
+      emptyAddressFields(['district', 'ward', 'addressDetail'])
     }
   }
 
-  const handlePickLocation = async (IAddressFilterReturn: IAddressFilterReturn) => {
+  const handleSelectWard = () => {
+    emptyAddressFields(['latitude', 'longitude'])
+  }
+
+  const handlePickLocation = async (
+    addressFilterReturn: Omit<IAddress, 'longitude' | 'latitude' | 'phoneNumber' | 'name'>,
+    coords?: number[]
+  ) => {
     try {
-      const province = provinces?.find((item) =>
-        item.value.toLocaleLowerCase().includes(IAddressFilterReturn.province.toLocaleLowerCase())
+      const province = currentProvinces?.find((item) =>
+        item.value.toLowerCase().includes(addressFilterReturn.province.toLowerCase())
       )
       if (!province) {
         throw new Error('Invalid province selected')
       }
-      setValue('province', province.value)
-
+      setValue('province', province.value, { shouldDirty: true })
       const districtData = await fetchDistricts(province.id)
       const district = districtData.find((item) =>
-        item.value.toLocaleLowerCase().includes(IAddressFilterReturn.district.toLocaleLowerCase())
+        item.value.toLowerCase().includes(addressFilterReturn.district.toLowerCase())
       )
 
       if (!district) {
         throw new Error('Invalid district selected')
       }
-      setValue('district', district.value)
+      setValue('district', district.value, { shouldDirty: true })
 
       const wardData = await fetchWards(district.id)
-      const ward = wardData.find((item) =>
-        item.value.toLocaleLowerCase().includes(IAddressFilterReturn.ward.toLocaleLowerCase())
-      )
+      const ward = wardData.find((item) => item.value.toLowerCase().includes(addressFilterReturn.ward.toLowerCase()))
       if (ward) {
-        console.log(ward)
-
-        setValue('ward', ward.value)
+        setValue('ward', ward.value, { shouldDirty: true })
       } else {
-        console.log(IAddressFilterReturn.ward)
-        setValue('ward', '0')
+        if (addressFilterReturn.ward !== 'null') {
+          addressFilterReturn.addressDetail = `${addressFilterReturn.addressDetail ? `${addressFilterReturn.addressDetail}, ${addressFilterReturn.ward}` : addressFilterReturn.ward}`
+        }
+        setValue('ward', '0', { shouldDirty: true })
       }
-      setValue('addressDetail', IAddressFilterReturn.addressDetail)
-
+      setValue('addressDetail', addressFilterReturn.addressDetail, { shouldDirty: true })
+      if (coords) {
+        setValue('longitude', coords[0].toString(), { shouldDirty: true })
+        setValue('latitude', coords[1].toString(), { shouldDirty: true })
+      }
       addressFields.forEach((item) => {
         clearErrors(item)
       })
     } catch (error) {
-      resetAddressFields(['province', 'district', 'ward', 'addressDetail'])
-      console.error((error as Error).message)
+      emptyAddressFields(addressFields)
     }
-  }
-  const handleAddAddress = (data: any) => {
-    console.log(data)
   }
 
   return (
-    <Modal
-      title='Thêm địa chỉ mới'
-      open={modalControl.value}
-      onOk={handleSubmit(handleAddAddress)}
-      onCancel={handleCancel}
-      width={800}
-      footer={[
-        ,
-        <div className='flex justify-between'>
-          <div>
-            {mapVisible.value ? (
-              <Button
-                onClick={mapVisible.toggle}
-                className={'bg-red-600 text-white hover:!text-red-600 hover:!border-red-600'}
-                variant='solid'
-              >
-                Ẩn bản đồ
-                {icons.map}
-              </Button>
-            ) : (
-              <Button
-                onClick={mapVisible.toggle}
-                className={'bg-green-600 text-white hover:!text-green-600 hover:!border-green-600'}
-                variant='solid'
-              >
-                Chọn trên bản đồ
-                {icons.map}
-              </Button>
-            )}
-          </div>
-          <div className='flex gap-2'>
-            <Button key='back' onClick={handleCancel}>
-              Hủy
-            </Button>
-            <Button key='submit' type='primary' onClick={handleSubmit(handleAddAddress)}>
-              Ok
-            </Button>
-          </div>
-        </div>
-      ]}
+    <ConfigProvider
+      theme={{
+        components: {
+          Select: {
+            singleItemHeightLG: 48,
+            optionSelectedFontWeight: 600
+          }
+        }
+      }}
     >
-      <Form className='mb-4' onFinish={handleSubmit(handleAddAddress)} layout='vertical'>
-        <CustomInput
-          className='mt-0'
-          key={'name'}
-          name={'name'}
-          size='large'
-          type={'text'}
-          control={control}
-          errors={errors}
-          placeholder={'Họ tên'}
-        />
-        <CustomInput
-          className='mt-0'
-          key={'phoneNumber'}
-          name={'phoneNumber'}
-          size='large'
-          type={'text'}
-          control={control}
-          errors={errors}
-          placeholder={'Số điện thoại'}
-        />
-        <div className='flex flex-wrap justify-between'>
-          <Form.Item
-            className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
-            validateStatus={errors['province'] ? 'error' : ''}
-            help={errors['province']?.message}
-          >
-            <Controller
-              name={'province'}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  loading={isFetchingAddress.value}
-                  disabled={isFetchingAddress.value}
+      <Modal
+        title={[
+          <div key={'modal-title'} className='text-xl'>
+            {title}
+          </div>
+        ]}
+        open={modalControl.value}
+        onOk={handleSubmit(onSubmit)}
+        onCancel={handleCancel}
+        width={800}
+        footer={[
+          <div key={'footer-control'} className='flex justify-between'>
+            <div>
+              {mapVisible.value ? (
+                <Button
+                  onClick={mapVisible.toggle}
+                  className={'bg-red-600 text-white hover:!text-red-600 hover:!border-red-600'}
+                  variant='solid'
                   size='large'
-                  onSelect={() => handleSelectProvince(getValues('province'))}
-                  showSearch
-                  value={getValues('province')}
-                  placeholder='Chọn tỉnh, thành phố'
-                  filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
-                  options={provinces}
-                />
-              )}
-            />
-          </Form.Item>
-          <Form.Item
-            className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
-            validateStatus={errors['district'] ? 'error' : ''}
-            help={errors['district']?.message}
-          >
-            <Controller
-              name={'district'}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
+                >
+                  Ẩn bản đồ
+                  {icons.map}
+                </Button>
+              ) : (
+                <Button
+                  onClick={mapVisible.toggle}
+                  className={'bg-green-600 text-white hover:!text-green-600 hover:!border-green-600'}
+                  variant='solid'
                   size='large'
-                  loading={isFetchingAddress.value}
-                  disabled={isFetchingAddress.value}
-                  onSelect={() => handleSelectDistrict(getValues('district'))}
-                  showSearch
-                  value={getValues('district')}
-                  placeholder='Chọn quận, huyện'
-                  filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
-                  options={districts}
-                />
+                >
+                  Chọn trên bản đồ
+                  {icons.map}
+                </Button>
               )}
-            />
-          </Form.Item>
-          <Form.Item
-            className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
-            validateStatus={errors['ward'] ? 'error' : ''}
-            help={errors['ward']?.message}
-          >
-            <Controller
-              name={'ward'}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  size='large'
-                  loading={isFetchingAddress.value}
-                  disabled={isFetchingAddress.value}
-                  showSearch
-                  value={getValues('ward')}
-                  placeholder='Chọn phường, xã'
-                  filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
-                  options={wards}
-                />
-              )}
-            />
-          </Form.Item>
-        </div>
-        <CustomInput
-          className='mt-0'
-          key={'addressDetail'}
-          name={'addressDetail'}
-          size='large'
-          type={'text'}
-          disabled={isFetchingAddress.value}
-          control={control}
-          errors={errors}
-          placeholder={'Địa chỉ'}
-        />
-      </Form>
-      {mapVisible.value && <Map isFetchingAddress={isFetchingAddress} handlePickLocation={handlePickLocation} />}
-    </Modal>
+            </div>
+            <div className='flex gap-2'>
+              <Button size='large' key='back' onClick={handleCancel}>
+                Hủy
+              </Button>
+              <Button
+                size='large'
+                loading={loadingSubmit}
+                disabled={!isDirty}
+                key='submit'
+                type='primary'
+                onClick={handleSubmit(onSubmit)}
+              >
+                Ok
+              </Button>
+            </div>
+          </div>
+        ]}
+      >
+        <Form className='mb-4' onFinish={handleSubmit(onSubmit)} layout='vertical'>
+          <CustomInput
+            className='mt-0 !font-normal'
+            key={'name'}
+            name={'name'}
+            size='large'
+            type={'text'}
+            control={control}
+            errors={errors}
+            placeholder={'Họ tên'}
+          />
+          <CustomInput
+            className='mt-0 !font-normal'
+            key={'phoneNumber'}
+            name={'phoneNumber'}
+            size='large'
+            type={'text'}
+            control={control}
+            errors={errors}
+            placeholder={'Số điện thoại'}
+          />
+          <div className='flex flex-wrap justify-between'>
+            <Form.Item
+              className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
+              validateStatus={errors['province'] ? 'error' : ''}
+              help={errors['province']?.message}
+            >
+              <Controller
+                name={'province'}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    className='text-lg'
+                    loading={isFetchingAddress.value}
+                    disabled={isFetchingAddress.value}
+                    size='large'
+                    onSelect={() => handleSelectProvince(getValues('province'))}
+                    showSearch
+                    value={getValues('province')}
+                    placeholder='Chọn tỉnh, thành phố'
+                    filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
+                    options={currentProvinces}
+                  />
+                )}
+              />
+            </Form.Item>
+            <Form.Item
+              className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
+              validateStatus={errors['district'] ? 'error' : ''}
+              help={errors['district']?.message}
+            >
+              <Controller
+                name={'district'}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    className='text-lg'
+                    size='large'
+                    loading={isFetchingAddress.value}
+                    disabled={isFetchingAddress.value}
+                    onSelect={() => handleSelectDistrict(getValues('district'))}
+                    showSearch
+                    value={getValues('district')}
+                    placeholder='Chọn quận, huyện'
+                    filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
+                    options={districts}
+                  />
+                )}
+              />
+            </Form.Item>
+            <Form.Item
+              className='w-full mt-4 mb-0 text-lg font-normal text-left border-0 lg:w-60 hover:border-dark-blue'
+              validateStatus={errors['ward'] ? 'error' : ''}
+              help={errors['ward']?.message}
+            >
+              <Controller
+                name={'ward'}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    className='text-lg'
+                    size='large'
+                    loading={isFetchingAddress.value}
+                    disabled={isFetchingAddress.value}
+                    onSelect={() => handleSelectWard()}
+                    showSearch
+                    value={getValues('ward')}
+                    placeholder='Chọn phường, xã'
+                    filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
+                    options={wards}
+                  />
+                )}
+              />
+            </Form.Item>
+          </div>
+          <CustomInput
+            className='mt-0 !font-normal'
+            key={'addressDetail'}
+            name={'addressDetail'}
+            size='large'
+            type={'text'}
+            disabled={isFetchingAddress.value}
+            control={control}
+            errors={errors}
+            placeholder={'Địa chỉ'}
+          />
+        </Form>
+        {mapVisible.value && <Map isFetchingAddress={isFetchingAddress} handlePickLocation={handlePickLocation} />}
+      </Modal>
+    </ConfigProvider>
   )
 }
-
-// const handlePickLocation = (IAddressFilterReturn: IAddressFilterReturn) => {
-//   let isError = false
-//   const province = provinces?.find((item) => {
-//     if (item.value.toLocaleLowerCase().includes(IAddressFilterReturn.province.toLocaleLowerCase())) {
-//       setValue('province', item.value)
-//     }
-//     return item.value.toLocaleLowerCase().includes(IAddressFilterReturn.province.toLocaleLowerCase())
-//   })
-//   if (province) {
-//     const fetchDistricts = async () => {
-//       const districtData = await getDistricts(province.id)
-//       setDistricts(districtData)
-//       const district = districtData.find((item) => {
-//         if (item.value.toLocaleLowerCase().includes(IAddressFilterReturn.district.toLocaleLowerCase())) {
-//           setValue('district', item.value)
-//         }
-//         return item.value.toLocaleLowerCase().includes(IAddressFilterReturn.district.toLocaleLowerCase())
-//       })
-
-//       if (district) {
-//         const fetchWards = async () => {
-//           const wardData = await getWards(district.id)
-//           setWards([...wardData, defaultWardData])
-//           setValue('ward', IAddressFilterReturn.ward)
-//           setValue('addressDetail', IAddressFilterReturn.addressDetail)
-//         }
-//         fetchWards()
-//       } else {
-//         isError = true
-//       }
-//     }
-//     fetchDistricts()
-//   } else {
-//     isError = true
-//   }
-//   if (isError) {
-//     resetField('province')
-//     resetField('district')
-//     resetField('ward')
-//     resetField('addressDetail')
-//   } else {
-//     clearErrors('province')
-//     clearErrors('district')
-//     clearErrors('ward')
-//     clearErrors('addressDetail')
-//   }
-// }

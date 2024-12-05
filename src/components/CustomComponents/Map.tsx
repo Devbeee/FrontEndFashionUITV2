@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { LatLngExpression } from 'leaflet'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
-import { Button, Spin } from 'antd'
+import { Button, message, Spin } from 'antd'
 
 import { addressFilter, getLocation, icons } from '@/utils'
 import { IUseBoolean } from '@/interfaces'
 
 type MapProps = {
-  handlePickLocation: (addressFilterReturn: AddressFilterReturn) => void
+  handlePickLocation: (addressFilterReturn: AddressFilterReturn, coords: number[]) => void
   isFetchingAddress: IUseBoolean
 }
 type AddressFilterReturn = {
@@ -31,6 +31,7 @@ export const Map: React.FC<MapProps> = ({ handlePickLocation, isFetchingAddress 
       fetchLocationInfo(location.coords.latitude, location.coords.longitude)
     } else {
       setLocationError(location.err || 'Không xác định được vị trí')
+      message.error(location.err || 'Không xác định được vị trí')
     }
     isFetchingAddress.setFalse()
   }
@@ -56,7 +57,7 @@ export const Map: React.FC<MapProps> = ({ handlePickLocation, isFetchingAddress 
       const data = response.data
       if (data && data.address) {
         const newFieldValues = addressFilter(data.display_name)
-        handlePickLocation(newFieldValues)
+        handlePickLocation(newFieldValues, [lat, lng])
         isFetchingAddress.setFalse()
       } else {
         isFetchingAddress.setFalse()

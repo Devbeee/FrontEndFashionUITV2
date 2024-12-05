@@ -1,4 +1,4 @@
-import { IAddressFieldData, IAddressFilterReturn } from '@/interfaces'
+import { IAddress, IAddressFieldData } from '@/interfaces'
 import axios from 'axios'
 
 type locationReturn = {
@@ -69,39 +69,46 @@ export const getWards = async (districtID: string): Promise<IAddressFieldData[]>
   }
 }
 
-export const getLocation = (): Promise<locationReturn> => {
-  return new Promise((resolve) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({ coords: position.coords })
-        },
-        (error) => {
-          let errorMessage = ''
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = 'User denied the request for Geolocation.'
-              break
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = 'Location information is unavailable.'
-              break
-            case error.TIMEOUT:
-              errorMessage = 'The request to get user location timed out.'
-              break
-            default:
-              errorMessage = 'An unknown error occurred.'
-              break
-          }
-          resolve({ err: errorMessage })
-        }
-      )
-    } else {
-      resolve({ err: 'Geolocation is not supported by this browser.' })
+export const getLocation = async (): Promise<locationReturn> => {
+  if (!navigator.geolocation) {
+    return { err: 'Geolocation is not supported by this browser.' }
+  }
+
+  try {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    })
+
+    return { coords: position.coords }
+  } catch (error) {
+    if (error instanceof GeolocationPositionError) {
+      let errorMessage = ''
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = 'User denied the request for Geolocation.'
+          break
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = 'Location information is unavailable.'
+          break
+        case error.TIMEOUT:
+          errorMessage = 'The request to get user location timed out.'
+          break
+        default:
+          errorMessage = 'An unknown error occurred.'
+          break
+      }
+
+      return { err: errorMessage }
     }
-  })
+
+    return { err: 'An unknown error occurred.' }
+  }
 }
 
-export const addressFilter = (rawAddressData: string): IAddressFilterReturn => {
+export const addressFilter = (
+  rawAddressData: string
+): Omit<IAddress, 'longitude' | 'latitude' | 'phoneNumber' | 'name'> => {
   const addressArray = rawAddressData.split(',').map((item) => item.trim())
   addressArray.pop()
   if (/\d+/.test(addressArray[addressArray.length - 1].trim())) {

@@ -3,7 +3,7 @@ import { CiLocationOn, CiSettings } from 'react-icons/ci'
 import { BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
-import { FaGift, FaPlus, FaFilter, FaMapLocationDot } from 'react-icons/fa6'
+import { FaGift, FaPlus, FaFilter, FaMapLocationDot, FaLocationDot } from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
 import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
@@ -44,5 +44,6 @@ export const icons = {
     darkBlue: <FaFilter className='text-dark-blue' />
   },
   map: <FaMapLocationDot />,
-  currentLocation: <BiCurrentLocation />
+  currentLocation: <BiCurrentLocation />,
+  filledLocation: <FaLocationDot />
 }

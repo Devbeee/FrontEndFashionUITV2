@@ -27,3 +27,6 @@ export * from './CustomBreadcrumb'
 export * from './ProductsList'
 export * from './Vouchers'
 export * from './QuickViewProduct'
+
+export * from './AddressItem'
+export * from './AddressModal'

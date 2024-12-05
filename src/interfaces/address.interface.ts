@@ -3,9 +3,18 @@ export interface IAddressFieldData {
   label: string
   id: string
 }
-export interface IAddressFilterReturn {
+
+export interface IAddress {
+  name: string
   province: string
   district: string
   ward: string
+  phoneNumber: string
+  longitude?: string
+  latitude?: string
   addressDetail: string
+}
+
+export interface IAddressReturn extends IAddress {
+  id: string
 }
