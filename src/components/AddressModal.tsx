@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import { IAddress, IAddressFieldData, IUseBoolean } from '@/interfaces'
 import { getDistricts, getWards, icons, phoneRegExp } from '@/utils'
-import { useBoolean } from '@/hooks'
+import { useBoolean, useWindowSize } from '@/hooks'
 import { CustomInput } from '@/components/CustomComponents/CustomInput'
 import { Map } from '@/components/CustomComponents/Map'
 import { useProvincesStore } from '@/stores'
@@ -52,7 +52,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
   onSubmit
 }) => {
   const { currentProvinces } = useProvincesStore()
-
+  const windowSize = useWindowSize()
   const [districts, setDistricts] = useState<IAddressFieldData[]>()
   const [wards, setWards] = useState<IAddressFieldData[]>()
   const mapVisible = useBoolean(false)
@@ -221,7 +221,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                   variant='solid'
                   size='large'
                 >
-                  Ẩn bản đồ
+                  {windowSize.width > 480 && 'Ẩn bản đồ'}
                   {icons.map}
                 </Button>
               ) : (
@@ -231,7 +231,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                   variant='solid'
                   size='large'
                 >
-                  Chọn trên bản đồ
+                  {windowSize.width > 480 && 'Chọn trên bản đồ'}
                   {icons.map}
                 </Button>
               )}

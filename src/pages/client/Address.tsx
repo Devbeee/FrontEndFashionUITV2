@@ -5,7 +5,7 @@ import { message, Spin } from 'antd'
 import { addressApi, userApi } from '@/apis'
 import { AddressItem, AddressModal, CustomBtn } from '@/components'
 
-import { useApi, useBoolean } from '@/hooks'
+import { useApi, useBoolean, useWindowSize } from '@/hooks'
 import { IAddress, IAddressReturn } from '@/interfaces'
 import { useProvincesStore } from '@/stores'
 import { getProvinces } from '@/utils'
@@ -19,7 +19,7 @@ export const Address = () => {
   const { loading: addressLoading, callApi: callApiAddAddress } = useApi<void>()
   const [addressesList, setAddressesList] = useState<IAddressReturn[]>()
   const { setCurrentProvinces, currentProvinces } = useProvincesStore()
-
+  const windowSize = useWindowSize()
   const fetchAddresses = async () => {
     callApiAddAddress(async () => {
       const data = await addressApi.getAddresses()
@@ -115,14 +115,20 @@ export const Address = () => {
   return (
     <section className='px-2 xs:px-4 '>
       <div className='flex items-center justify-between w-full'>
-        <div className='text-2xl font-bold xs:text-3xl text-dark-blue'>Địa chỉ của bạn</div>
-        <div className='w-fit'>
-          <CustomBtn onClick={addModalControl.toggle} type='primary' title='Thêm địa chỉ'></CustomBtn>
+        <div className='text-2xl font-bold xs:text-3xl text-dark-blue'>
+          {windowSize.width > 640 ? 'Địa chỉ của bạn' : 'Địa chỉ'}
+        </div>
+        <div className='w-fit flex items-center'>
+          <CustomBtn
+            onClick={addModalControl.toggle}
+            type='primary'
+            title={windowSize.width > 640 ? 'Thêm địa chỉ' : 'Thêm'}
+          ></CustomBtn>
         </div>
       </div>
       {!addressLoading ? (
         addressesList?.length ? (
-          <div className='max-h-[78vh] overflow-y-scroll w-full flex flex-col items-start gap-4 pl-4 my-4 pr-8 py-2'>
+          <div className='max-h-[78vh] overflow-y-scroll w-full flex flex-col items-start gap-4 md:pl-4 my-4 md:pr-8 md:py-2 px-1 pr-2 pl-2'>
             {defaultAddress && (
               <AddressItem
                 isDefault={true}
@@ -156,7 +162,7 @@ export const Address = () => {
       )}
       {addModalControl.value && (
         <AddressModal
-          title={'Thêm thông tin địa chỉ mới'}
+          title={'Thêm địa chỉ mới'}
           onSubmit={handleAddAddress}
           loadingSubmit={false}
           modalControl={addModalControl}
@@ -164,7 +170,7 @@ export const Address = () => {
       )}
       {updateModalControl.value && (
         <AddressModal
-          title={'Chỉnh sửa thông tin địa chỉ'}
+          title={'Chỉnh sửa địa chỉ'}
           defaultData={updatingAddress}
           onSubmit={handleUpdateAddress}
           loadingSubmit={false}
