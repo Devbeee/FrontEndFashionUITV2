@@ -2,7 +2,7 @@ import { Button, Spin } from 'antd'
 import { Link } from 'react-router-dom'
 
 type ButtonProps = {
-  title: string
+  title?: string
   type?: 'default' | 'primary' | 'link' | 'text'
   className?: string
   to?: string

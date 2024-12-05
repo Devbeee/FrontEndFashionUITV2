@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import type { MenuProps } from 'antd'
 import { Input, Menu, Dropdown, Badge } from 'antd'
@@ -7,7 +7,7 @@ import { authApi } from '@/apis'
 
 import { useApi } from '@/hooks'
 
-import { useAuthStore } from '@/stores'
+import { useAuthStore, useCartStore } from '@/stores'
 
 import { icons, NAVIGATION_ITEMS, PATH } from '@/utils'
 
@@ -15,6 +15,7 @@ import logo from '@/assets/images/logo.webp'
 
 export function Header() {
   const { currentUser, setCurrentUser } = useAuthStore()
+  const { productCount, setQuantity } = useCartStore()
 
   const { callApi: callApiLogout } = useApi<void>()
 
@@ -22,6 +23,7 @@ export function Header() {
     callApiLogout(async () => {
       await authApi.logout()
       setCurrentUser(null)
+      setQuantity(0)
     })
   }
 
@@ -122,12 +124,15 @@ export function Header() {
             </button>
           </Dropdown>
 
-          <button className='flex flex-col justify-center items-center relative text-center group'>
-            <Badge count={0} showZero className='p-3 rounded-full border border-gray-300'>
+          <Link
+            to={'/cart'}
+            className='flex flex-col justify-center items-center relative text-center group'
+          >
+            <Badge count={productCount} showZero className='p-3 rounded-full border border-gray-300'>
               <span>{icons.shoppingBag}</span>
             </Badge>
             <span className='group-hover:text-dark-blue'>Giỏ hàng</span>
-          </button>
+          </Link>
         </div>
       </header>
     </div>

@@ -1,16 +1,24 @@
-export interface IProduct {
-    id: string;
+import { ICategory } from "./category.interface";
+export interface IProductDetail {
+    id: string,
+    size: string,
+    colorName: string,
+    color: string,
+    imgUrl: string,
+    stock: number
+}
+export interface IProduct {  
+    id: string; 
     name: string;
     description: string;
     price: number;
+    category: ICategory;
     slug: string;
-    images: { imgUrl: string }[];
     discount: number;
-    category?: {
-        gender: string;
-        type: string;
-    }
-};
+    createdAt: Date;
+    updatedAt: Date;
+    productDetails: IProductDetail[];
+}
 
 export interface IProductComp extends IProduct {
     ranking?: number;
@@ -19,15 +27,6 @@ export interface IProductComp extends IProduct {
     sold?: number;
     saleCount?: number;
 }
-
-export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
-    id: string;
-    size: string;
-    color: string;
-    quantity: number,
-    image: string,
-}
-
 
 export interface IImage {
     imgUrl: string
