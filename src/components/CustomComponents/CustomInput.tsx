@@ -7,6 +7,8 @@ type CustomInputProps = {
   name: string
   control?: any
   errors?: any
+  value?: number
+  maxLength?: number
   label?: string
   placeholder: string
   size: 'large' | 'middle' | 'small'
@@ -24,6 +26,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   control,
   errors,
   placeholder,
+  value,
+  maxLength,
   size = 'small',
   className,
   prefixIcon = null,
@@ -70,6 +74,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       name={name}
       disabled={disabled}
       size={size}
+      value={value}
+      maxLength={maxLength}
       status={status}
       onChange={onChange}
       onKeyDown={onKeyDown}

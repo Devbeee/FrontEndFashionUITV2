@@ -25,7 +25,7 @@ export function ProductsList({ title, products }: ProductsListProps) {
                         <div className="w-14 h-20 mr-3 object-scale-down">
                             <Link to={product.slug} title={product.name} className="block">
                                 <img
-                                    src={product?.images[0]?.imgUrl}
+                                    src={product.productDetails[0].imgUrl}
                                     alt={product.name}
                                     className="w-full h-full"
                                 />
