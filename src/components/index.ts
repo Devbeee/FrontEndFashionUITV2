@@ -19,14 +19,13 @@ export * from './HotNews'
 export * from './NewsCard'
 export * from './Tags'
 
-export * from './CustomComponents/CustomBtn'
-export * from './CustomComponents/CustomInput'
-export * from './CustomComponents/Map'
-
 export * from './CustomBreadcrumb'
 export * from './ProductsList'
 export * from './Vouchers'
 export * from './QuickViewProduct'
 
+export * from './CustomComponents'
+
 export * from './AddressItem'
 export * from './AddressModal'
+export * from './AddressMap'

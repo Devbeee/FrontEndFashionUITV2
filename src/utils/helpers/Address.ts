@@ -116,9 +116,9 @@ export const addressFilter = (
   }
   const province = addressArray.pop()
   const addressObject = {
-    province: province?.replace(/^(Tỉnh|Thành phố)\s/, '').trim() || 'null',
-    district: addressArray.pop() || 'null',
-    ward: addressArray.pop()?.replace(/^[^.]*\./, '') || 'null',
+    province: province?.replace(/^(Tỉnh|Thành phố)\s/, '').trim() || '',
+    district: addressArray.pop() || '',
+    ward: addressArray.pop()?.replace(/^[^.]*\./, '') || '',
     addressDetail: addressArray.join(', ') || ''
   }
   return addressObject

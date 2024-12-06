@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import { Button, ConfigProvider, Form, Modal, Select } from 'antd'
+import { Button, ConfigProvider, Form, message, Modal, Select } from 'antd'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 import { IAddress, IAddressFieldData, IUseBoolean } from '@/interfaces'
 import { getDistricts, getWards, icons, phoneRegExp } from '@/utils'
 import { useBoolean, useWindowSize } from '@/hooks'
-import { CustomInput } from '@/components/CustomComponents/CustomInput'
-import { Map } from '@/components/CustomComponents/Map'
 import { useProvincesStore } from '@/stores'
+import { AddressMap, CustomInput } from '@/components'
 
 interface IAddressDefault extends IAddress {
   id: string
@@ -154,8 +153,11 @@ export const AddressModal: React.FC<AddressModalProps> = ({
         item.value.toLowerCase().includes(addressFilterReturn.province.toLowerCase())
       )
       if (!province) {
-        throw new Error('Invalid province selected')
+        message.error('Tỉnh, thành phố không hợp lệ!')
+        emptyAddressFields(addressFields)
+        return
       }
+
       setValue('province', province.value, { shouldDirty: true })
       const districtData = await fetchDistricts(province.id)
       const district = districtData.find((item) =>
@@ -163,7 +165,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({
       )
 
       if (!district) {
-        throw new Error('Invalid district selected')
+        message.error('Quận, huyện không hợp lệ!')
+        emptyAddressFields(addressFields)
+        return
       }
       setValue('district', district.value, { shouldDirty: true })
 
@@ -172,7 +176,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
       if (ward) {
         setValue('ward', ward.value, { shouldDirty: true })
       } else {
-        if (addressFilterReturn.ward !== 'null') {
+        if (addressFilterReturn.ward) {
           addressFilterReturn.addressDetail = `${addressFilterReturn.addressDetail ? `${addressFilterReturn.addressDetail}, ${addressFilterReturn.ward}` : addressFilterReturn.ward}`
         }
         setValue('ward', '0', { shouldDirty: true })
@@ -364,7 +368,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({
             placeholder={'Địa chỉ'}
           />
         </Form>
-        {mapVisible.value && <Map isFetchingAddress={isFetchingAddress} handlePickLocation={handlePickLocation} />}
+        {mapVisible.value && (
+          <AddressMap isFetchingAddress={isFetchingAddress} handlePickLocation={handlePickLocation} />
+        )}
       </Modal>
     </ConfigProvider>
   )

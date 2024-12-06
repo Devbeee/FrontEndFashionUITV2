@@ -8,7 +8,7 @@ import { Button, message, Spin } from 'antd'
 import { addressFilter, getLocation, icons } from '@/utils'
 import { IUseBoolean } from '@/interfaces'
 
-type MapProps = {
+type AddressMapProps = {
   handlePickLocation: (addressFilterReturn: AddressFilterReturn, coords: number[]) => void
   isFetchingAddress: IUseBoolean
 }
@@ -19,7 +19,7 @@ type AddressFilterReturn = {
   addressDetail: string
 }
 
-export const Map: React.FC<MapProps> = ({ handlePickLocation, isFetchingAddress }) => {
+export const AddressMap: React.FC<AddressMapProps> = ({ handlePickLocation, isFetchingAddress }) => {
   const [currentCoords, setCurrentCoords] = useState<LatLngExpression>([10.7769, 106.7009])
   const [locationError, setLocationError] = useState<string>()
   const fetchCurrentLocation = async () => {
@@ -62,13 +62,11 @@ export const Map: React.FC<MapProps> = ({ handlePickLocation, isFetchingAddress 
       } else {
         isFetchingAddress.setFalse()
 
-        alert('Không tìm thấy thông tin vị trí.')
+        message.error('Không tìm thấy thông tin vị trí.')
       }
     } catch (error) {
       isFetchingAddress.setFalse()
-
-      console.error('Error fetching location info:', error)
-      alert('Lỗi khi lấy thông tin vị trí.')
+      message.error('Lỗi khi lấy thông tin vị trí')
     }
   }
   const handleMapClick = (e: any) => {
