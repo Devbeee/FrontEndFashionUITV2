@@ -58,28 +58,3 @@ export interface IGetProductsParams {
     categoryType?: string;
     colorName?: string;
 }
-
-export interface IGetProductsResponse {
-    id: string; 
-    name: string;
-    description: string;
-    price: number;
-    category?: {
-        gender: string;
-        type: string;
-    }
-    slug: string;
-    discount: number;
-    createdAt: Date;
-    updatedAt: Date;
-    productDetails: IProductDetail[];
-}
-
-export interface IProductDetail {
-    id: string,
-    size: string,
-    colorName: string,
-    color: string,
-    imgUrl: string,
-    stock: number
-}

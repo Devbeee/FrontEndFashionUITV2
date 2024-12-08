@@ -22,7 +22,7 @@ export const Product: React.FC<ProductProps> = ({
           <div className="relative overflow-hidden group">
             <div className="absolute w-full h-full bg-gray-300 opacity-0 z-0 top-0 right-0 ease-in-out duration-150 group-hover:opacity-70"></div>
               <img
-                className="bg-transparent w-auto rounded max-h-full top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity"
+                className="bg-transparent w-auto rounded h-[300px] top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity"
                 src={product?.productDetails[0]?.imgUrl}
                 alt={product?.name}
               />

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-import { Select, Checkbox } from 'antd'
+import { Select, Checkbox, Pagination } from 'antd'
 
 import { useApi, useBoolean } from '@/hooks'
 
-import { IGetProductsResponse, IProduct } from '@/interfaces'
+import { IProduct } from '@/interfaces'
 
 import { Product } from '@/components'
 
@@ -16,53 +16,21 @@ export const AllProducts: React.FC = () => {
 
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
   const [products, setProducts] = useState<IProduct[]>([])
-  const mappingProducts = (productsResponse: IGetProductsResponse[]) => {
-    const products = productsResponse.map((product) => {
-      const images = product.productDetails.map((productDetail) => {
-        return {
-          imgUrl: productDetail.imgUrl
-        }
-      })
-      return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        discount: product.discount,
-        images: images,
-        slug: product.slug,
-        category: {
-          gender: product.category?.gender || '',
-          type: product.category?.type || ''
-        },
-        description: product.description
-      }
-    })
-    return setProducts(products)
-  }
   const [totalProducts, setTotalProducts] = useState(0)
-  const [limit] = useState(8)
+  const [limit] = useState(12)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(totalProducts / limit)) {
-      getProducts(currentPage+1, limit)
-      setCurrentPage(currentPage + 1)
-    }
-  }
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      getProducts(currentPage-1, limit)
-      setCurrentPage(currentPage - 1)
-    }
-  }
+  const handleChangePage = (page: number) => {
+    setCurrentPage(page);
+    getProducts(page, limit);
+  };
 
   const [sortStyle, setSortStyle] = useState('')
   const [categoryGender, setCategoryGender] = useState('')
   const [price, setPrice] = useState<string[]>([])
   const [categoryType, setCategoryType] = useState<string[]>([])
   const [colorName, setColorName] = useState<string[]>([])
-  const { callApi: callApiGetProduct } = useApi<void>()
+  const { loading, callApi: callApiGetProduct } = useApi<void>()
 
   const getProducts = async (page: number, limit: number) => {
     const params = {
@@ -77,14 +45,48 @@ export const AllProducts: React.FC = () => {
     callApiGetProduct(async () => {
       const {data} = await productApi.getProducts(params);
       if (data) {
-        mappingProducts(data.data);
+        setProducts(data.data)
         setTotalProducts(data.total)
       } else {
-        mappingProducts([]);
+        setProducts([]);
       }
     })
   }
 
+  const handleClearFilter = () => {
+    setSelectedFilter([])
+    setPrice([])
+    setCategoryType([])
+    setColorName([])
+  }
+
+  const handleCheckFilter = (filterType: string, option: string) => {
+    const toggleOption = (stateSetter: React.Dispatch<React.SetStateAction<string[]>>, state: string[]) => {
+      if (state.indexOf(option) === -1) {
+        stateSetter([...state, option]);
+      } else {
+        stateSetter(state.filter((item) => item !== option));
+      }
+    };
+  
+    setSelectedFilter((prev) =>
+      prev.indexOf(option) === -1 ? [...prev, option] : prev.filter((item) => item !== option)
+    );
+  
+    switch (filterType) {
+      case 'price':
+        toggleOption(setPrice, price);
+        break;
+      case 'category':
+        toggleOption(setCategoryType, categoryType);
+        break;
+      case 'color':
+        toggleOption(setColorName, colorName);
+        break;
+      default:
+        break;
+    }
+  };
   useEffect(() => {
     getProducts(1, limit)
     setCurrentPage(1)
@@ -144,12 +146,7 @@ export const AllProducts: React.FC = () => {
                 <div className={'hover:cursor-pointer'}>
                   <div 
                   className={'text-red-500 user-select-none font-medium'}
-                  onClick={() => {
-                    setSelectedFilter([])
-                    setPrice([])
-                    setCategoryType([])
-                    setColorName([])
-                  }}
+                  onClick={handleClearFilter}
                   >Clear</div>
                 </div>
               </div>
@@ -161,46 +158,19 @@ export const AllProducts: React.FC = () => {
                   {filterTier.options.map((option) => (
                     <li
                       className={'flex w-full justify-start h-8 items-center group hover:cursor-pointer'}
-                      key={option}
+                      key={option.value}
                     >
                       <Checkbox
                         id={`priceFilter-${option}`}
                         className={'mr-2'}
-                        checked={selectedFilter.indexOf(option) !== -1 ? true : false}
-                        onChange={() => {
-                          if (selectedFilter.indexOf(option) === -1) {
-                            setSelectedFilter([...selectedFilter, option])
-                          } else {
-                            setSelectedFilter(selectedFilter.filter((item) => item !== option))
-                          }
-                          if(filterTier.typeFilter === 'price') {
-                            if(price.indexOf(option) === -1) {
-                              setPrice([...price, option])
-                            } else {
-                              setPrice(price.filter((item) => item !== option))
-                            }
-                          }
-                          if(filterTier.typeFilter === 'category') {
-                            if (categoryType.indexOf(option) === -1) {
-                              setCategoryType([...categoryType, option])
-                            } else {
-                              setCategoryType(categoryType.filter((item) => item !== option))
-                            }
-                          }
-                          if(filterTier.typeFilter === 'color') {
-                            if (colorName.indexOf(option) === -1) {
-                              setColorName([...colorName, option])
-                            } else {
-                              setColorName(colorName.filter((item) => item !== option))
-                            }
-                          }
-                        }}
+                        checked={selectedFilter.indexOf(option.value) !== -1 ? true : false}
+                        onChange={() => handleCheckFilter(filterTier.typeFilter, option.value)}
                       ></Checkbox>
                       <label
                         htmlFor={`priceFilter-${option}`}
                         className={'ml-7.5 user-select-none group-hover:text-dark-blue'}
                       >
-                        {option}
+                        {option.label}
                       </label>
                     </li>
                   ))}
@@ -219,7 +189,7 @@ export const AllProducts: React.FC = () => {
               TẤT CẢ SẢN PHẨM
             </div>
             <div className={'flex items-center'}>
-              <div className={''}>{icons.sortDecreasing}</div>
+              <div>{icons.sortDecreasing}</div>
               <div className={'font-medium mx-2.5 ml-1 pb-1'}>Sắp xếp:</div>
                 <Select
                 onChange={(value) => setSortStyle(value)}
@@ -229,8 +199,17 @@ export const AllProducts: React.FC = () => {
               ></Select>
             </div>
           </div>
-          <div className={'w-full flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}>
-            {products.length === 0 ? (
+          <div className={'w-full min-h-[900px] flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}>
+            {loading ? (
+              <div className={'w-full flex justify-center items-center'}>
+                <div className="flex flex-col items-center">
+                  <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-t-primary"></div>
+                  <div className="text-xl font-medium text-gray-500 mt-2">
+                    Đang tải...
+                  </div>
+                </div>
+              </div>
+            ) : products.length === 0 ? (
               <div className={'w-full flex justify-center'}>
                 <div className={'text-2xl font-semibold text-gray-400'}>Không có sản phẩm phù hợp</div>
               </div>
@@ -244,23 +223,17 @@ export const AllProducts: React.FC = () => {
               </div>
             ))}
           </div>
-          <div>
-            <div className={'flex justify-center mt-5'}>
-              <button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-                className={'px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50'}
-              >
-                Trang Trước
-              </button>
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === Math.ceil(totalProducts / limit)}
-                className={'px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50'}
-              >
-                Trang Tiếp
-              </button>
-            </div>
+          <div className="flex justify-center mt-5">
+            <Pagination
+              disabled={totalProducts === 0}
+              align="center"
+              defaultCurrent={1}
+              current={currentPage}
+              total={totalProducts}
+              pageSize={limit}
+              onChange={handleChangePage}
+              showSizeChanger={false}
+            />
           </div>
         </div>
       </div>
