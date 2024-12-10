@@ -8,9 +8,14 @@ export const productApi = {
     findOneProduct: async (productId: string) => {
         return await axiosClient.get(`/product/${productId}`)
     },
-    getProducts: async (getProductsParams: IGetProductsParams) => {
-        const { page, limit, sortStyle, categoryGender, price, categoryType, colorName } = getProductsParams
-        const url = `/product/list?page=${page}&limit=${limit}&sortStyle=${sortStyle}&categoryGender=${categoryGender}&price=${price}&categoryType=${categoryType}&colorName=${colorName}`
-        return axiosClient.get(url)
+    getProducts: async ({ page, limit, ...optionalParams }: IGetProductsParams) => {
+        const validParams = Object.fromEntries(
+            Object.entries({ page, limit, ...optionalParams }).filter(([, value]) => value !== undefined)
+        ) as Partial<IGetProductsParams>;
+    
+        const queryString = new URLSearchParams(validParams as Record<string, string>).toString();
+    
+        const url = `/product/list?${queryString}`;
+        return axiosClient.get(url);
     }
 }
