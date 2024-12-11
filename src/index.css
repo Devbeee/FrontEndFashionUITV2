@@ -14,7 +14,10 @@
     @apply scrollbar-thin scrollbar-thumb scrollbar-track;
   }
 }
-
+.leaflet-container {
+  height: 40vh;
+  width: 100%;
+}
 .ant-dropdown-menu-item:hover {
   background-color: #01567f !important;
 }

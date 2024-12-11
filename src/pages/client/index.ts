@@ -9,3 +9,4 @@ export * from './ProductDetail'
 
 export * from './Profile'
 export * from './ChangePassword'
+export * from './Address'
