@@ -13,14 +13,14 @@ export const Product: React.FC<ProductProps> = ({ product, handleClickEye }) => 
   return (
     <div className=''>
       {product ? (
-        <div className='shadow-md rounded'>
-          <div className='relative overflow-hidden group'>
-            <div className='absolute w-full h-full bg-gray-300 opacity-0 z-0 top-0 right-0 ease-in-out duration-150 group-hover:opacity-70'></div>
-            <img
-              className='bg-transparent w-auto rounded max-h-full top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity'
-              src={product?.productDetails[0]?.imgUrl}
-              alt={product?.name}
-            />
+        <div className="shadow-md rounded">
+          <div className="relative overflow-hidden group">
+            <div className="absolute w-full h-full bg-gray-300 opacity-0 z-0 top-0 right-0 ease-in-out duration-150 group-hover:opacity-70"></div>
+              <img
+                className="bg-transparent w-auto rounded h-[300px] top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity"
+                src={product?.productDetails[0]?.imgUrl}
+                alt={product?.name}
+              />
             {product.discount && (
               <span className='absolute rounded top-2 right-2 bg-rose-600 text-white px-2 py-1 box-content text-xs font-normal italic text-center'>
                 -{product?.discount}%
