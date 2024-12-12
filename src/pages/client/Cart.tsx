@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Col, Row, Table, Image, Modal, message } from 'antd'
+import { Col, Row, Table, Image, Modal, message, Button } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
 import { useCartStore } from '@/stores'
@@ -163,6 +163,7 @@ export function Cart() {
         const cartProducts: ICartProduct[] = data.cartProducts?.map((item: IFetchedCartItem) => ({
           id: item.id,
           name: item.productDetail.product.name,
+          slug: item.productDetail.product.slug,
           price: item.productDetail.product.price,
           discount: item.productDetail.product.discount,
           size: item.productDetail.size,
@@ -341,12 +342,28 @@ export function Cart() {
                         </div>
                       </Col>
                     </Row>
-                    <CustomBtn
-                      className='w-[97%]'
+
+                    <Button
+                      size='large'
+                      className='w-[97%] h-12 text-lg mt-4 font-semibold rounded-md bg-dark-blue text-white hover:!bg-blue-cyan hover:opacity-90 disabled:bg-blue-cyan disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white'
                       type='primary'
                       disabled={checkoutItems.length === 0}
-                      title='Thanh toán'
-                    />
+                    >
+                      <Link
+                        to='/checkout'
+                        state={{
+                          checkoutItems,
+                          totalPrice: checkoutItems.length
+                            ? checkoutItems.reduce(
+                                (acc, item) => acc + (item.price - (item.price * item.discount) / 100) * item.quantity,
+                                0
+                              )
+                            : 0
+                        }}
+                      >
+                        Thanh toán
+                      </Link>
+                    </Button>
                   </Col>
                 </div>
               </Col>

@@ -15,7 +15,8 @@ import {
   ProductDetail,
   Profile,
   ChangePassword,
-  Address
+  Address,
+  Checkout
 } from '@/pages'
 import {
   CollabPolicies,
@@ -86,6 +87,14 @@ export const router = createBrowserRouter([
             element: <Address />
           }
         ]
+      },
+      {
+        path: PATH.checkout,
+        element: (
+          <ProtectedRoute role={Role.User}>
+            <Checkout />
+          </ProtectedRoute>
+        )
       },
       {
         path: PATH.collab_pol,

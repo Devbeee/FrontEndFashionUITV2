@@ -13,6 +13,7 @@ export const PATH = {
   profile: '/profile',
   changePassword: '/change-password',
   address: '/address',
+  checkout: '/checkout',
   collab_pol: '/collab_pol',
   exchange_pol: '/exchange_pol',
   membership_pol: '/membership_pol',

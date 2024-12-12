@@ -15,9 +15,9 @@ export const Address = () => {
   const updateModalControl = useBoolean(false)
   const [updatingAddress, setUpdatingAddress] = useState<IAddressReturn>()
   const [defaultAddress, setDefaultAddress] = useState<IAddressReturn>()
+  const [addressesList, setAddressesList] = useState<IAddressReturn[]>()
 
   const { loading: addressLoading, callApi: callApiAddAddress } = useApi<void>()
-  const [addressesList, setAddressesList] = useState<IAddressReturn[]>()
   const { setCurrentProvinces, currentProvinces } = useProvincesStore()
   const windowSize = useWindowSize()
   const fetchAddresses = async () => {
