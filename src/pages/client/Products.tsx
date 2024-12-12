@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { Select, Checkbox, Pagination } from 'antd'
 
 import { useApi, useBoolean } from '@/hooks'
 
-import { IProduct } from '@/interfaces'
+import { IGetProductsParams, IProduct } from '@/interfaces'
 
 import { Product } from '@/components'
 
 import { icons, sortOptions, filterTiers, collectionLinks } from '@/utils'
 import { productApi } from '@/apis/product.api'
 
+type query = {
+  sortStyle: string
+  categoryGender: string
+  price: string[]
+  categoryType: string[]
+  colorName: string[]
+}
+
 export const AllProducts: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const sideBarVisible = useBoolean(window.innerWidth > 980)
 
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
@@ -19,29 +29,33 @@ export const AllProducts: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0)
   const [limit] = useState(12)
   const [currentPage, setCurrentPage] = useState(1)
+  const {value: firstRender, setFalse} = useBoolean(true)
 
   const handleChangePage = (page: number) => {
-    setCurrentPage(page);
     getProducts(page, limit);
+    setCurrentPage(page);
   };
 
-  const [sortStyle, setSortStyle] = useState('')
-  const [categoryGender, setCategoryGender] = useState('')
-  const [price, setPrice] = useState<string[]>([])
-  const [categoryType, setCategoryType] = useState<string[]>([])
-  const [colorName, setColorName] = useState<string[]>([])
+  const [query, setQuery] = useState<query>({
+    sortStyle: '',
+    categoryGender: '',
+    price: [],
+    categoryType: [],
+    colorName: []
+  })
   const { loading, callApi: callApiGetProduct } = useApi<void>()
 
   const getProducts = async (page: number, limit: number) => {
-    const params = {
+    const params: IGetProductsParams = {
       page,
       limit,
-      sortStyle,
-      categoryGender,
-      price: price.join(','),
-      categoryType: categoryType.join(','),
-      colorName: colorName.join(',')
-    }
+      ...(query.sortStyle && { sortStyle: query.sortStyle }),
+      ...(query.categoryGender && { categoryGender: query.categoryGender }),
+      ...(query.price.length > 0 && { price: query.price.join(',') }),
+      ...(query.categoryType.length > 0 && { categoryType: query.categoryType.join(',') }),
+      ...(query.colorName.length > 0 && { colorName: query.colorName.join(',') })
+    };
+    updateSearchParams(page, limit);
     callApiGetProduct(async () => {
       const {data} = await productApi.getProducts(params);
       if (data) {
@@ -55,42 +69,79 @@ export const AllProducts: React.FC = () => {
 
   const handleClearFilter = () => {
     setSelectedFilter([])
-    setPrice([])
-    setCategoryType([])
-    setColorName([])
+    setCurrentPage(1)
+    setQuery({
+      sortStyle: '',
+      categoryGender: '',
+      price: [],
+      categoryType: [],
+      colorName: []
+    })
   }
 
-  const handleCheckFilter = (filterType: string, option: string) => {
-    const toggleOption = (stateSetter: React.Dispatch<React.SetStateAction<string[]>>, state: string[]) => {
-      if (state.indexOf(option) === -1) {
-        stateSetter([...state, option]);
-      } else {
-        stateSetter(state.filter((item) => item !== option));
-      }
-    };
+  const handleCheckFilter = (filterType: keyof query, option: string) => {
+    setCurrentPage(1);
+    setQuery((prevQuery) => {
+      const currentFilter = prevQuery[filterType];
+      
+      if (Array.isArray(currentFilter)) {
+        const updatedFilter = 
+          currentFilter.includes(option)
+            ? currentFilter.filter((item) => item !== option)
+            : [...currentFilter, option]; 
   
+        return { ...prevQuery, [filterType]: updatedFilter };
+      }
+      
+      return prevQuery;
+    });
     setSelectedFilter((prev) =>
       prev.indexOf(option) === -1 ? [...prev, option] : prev.filter((item) => item !== option)
     );
-  
-    switch (filterType) {
-      case 'price':
-        toggleOption(setPrice, price);
-        break;
-      case 'category':
-        toggleOption(setCategoryType, categoryType);
-        break;
-      case 'color':
-        toggleOption(setColorName, colorName);
-        break;
-      default:
-        break;
-    }
+  }
+
+  const updateSearchParams = (page: number, limit: number) => {
+    setSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...(query.sortStyle && { sortStyle: query.sortStyle }),
+      ...(query.categoryGender && { categoryGender: query.categoryGender }),
+      ...(query.price.length > 0 && { price: query.price.join(',') }),
+      ...(query.categoryType.length > 0 && { categoryType: query.categoryType.join(',') }),
+      ...(query.colorName.length > 0 && { colorName: query.colorName.join(',') })
+    });
   };
+
   useEffect(() => {
-    getProducts(1, limit)
-    setCurrentPage(1)
-  },[selectedFilter, price, categoryType, colorName, sortStyle, categoryGender])
+    if (firstRender) {
+      setFalse();
+  
+      const urlPage = parseInt(searchParams.get('page') || '1');
+      const urlSortStyle = searchParams.get('sortStyle') || '';
+      const urlCategoryGender = searchParams.get('categoryGender') || '';
+      const urlPrice = searchParams.get('price')?.split(',') || [];
+      const urlCategoryType = searchParams.get('categoryType')?.split(',') || [];
+      const urlColorName = searchParams.get('colorName')?.split(',') || [];
+      setSelectedFilter([...urlPrice, ...urlCategoryType, ...urlColorName]);
+
+      const updateQuery = {
+        sortStyle: urlSortStyle,
+        categoryGender: urlCategoryGender,
+        price: urlPrice,
+        categoryType: urlCategoryType,
+        colorName: urlColorName,
+      };
+  
+      setQuery(updateQuery);
+      setCurrentPage(urlPage);
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (!firstRender) {
+      getProducts(currentPage, limit);
+    }
+  }, [query]);
 
   const handleClickCart = () => {}
   const handleClickEye = () => {}
@@ -131,7 +182,7 @@ export const AllProducts: React.FC = () => {
                     <div className={'group-hover:h-5 group-hover:bg-dark-blue'}></div>
                     <div 
                     className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}
-                    onClick={() => setCategoryGender(link)}
+                    onClick={() => setQuery({...query, categoryGender: link})}
                     >{link}</div>
                   </div>
                   {icons.filter.darkBlue}
@@ -164,7 +215,7 @@ export const AllProducts: React.FC = () => {
                         id={`priceFilter-${option}`}
                         className={'mr-2'}
                         checked={selectedFilter.indexOf(option.value) !== -1 ? true : false}
-                        onChange={() => handleCheckFilter(filterTier.typeFilter, option.value)}
+                        onChange={() => handleCheckFilter(filterTier.typeFilter as keyof query, option.value)}
                       ></Checkbox>
                       <label
                         htmlFor={`priceFilter-${option}`}
@@ -192,8 +243,9 @@ export const AllProducts: React.FC = () => {
               <div>{icons.sortDecreasing}</div>
               <div className={'font-medium mx-2.5 ml-1 pb-1'}>Sắp xếp:</div>
                 <Select
-                onChange={(value) => setSortStyle(value)}
+                onChange={(value) => setQuery({...query, sortStyle: value})}
                 defaultValue={sortOptions.default}
+                value={query.sortStyle || sortOptions.default}
                 style={{ width: 120 }}
                 options={sortOptions.option}
               ></Select>

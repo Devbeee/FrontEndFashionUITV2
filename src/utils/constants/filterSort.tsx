@@ -11,7 +11,7 @@ export const filterTiers = [
     ]
   },
   {
-    typeFilter: 'category',
+    typeFilter: 'categoryType',
     title: 'LOẠI SẢN PHẨM',
     options: [
       { value: 'Áo Cotton', label: 'Áo Cotton' },
@@ -23,7 +23,7 @@ export const filterTiers = [
     ]
   },
   {
-    typeFilter: 'color',
+    typeFilter: 'colorName',
     title: 'CHỌN MÀU SẮC',
     options: [
       { value: 'Xanh lá', label: 'Xanh lá' },
