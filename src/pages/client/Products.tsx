@@ -29,10 +29,11 @@ export const AllProducts: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0)
   const [limit] = useState(12)
   const [currentPage, setCurrentPage] = useState(1)
-  const {value: firstRender, setFalse} = useBoolean(true)
+  const {value: initialRender, setFalse: setFalseInitial, setTrue: setTrueInitial} = useBoolean(true)
+  const {value: isUpdate, setFalse: setFalseUpdate} = useBoolean(true)
 
   const handleChangePage = (page: number) => {
-    getProducts(page, limit);
+    updateSearchParams(page, limit);
     setCurrentPage(page);
   };
 
@@ -55,7 +56,6 @@ export const AllProducts: React.FC = () => {
       ...(query.categoryType.length > 0 && { categoryType: query.categoryType.join(',') }),
       ...(query.colorName.length > 0 && { colorName: query.colorName.join(',') })
     };
-    updateSearchParams(page, limit);
     callApiGetProduct(async () => {
       const {data} = await productApi.getProducts(params);
       if (data) {
@@ -81,6 +81,10 @@ export const AllProducts: React.FC = () => {
 
   const handleCheckFilter = (filterType: keyof query, option: string) => {
     setCurrentPage(1);
+    if (filterType === 'sortStyle' || filterType === 'categoryGender') {
+      setQuery({...query, [filterType]: option})
+      return;
+    }
     setQuery((prevQuery) => {
       const currentFilter = prevQuery[filterType];
       
@@ -113,8 +117,8 @@ export const AllProducts: React.FC = () => {
   };
 
   useEffect(() => {
-    if (firstRender) {
-      setFalse();
+    if (initialRender) {
+      setFalseInitial();
   
       const urlPage = parseInt(searchParams.get('page') || '1');
       const urlSortStyle = searchParams.get('sortStyle') || '';
@@ -135,10 +139,17 @@ export const AllProducts: React.FC = () => {
       setQuery(updateQuery);
       setCurrentPage(urlPage);
     }
-  }, []);
+  }, [searchParams]);
   
   useEffect(() => {
-    if (!firstRender) {
+    if (!isUpdate) {
+      updateSearchParams(currentPage, limit);
+    } else {
+      setFalseUpdate();
+    }
+
+    if (!initialRender) {
+      setTrueInitial();
       getProducts(currentPage, limit);
     }
   }, [query]);
@@ -182,7 +193,7 @@ export const AllProducts: React.FC = () => {
                     <div className={'group-hover:h-5 group-hover:bg-dark-blue'}></div>
                     <div 
                     className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}
-                    onClick={() => setQuery({...query, categoryGender: link})}
+                    onClick={() => handleCheckFilter('categoryGender', link)}
                     >{link}</div>
                   </div>
                   {icons.filter.darkBlue}
@@ -243,7 +254,7 @@ export const AllProducts: React.FC = () => {
               <div>{icons.sortDecreasing}</div>
               <div className={'font-medium mx-2.5 ml-1 pb-1'}>Sắp xếp:</div>
                 <Select
-                onChange={(value) => setQuery({...query, sortStyle: value})}
+                onChange={(value) => handleCheckFilter('sortStyle', value)}
                 defaultValue={sortOptions.default}
                 value={query.sortStyle || sortOptions.default}
                 style={{ width: 120 }}
