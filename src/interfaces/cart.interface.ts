@@ -20,10 +20,11 @@ export interface IFetchedCartItem {
 
 export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount' | 'slug'> {
   id: string
+  productDetailId: string
   size: string
   color: string
   quantity: number
-  image: string
+  imgUrl: string
   stock: number
 }
 

@@ -1,6 +1,6 @@
 import { LiaPhoneSolid } from 'react-icons/lia'
 import { CiLocationOn, CiSettings } from 'react-icons/ci'
-import { BsBank2, BsSearch, BsSortDown } from 'react-icons/bs'
+import { BsBank2, BsCashStack, BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift, FaPlus, FaFilter, FaMinus, FaMapLocationDot, FaLocationDot, FaTruck } from 'react-icons/fa6'
@@ -51,5 +51,6 @@ export const icons = {
   currentLocation: <BiCurrentLocation />,
   filledLocation: <FaLocationDot />,
   delivery: <FaTruck />,
-  bank: <BsBank2 />
+  bank: <BsBank2 />,
+  cash: <BsCashStack />
 }

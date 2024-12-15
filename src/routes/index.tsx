@@ -16,7 +16,8 @@ import {
   Profile,
   ChangePassword,
   Address,
-  Checkout
+  Checkout,
+  Orders
 } from '@/pages'
 import {
   CollabPolicies,
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
           {
             path: PATH.address,
             element: <Address />
+          },
+          {
+            path: PATH.orders,
+            element: <Orders />
           }
         ]
       },

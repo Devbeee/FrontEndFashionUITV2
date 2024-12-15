@@ -46,7 +46,7 @@ export function Cart() {
         <>
           <Row gutter={8}>
             <Col span={6}>
-              <Image src={record.image} alt={record.name} />
+              <Image src={record.imgUrl} alt={record.name} />
             </Col>
             <Col span={18} className='pl-4'>
               <h6 className='text-sm font-medium line-clamp-2'>{record.name}</h6>
@@ -162,6 +162,7 @@ export function Cart() {
       if (data) {
         const cartProducts: ICartProduct[] = data.cartProducts?.map((item: IFetchedCartItem) => ({
           id: item.id,
+          productDetailId: item.productDetail.id,
           name: item.productDetail.product.name,
           slug: item.productDetail.product.slug,
           price: item.productDetail.product.price,
@@ -169,7 +170,7 @@ export function Cart() {
           size: item.productDetail.size,
           color: item.productDetail.colorName,
           quantity: item.quantity,
-          image: item.productDetail.imgUrl,
+          imgUrl: item.productDetail.imgUrl,
           stock: item.productDetail.stock
         }))
         setCartItems(cartProducts)

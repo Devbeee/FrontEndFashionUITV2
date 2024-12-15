@@ -115,7 +115,7 @@ export const Address = () => {
   return (
     <section className='px-2 xs:px-4 '>
       <div className='flex items-center justify-between w-full'>
-        <div className='text-2xl font-bold xs:text-3xl text-dark-blue'>
+        <div className='text-2xl font-bold xs:text-2xl text-dark-blue'>
           {windowSize.width > 640 ? 'Địa chỉ của bạn' : 'Địa chỉ'}
         </div>
         <div className='w-fit flex items-center'>
