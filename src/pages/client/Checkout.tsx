@@ -1,14 +1,16 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+
+import { Col, Row, Table, TableColumnsType, Image, message, Radio, Input, Button } from 'antd'
+import TextArea from 'antd/es/input/TextArea'
+
 import { addressApi, userApi } from '@/apis'
 import { checkoutApi } from '@/apis/checkout.api'
-import { AddressModal, CustomBtn, CustomInput, SelectAddressModal } from '@/components'
+import { AddressModal, SelectAddressModal } from '@/components'
 import { useApi, useBoolean, useWindowSize } from '@/hooks'
 import { IAddress, IAddressReturn, ICartProduct, IOrder } from '@/interfaces'
-import { useProvincesStore } from '@/stores'
+import { useCartStore, useProvincesStore } from '@/stores'
 import { getProvinces, icons, PaymentMethod } from '@/utils'
-import { Col, Row, Table, TableColumnsType, Image, message, Radio, Input, Button, Modal } from 'antd'
-import TextArea from 'antd/es/input/TextArea'
-import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
 
 type CheckoutState = {
   checkoutItems: ICartProduct[]
@@ -27,12 +29,12 @@ export function Checkout() {
 
   const { setCurrentProvinces, currentProvinces } = useProvincesStore()
   const location = useLocation()
-
-  const { callApi: callApiOrder } = useApi<void>()
+  const { removeFromCart } = useCartStore()
+  const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
   const windowSize = useWindowSize()
 
   const fetchDefaultAddress = () => {
-    callApiOrder(async () => {
+    callOrderApi(async () => {
       const data = await userApi.getDefaultAddress()
       if (data) {
         setSelectedAddress(data.data)
@@ -43,7 +45,7 @@ export function Checkout() {
   }
 
   const fetchAddresses = async () => {
-    callApiOrder(async () => {
+    callOrderApi(async () => {
       const data = await addressApi.getAddresses()
       if (data) {
         setAddressesList(data.data)
@@ -64,62 +66,65 @@ export function Checkout() {
     if (currentProvinces.length <= 0) fetchProvinces()
     setCheckoutObj({ checkoutItems: location?.state?.checkoutItems, totalPrice: location?.state?.totalPrice })
   }, [])
-  const columns: TableColumnsType<ICartProduct> = [
-    {
-      title: <h2 className='uppercase font-bold text-center'>Thông tin sản phẩm</h2>,
-      className: '!px-2',
-      key: 'informations',
-      dataIndex: 'informations',
-      width: 350,
-      render: (_, record) => (
-        <>
-          <Row gutter={8}>
-            <Col span={6}>
-              <Image src={record.imgUrl} alt={record.name} />
-            </Col>
-            <Col span={18} className='pl-4 flex flex-col justify-between'>
-              <div>
-                <h6 className='text-sm font-medium line-clamp-2 text-ellipsis'>{record.name}</h6>
-                <div className='text-xs capitalize'>
-                  {record.color} / {record.size}
+  const columns = useMemo<TableColumnsType<ICartProduct>>(
+    () => [
+      {
+        title: <h2 className='uppercase font-bold text-center'>Thông tin sản phẩm</h2>,
+        className: '!px-2',
+        key: 'informations',
+        dataIndex: 'informations',
+        width: 350,
+        render: (_, record) => (
+          <>
+            <Row gutter={8}>
+              <Col span={6}>
+                <Image src={record.imgUrl} alt={record.name} />
+              </Col>
+              <Col span={18} className='pl-4 flex flex-col justify-between'>
+                <div>
+                  <h6 className='text-sm font-medium line-clamp-2 text-ellipsis'>{record.name}</h6>
+                  <div className='text-xs capitalize'>
+                    {record.color} / {record.size}
+                  </div>
                 </div>
-              </div>
-              <div className='text-red-600 font-bold pb-2'>
-                {(record.price * (1 - record.discount / 100)).toLocaleString('de-DE')}đ
-              </div>
-            </Col>
-          </Row>
-        </>
-      )
-    },
-    {
-      title: <h2 className='uppercase font-bold text-center'>Số lượng</h2>,
-      className: '!px-2',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      width: 100,
-      render: (_, record) => (
-        <div className='relative flex items-center justify-center max-w-[8rem] '>{record.quantity}</div>
-      )
-    },
-    {
-      title: <h2 className='uppercase font-bold text-center'>Thành tiền</h2>,
-      className: '!px-2',
-      dataIndex: 'totalPrice',
-      key: 'totalPrice',
-      width: 150,
-      render: (_, record) => (
-        <div className='text-red-600 font-bold text-center px-5'>
-          {(record.price * (1 - record.discount / 100) * record.quantity).toLocaleString('de-DE')}đ
-        </div>
-      )
-    }
-  ]
+                <div className='text-red-600 font-bold pb-2'>
+                  {(record.price * (1 - record.discount / 100)).toLocaleString('de-DE')}đ
+                </div>
+              </Col>
+            </Row>
+          </>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center'>Số lượng</h2>,
+        className: '!px-2',
+        dataIndex: 'quantity',
+        key: 'quantity',
+        width: 100,
+        render: (_, record) => (
+          <div className='relative flex items-center justify-center max-w-[8rem] '>{record.quantity}</div>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center'>Thành tiền</h2>,
+        className: '!px-2',
+        dataIndex: 'totalPrice',
+        key: 'totalPrice',
+        width: 150,
+        render: (_, record) => (
+          <div className='text-red-600 font-bold text-center px-5'>
+            {(record.price * (1 - record.discount / 100) * record.quantity).toLocaleString('de-DE')}đ
+          </div>
+        )
+      }
+    ],
+    [callOrderApiLoading]
+  )
   const handleChangePaymentMethod = (value: PaymentMethod) => {
     setPaymentMethod(value)
   }
   const handleAddAddress = (addressData: IAddress) => {
-    callApiOrder(async () => {
+    callOrderApi(async () => {
       const data = await addressApi.addAddress(addressData)
       if (data) {
         addModalControl.setFalse()
@@ -149,9 +154,10 @@ export function Checkout() {
         paymentMethod: paymentMethod,
         message: orderMessage
       }
-      callApiOrder(async () => {
+      callOrderApi(async () => {
         const data = await checkoutApi.createOrder(orderData)
         if (data) {
+          removeFromCart(checkoutObj?.checkoutItems.length)
           message.success('Call api thành công!')
         } else {
           message.error('Đã xãy ra lỗi khi tạo đơn hàng!')

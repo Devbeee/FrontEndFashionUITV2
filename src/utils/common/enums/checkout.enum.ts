@@ -14,3 +14,11 @@ export enum PaymentMethod {
   Banking = 'banking',
   COD = 'cod'
 }
+
+export enum SortOptions {
+  DateDecrease = 'date-decrease',
+  DateIncrease = 'date-increase',
+  PriceDecrease = 'price-decrease',
+  PriceIncrease = 'price-increase',
+  None = 'none'
+}

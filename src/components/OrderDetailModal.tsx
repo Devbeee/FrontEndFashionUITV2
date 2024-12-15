@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Col, ConfigProvider, Image, Input, Modal, Row, Table, TableColumnsType } from 'antd'
+import { Col, ConfigProvider, Image, Modal, Row, Table, TableColumnsType } from 'antd'
 
 import { IOrderProduct, IOrderReturn, IUseBoolean } from '@/interfaces'
 import { useWindowSize } from '@/hooks'

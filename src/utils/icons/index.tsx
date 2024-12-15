@@ -3,7 +3,17 @@ import { CiLocationOn, CiSettings } from 'react-icons/ci'
 import { BsBank2, BsCashStack, BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
-import { FaGift, FaPlus, FaFilter, FaMinus, FaMapLocationDot, FaLocationDot, FaTruck } from 'react-icons/fa6'
+import {
+  FaGift,
+  FaPlus,
+  FaFilter,
+  FaMinus,
+  FaMapLocationDot,
+  FaLocationDot,
+  FaTruck,
+  FaArrowDownLong,
+  FaArrowUpLong
+} from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
 import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
@@ -52,5 +62,7 @@ export const icons = {
   filledLocation: <FaLocationDot />,
   delivery: <FaTruck />,
   bank: <BsBank2 />,
-  cash: <BsCashStack />
+  cash: <BsCashStack />,
+  downArrow: <FaArrowDownLong />,
+  upArrow: <FaArrowUpLong />
 }
