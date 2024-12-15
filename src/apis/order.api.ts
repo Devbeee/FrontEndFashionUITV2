@@ -9,5 +9,8 @@ export const orderApi = {
     return await axiosClient.get(
       `/orders/?page=${page}${limit ? `&limit=${limit}` : ''}${keyword ? `&keyword=${keyword}` : ''}${sortBy ? `&sortBy=${sortBy}` : ''}`
     )
+  },
+  cancelOrder: async (id: string) => {
+    return await axiosClient.patch(`/orders/cancel/?id=${id}`)
   }
 }

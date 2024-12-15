@@ -20,7 +20,7 @@ import { orderApi } from '@/apis'
 import { OrderDetailModal } from '@/components'
 import { useApi, useBoolean, useWindowSize } from '@/hooks'
 import { IOrderReturn } from '@/interfaces'
-import { ConvertDateString, getOrderStatusByEnum, icons, OrderStatus, SortOptions } from '@/utils'
+import { ConvertDateString, getOrderStatusByEnum, icons, OrderStatus, sortByEnumMapping, SortOptions } from '@/utils'
 
 type PaginationType = {
   totalPages?: number
@@ -38,7 +38,8 @@ export const Orders = () => {
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
   const queryParamPage = parseInt(queryParams.get('page') || '1')
   const queryParamLimit = parseInt(queryParams.get('limit') || '4')
-  const queryParamSortBy = SortOptions[queryParams.get('sortBy') as keyof typeof SortOptions]
+  const queryParamSortBy = sortByEnumMapping(queryParams.get('sortBy') ?? undefined)
+
   const { loading: callOrderApiLoading, callApi: callOrdertApi } = useApi<void>()
 
   const [orders, setOrders] = useState<IOrderReturn[]>([])
@@ -46,7 +47,7 @@ export const Orders = () => {
   const [pagination, setPagination] = useState<PaginationType>({})
   const [inputKeyword, setInputKeyword] = useState<string>(queryParams.get('keyword') ?? '')
   const [currentKeyword, setCurrentKeyword] = useState<string>(queryParams.get('keyword') ?? '')
-  const [currentSortBy, setCurrentSortBy] = useState<SortOptions>(queryParamSortBy || SortOptions.None)
+  const [currentSortBy, setCurrentSortBy] = useState<SortOptions>(queryParamSortBy)
 
   const hanldeSelectOrder = (order: IOrderReturn) => {
     setSelectedOrder(order)
@@ -55,7 +56,7 @@ export const Orders = () => {
   const getSortOptionElm = (title: string, icon?: JSX.Element) => {
     return (
       <span className='flex items-center gap-1'>
-        <span>{title}:</span>
+        <span>{title}</span>
         <span>{icon}</span>
       </span>
     )
@@ -63,19 +64,19 @@ export const Orders = () => {
   const sortOptions = [
     {
       value: SortOptions.DateDecrease,
-      label: getSortOptionElm('Date', icons.downArrow)
+      label: getSortOptionElm('Date:', icons.downArrow)
     },
     {
       value: SortOptions.DateIncrease,
-      label: getSortOptionElm('Date', icons.upArrow)
+      label: getSortOptionElm('Date:', icons.upArrow)
     },
     {
       value: SortOptions.PriceDecrease,
-      label: getSortOptionElm('Price', icons.downArrow)
+      label: getSortOptionElm('Price:', icons.downArrow)
     },
     {
       value: SortOptions.PriceIncrease,
-      label: getSortOptionElm('Price', icons.upArrow)
+      label: getSortOptionElm('Price:', icons.upArrow)
     },
     {
       value: SortOptions.None,
@@ -83,192 +84,161 @@ export const Orders = () => {
     }
   ]
   const columns = useMemo<TableColumnsType<IOrderReturn>>(
-    () =>
-      !callOrderApiLoading
-        ? [
-            {
-              title: <h2 className='uppercase font-bold text-center  w-[130px]'>ID</h2>,
-              key: 'informations',
-              dataIndex: 'informations',
-              width: 100,
-              render: (_, record) => (
-                <Row gutter={8} className='w-full flex flex-col justify-between'>
-                  <Col span={24} className='pl-4'>
-                    <Tooltip
-                      className='!w-full'
-                      placement='bottomLeft'
-                      title={record.id}
-                      color='white'
-                      overlayStyle={{
-                        maxWidth: '100%'
-                      }}
-                      overlayInnerStyle={{
-                        color: 'black',
-                        textWrap: 'nowrap'
-                      }}
-                      arrow={{
-                        pointAtCenter: true
-                      }}
-                    >
-                      <h6
-                        onClick={() => {
-                          hanldeSelectOrder(record)
-                        }}
-                        className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'
-                      >
-                        {record.id}
-                      </h6>
-                    </Tooltip>
-                  </Col>
-                </Row>
-              )
-            },
-            {
-              title: <h2 className='uppercase font-bold text-center min-w-[250px]'>Sản phẩm</h2>,
-              key: 'informations',
-              dataIndex: 'informations',
-              width: orders.length > 4 ? 160 : 200,
-              render: (_, record) => (
-                <Row gutter={8} className='w-full flex justify-center'>
-                  <Col span={orders.length > 4 ? 6 : 6}>
-                    <Image src={record.products[0]?.imgUrl} alt={record.products[0]?.name} />
-                  </Col>
-                  <Col span={orders.length > 4 ? 18 : 18} className='pl-4 flex flex-col justify-between'>
-                    <div>
-                      <h6 className='text-sm font-medium line-clamp-1 text-ellipsis'>{record.products[0]?.name}</h6>
-                      <div className='text-xs capitalize'>
-                        {record.products[0]?.color} / {record.products[0]?.size}
-                      </div>
-                    </div>
-                    <div className='text-red-600 font-bold pb-2'>
-                      {(record.products[0]?.price * (1 - record.products[0]?.discount / 100)).toLocaleString('de-DE')}đ
-                    </div>
-                  </Col>
-                </Row>
-              )
-            },
-            {
-              title: <h2 className='uppercase font-bold text-center  w-[80px]'>Số sản phẩm</h2>,
-              key: 'informations',
-              dataIndex: 'informations',
-              width: 60,
-              render: (_, record) => (
-                <Row gutter={8} className='w-full flex justify-center'>
-                  <Col span={24} className='text-sm font-medium line-clamp-2 text-center'>
-                    {record.products.reduce((total, product) => total + product.quantity, 0)}
-                  </Col>
-                </Row>
-              )
-            },
-            {
-              title: <h2 className='uppercase font-bold text-center w-[80px]'>Tổng tiền</h2>,
-              dataIndex: 'quantity',
-              key: 'quantity',
-              width: 60,
-              render: (_, record) => (
-                <div className='relative flex items-center justify-center text-red-600 font-bold'>
-                  {record.totalPrice.toLocaleString('de-DE')}đ
-                </div>
-              )
-            },
-            {
-              title: <h2 className='uppercase font-bold text-center w-[60px]'>Tình trạng</h2>,
-              dataIndex: 'totalPrice',
-              key: 'totalPrice',
-              width: 40,
-              render: (_, record) => (
-                <div
-                  className={` text-center font-semibold ${record?.orderStatus === OrderStatus.Delivered ? 'text-green-500' : record?.orderStatus === OrderStatus.Pending ? 'text-slate-500' : 'text-red-500'}`}
+    () => [
+      {
+        title: <h2 className='uppercase font-bold text-center w-full'>ID</h2>,
+        key: 'informations',
+        dataIndex: 'informations',
+        width: 140,
+        render: (_, record) => (
+          <Row gutter={8} className='w-full flex flex-col justify-between'>
+            <Col span={24} className='pl-4'>
+              <Tooltip
+                className='!w-full'
+                placement='bottomLeft'
+                title={record.id}
+                color='white'
+                overlayStyle={{
+                  maxWidth: '100%'
+                }}
+                overlayInnerStyle={{
+                  color: 'black',
+                  textWrap: 'nowrap'
+                }}
+                arrow={{
+                  pointAtCenter: true
+                }}
+              >
+                <h6
+                  onClick={() => {
+                    hanldeSelectOrder(record)
+                  }}
+                  className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'
                 >
-                  {getOrderStatusByEnum(record?.orderStatus)}
+                  {record.id}
+                </h6>
+              </Tooltip>
+            </Col>
+          </Row>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center'>Sản phẩm</h2>,
+        key: 'informations',
+        dataIndex: 'informations',
+        width: 360,
+        render: (_, record) => (
+          <Row gutter={8} className='w-full flex justify-center'>
+            <Col span={orders.length > 4 ? 6 : 6}>
+              <Image src={record.products[0]?.imgUrl} alt={record.products[0]?.name} />
+            </Col>
+            <Col span={orders.length > 4 ? 18 : 18} className='pl-4 flex flex-col justify-between'>
+              <div>
+                <h6 className='text-sm font-medium line-clamp-1 text-ellipsis'>{record.products[0]?.name}</h6>
+                <div className='text-xs capitalize'>
+                  {record.products[0]?.color} / {record.products[0]?.size}
                 </div>
-              )
-            },
-            {
-              title: <h2 className='uppercase font-bold text-center w-[80px]'>Ngày đặt hàng</h2>,
-              dataIndex: 'totalPrice',
-              key: 'totalPrice',
-              width: 80,
-              render: (_, record) => <div className='text-center'>{ConvertDateString(record.createdAt)}</div>
-            }
-          ]
-        : [
-            {
-              title: <h2 className='uppercase font-bold text-center flex justify-center'>Đơn hàng</h2>,
-              key: 'informations',
-              dataIndex: 'informations',
-              width: 600,
-              render: () => (
-                <div className='w-full flex items-center justify-center'>
-                  <Spin />
-                </div>
-              )
-            }
-          ],
+              </div>
+              <div className='text-red-600 font-bold pb-2'>
+                {(record.products[0]?.price * (1 - record.products[0]?.discount / 100)).toLocaleString('de-DE')}đ
+              </div>
+            </Col>
+          </Row>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center w-full'>Số sản phẩm</h2>,
+        key: 'informations',
+        dataIndex: 'informations',
+        width: 100,
+
+        render: (_, record) => (
+          <Row gutter={8} className='w-full flex justify-center'>
+            <Col span={24} className='text-sm font-medium line-clamp-2 text-center'>
+              {record.products.reduce((total, product) => total + product.quantity, 0)}
+            </Col>
+          </Row>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center w-full'>Tổng tiền</h2>,
+        dataIndex: 'quantity',
+        key: 'quantity',
+        width: 120,
+        render: (_, record) => (
+          <div className='relative flex items-center justify-center text-red-600 font-bold'>
+            {record.totalPrice.toLocaleString('de-DE')}đ
+          </div>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold !text-center w-full flex'>Tình trạng</h2>,
+        dataIndex: 'totalPrice',
+        key: 'totalPrice',
+        width: 100,
+        render: (_, record) => (
+          <div
+            className={` text-center font-semibold ${record?.orderStatus === OrderStatus.Delivered ? 'text-green-500' : record?.orderStatus === OrderStatus.Pending ? 'text-slate-500' : 'text-red-500'}`}
+          >
+            {getOrderStatusByEnum(record?.orderStatus)}
+          </div>
+        )
+      },
+      {
+        title: <h2 className='uppercase font-bold text-center w-full'>Ngày đặt hàng</h2>,
+        dataIndex: 'totalPrice',
+        key: 'totalPrice',
+        width: 140,
+        render: (_, record) => <div className='text-center'>{ConvertDateString(record.createdAt)}</div>
+      }
+    ],
     [callOrderApiLoading]
   )
-
+  const getNavigateParams = (limit: number = 4, keyword?: string, sortBy?: SortOptions) => {
+    return {
+      sortBy: sortBy !== SortOptions.None ? `&sortBy=${sortBy}` : '',
+      limit: limit ? `&limit=${limit}` : '',
+      keyword: keyword ? `&keyword=${keyword}` : ''
+    }
+  }
   const fetchOrders = (page: number = 1, limit: number = 4, keyword?: string, sortBy?: SortOptions) => {
     callOrdertApi(async () => {
       const data = await orderApi.getOrders(page, limit, keyword, sortBy)
       if (data) {
         setOrders(data?.data?.orders || [])
         setPagination(data?.data?.pagination || {})
+        const param = getNavigateParams(limit, keyword, sortBy)
+        navigate(`?page=${data?.data?.pagination?.currentPage}${param.limit}${param.keyword}${param.sortBy}`)
       } else {
         message.error('Đã xảy ra lỗi khi lấy thông tin đơn hàng!')
       }
     })
   }
-  const fetchAndNavigate = (page: number = 1, limit: number = 4, keyword?: string, sortBy?: SortOptions) => {
-    const param = {
-      sortBy: sortBy !== SortOptions.None ? `&sortBy=${sortBy}` : '',
-      limit: pagination.limit ? `&limit=${limit}` : ''
-    }
-    if (keyword) {
-      const paramKeyword = `&keyword=${keyword}`
-      navigate(`?page=${page}${param.limit}${paramKeyword}${param.sortBy}`)
-      fetchOrders(page, limit, keyword, sortBy)
-    } else {
-      navigate(`?page=${page}${param.limit}${param.sortBy}`)
-      fetchOrders(page, limit, undefined, sortBy)
-    }
+  const fetchOrderWithCurrentParams = () => {
+    fetchOrders(queryParamPage, queryParamLimit, currentKeyword ? currentKeyword : undefined, currentSortBy)
   }
-  useEffect(() => {
-    if (currentKeyword) {
-      setPagination({ ...pagination, currentPage: queryParamPage, limit: queryParamLimit })
-      fetchOrders(queryParamPage, queryParamLimit, currentKeyword, currentSortBy)
-    } else {
-      setPagination({ ...pagination, currentPage: queryParamPage, limit: queryParamLimit })
-      fetchOrders(queryParamPage, queryParamLimit, undefined, currentSortBy)
-    }
-  }, [])
-
   const onChangePage: PaginationProps['onChange'] = (page, size) => {
-    if (currentKeyword === inputKeyword) {
-      fetchAndNavigate(page, size, currentKeyword, currentSortBy)
-    } else {
+    if (inputKeyword !== currentKeyword) {
       setInputKeyword(currentKeyword)
-      fetchAndNavigate(page, size, currentKeyword, currentSortBy)
     }
+    fetchOrders(page, size, currentKeyword, currentSortBy)
   }
   const handleSearchOrder = () => {
     if (inputKeyword !== currentKeyword) {
-      if (inputKeyword !== '') {
-        setCurrentKeyword(inputKeyword)
-        fetchAndNavigate(1, pagination.limit, inputKeyword, currentSortBy)
-      } else {
-        setCurrentKeyword('')
-        fetchAndNavigate(1, pagination.limit, undefined, currentSortBy)
-      }
+      setCurrentKeyword(inputKeyword)
+      fetchOrders(1, pagination.limit, inputKeyword ? inputKeyword : undefined, currentSortBy)
     }
   }
   const handleChangeSortOption = (value: SortOptions) => {
     setCurrentSortBy(value)
-    fetchAndNavigate(queryParamPage, queryParamLimit, currentKeyword, value)
+    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, value)
   }
+  useEffect(() => {
+    fetchOrderWithCurrentParams()
+  }, [])
   return (
     <section className='px-2 xs:px-4'>
-      <div className={`flex justify-start pb-4 ${windowSize.width < 720 && 'flex-col'}`}>
+      <div className={`flex justify-start pb-4 ${windowSize.width < 720 && 'flex-col gap-2'}`}>
         <div className='text-2xl font-bold xs:text-2xl text-dark-blue flex-[5] text-left'>
           {windowSize.width > 640 ? 'Danh sách đơn hàng' : 'Đơn hàng'}
         </div>
@@ -302,7 +272,9 @@ export const Orders = () => {
           />
         </div>
       </div>
-      {orders?.length > 0 ? (
+      {callOrderApiLoading ? (
+        <Spin />
+      ) : orders?.length > 0 ? (
         <div className='w-full border-[1px] border-gray-200 border-solid rounded-md'>
           <Table<IOrderReturn>
             columns={columns}
@@ -331,7 +303,13 @@ export const Orders = () => {
           />
         </div>
       )}
-      {selectedOrder && <OrderDetailModal defaultData={selectedOrder} modalControl={viewOrderModalControl} />}
+      {selectedOrder && (
+        <OrderDetailModal
+          defaultData={selectedOrder}
+          modalControl={viewOrderModalControl}
+          fetchOrders={fetchOrderWithCurrentParams}
+        />
+      )}
     </section>
   )
 }
