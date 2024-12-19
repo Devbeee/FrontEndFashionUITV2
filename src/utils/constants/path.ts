@@ -15,6 +15,7 @@ export const PATH = {
   address: '/address',
   orders: '/orders',
   checkout: '/checkout',
+  verify_payment: '/verify-payment',
   collab_pol: '/collab_pol',
   exchange_pol: '/exchange_pol',
   membership_pol: '/membership_pol',

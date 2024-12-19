@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { Col, Row, Table, TableColumnsType, Image, message, Radio, Input, Button } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
@@ -10,7 +10,7 @@ import { AddressModal, SelectAddressModal } from '@/components'
 import { useApi, useBoolean, useWindowSize } from '@/hooks'
 import { IAddress, IAddressReturn, ICartProduct, IOrder } from '@/interfaces'
 import { useCartStore, useProvincesStore } from '@/stores'
-import { getProvinces, icons, PaymentMethod } from '@/utils'
+import { getProvinces, icons, PATH, PaymentMethod } from '@/utils'
 
 type CheckoutState = {
   checkoutItems: ICartProduct[]
@@ -29,43 +29,11 @@ export function Checkout() {
 
   const { setCurrentProvinces, currentProvinces } = useProvincesStore()
   const location = useLocation()
+  const navigate = useNavigate()
   const { removeFromCart } = useCartStore()
   const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
   const windowSize = useWindowSize()
 
-  const fetchDefaultAddress = () => {
-    callOrderApi(async () => {
-      const data = await userApi.getDefaultAddress()
-      if (data) {
-        setSelectedAddress(data.data)
-      } else {
-        message.error('Đã xãy ra lỗi khi lấy địa chỉ mặc định!')
-      }
-    })
-  }
-
-  const fetchAddresses = async () => {
-    callOrderApi(async () => {
-      const data = await addressApi.getAddresses()
-      if (data) {
-        setAddressesList(data.data)
-      } else {
-        message.error('Đã xãy ra lỗi khi lấy danh sách địa chỉ!')
-      }
-    })
-  }
-
-  const fetchProvinces = async () => {
-    const provincesList = await getProvinces()
-    setCurrentProvinces(provincesList)
-  }
-
-  useEffect(() => {
-    fetchAddresses()
-    fetchDefaultAddress()
-    if (currentProvinces.length <= 0) fetchProvinces()
-    setCheckoutObj({ checkoutItems: location?.state?.checkoutItems, totalPrice: location?.state?.totalPrice })
-  }, [])
   const columns = useMemo<TableColumnsType<ICartProduct>>(
     () => [
       {
@@ -110,7 +78,7 @@ export function Checkout() {
         className: '!px-2',
         dataIndex: 'totalPrice',
         key: 'totalPrice',
-        width: 150,
+        width: 140,
         render: (_, record) => (
           <div className='text-red-600 font-bold text-center px-5'>
             {(record.price * (1 - record.discount / 100) * record.quantity).toLocaleString('de-DE')}đ
@@ -120,9 +88,53 @@ export function Checkout() {
     ],
     [callOrderApiLoading]
   )
+
+  const fetchDefaultAddress = () => {
+    callOrderApi(async () => {
+      const data = await userApi.getDefaultAddress()
+      if (data) {
+        setSelectedAddress(data.data)
+      } else {
+        message.error('Đã xãy ra lỗi khi lấy địa chỉ mặc định!')
+      }
+    })
+  }
+
+  const fetchAddresses = async () => {
+    callOrderApi(async () => {
+      const data = await addressApi.getAddresses()
+      if (data) {
+        setAddressesList(data.data)
+      } else {
+        message.error('Đã xãy ra lỗi khi lấy danh sách địa chỉ!')
+      }
+    })
+  }
+
+  const fetchProvinces = async () => {
+    const provincesList = await getProvinces()
+    setCurrentProvinces(provincesList)
+  }
+
+  useEffect(() => {
+    let mounted = true
+
+    if (mounted) {
+      fetchAddresses()
+      fetchDefaultAddress()
+      if (currentProvinces.length <= 0) fetchProvinces()
+      setCheckoutObj({ checkoutItems: location?.state?.checkoutItems, totalPrice: location?.state?.totalPrice })
+    }
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
   const handleChangePaymentMethod = (value: PaymentMethod) => {
     setPaymentMethod(value)
   }
+
   const handleAddAddress = (addressData: IAddress) => {
     callOrderApi(async () => {
       const data = await addressApi.addAddress(addressData)
@@ -141,7 +153,7 @@ export function Checkout() {
     setSelectedAddress(address)
     selectModalControl.setFalse()
   }
-  const handleCreateOrder = async () => {
+  const handleCreateCODOrder = () => {
     if (checkoutObj?.checkoutItems && checkoutObj?.totalPrice && selectedAddress) {
       const orderData: IOrder = {
         products: checkoutObj?.checkoutItems.map((item) => ({
@@ -158,11 +170,45 @@ export function Checkout() {
         const data = await checkoutApi.createOrder(orderData)
         if (data) {
           removeFromCart(checkoutObj?.checkoutItems.length)
-          message.success('Call api thành công!')
+          message.success('Đặt hàng thành công!')
+          navigate(PATH.orders)
         } else {
           message.error('Đã xãy ra lỗi khi tạo đơn hàng!')
         }
       })
+    }
+  }
+  const handleCreateStripeOrder = () => {
+    if (checkoutObj?.checkoutItems && checkoutObj?.totalPrice && selectedAddress) {
+      const orderData: IOrder = {
+        products: checkoutObj?.checkoutItems.map((item) => ({
+          productDetailId: item.productDetailId,
+          cartProductId: item.id,
+          quantity: item.quantity
+        })),
+        totalPrice: checkoutObj?.totalPrice,
+        address: selectedAddress,
+        paymentMethod: paymentMethod,
+        message: orderMessage
+      }
+      callOrderApi(async () => {
+        const data = await checkoutApi.createStripeUrl(orderData)
+        if (data) {
+          removeFromCart(checkoutObj?.checkoutItems.length)
+          message.success('Đặt hàng thành công!')
+          window.open(data.data, '_blank')
+          window.close()
+        } else {
+          message.error('Đã xãy ra lỗi khi tạo đơn hàng!')
+        }
+      })
+    }
+  }
+  const handleCreateOrder = async () => {
+    if (paymentMethod === PaymentMethod.COD) {
+      handleCreateCODOrder()
+    } else {
+      handleCreateStripeOrder()
     }
   }
   return (
@@ -248,10 +294,10 @@ export function Checkout() {
                       Thanh toán khi nhận hàng
                     </Radio>
                     <Radio
-                      value={PaymentMethod.Banking}
-                      className={`text-slate-700 ${paymentMethod === PaymentMethod.Banking && 'font-semibold'}`}
+                      value={PaymentMethod.Stripe}
+                      className={`text-slate-700 ${paymentMethod === PaymentMethod.Stripe && 'font-semibold'}`}
                     >
-                      Thanh toán trực tuyến
+                      Thẻ tín dụng, Thẻ ghi nợ,...
                     </Radio>
                   </Radio.Group>
                 </div>
@@ -344,6 +390,7 @@ export function Checkout() {
                         type='primary'
                         disabled={checkoutObj?.checkoutItems?.length ? false : true}
                         onClick={handleCreateOrder}
+                        loading={callOrderApiLoading}
                       >
                         Đặt hàng
                       </Button>

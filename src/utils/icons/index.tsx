@@ -53,10 +53,7 @@ export const icons = {
   login: <SlLogin />,
   logout: <SlLogout />,
   register: <PiUserPlus />,
-  filter: {
-    white: <FaFilter className='text-white' />,
-    darkBlue: <FaFilter className='text-dark-blue' />
-  },
+  filter: <FaFilter />,
   map: <FaMapLocationDot />,
   currentLocation: <BiCurrentLocation />,
   filledLocation: <FaLocationDot />,

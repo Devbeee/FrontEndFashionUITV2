@@ -13,6 +13,7 @@ export interface IOrder {
 }
 export interface IOrderProduct {
   color: string
+  colorName: string
   discount: number
   id: string
   imgUrl: string
@@ -31,5 +32,6 @@ export interface IOrderReturn {
   orderStatus: OrderStatus
   products: IOrderProduct[]
   createdAt: string
+  paidAt: string
   totalPrice: number
 }

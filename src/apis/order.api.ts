@@ -1,16 +1,19 @@
 import { instance as axiosClient } from '@/configs'
-import { SortOptions } from '@/utils'
+import { FilterOptions, SortOptions } from '@/utils'
 
 export const orderApi = {
   getAllOrders: async () => {
-    return await axiosClient.get('/orders/all')
+    return await axiosClient.get('/order/all')
   },
-  getOrders: async (page: number, limit?: number, keyword?: string, sortBy?: SortOptions) => {
+  getOrders: async (page: number, limit?: number, keyword?: string, sortBy?: SortOptions, filter?: FilterOptions) => {
     return await axiosClient.get(
-      `/orders/?page=${page}${limit ? `&limit=${limit}` : ''}${keyword ? `&keyword=${keyword}` : ''}${sortBy ? `&sortBy=${sortBy}` : ''}`
+      `/order/user/?page=${page}${limit ? `&limit=${limit}` : ''}${keyword ? `&keyword=${keyword}` : ''}${sortBy ? `&sortBy=${sortBy}` : ''}${filter ? `&filter=${filter}` : ''}`
     )
   },
+  getOrder: async (id: string) => {
+    return await axiosClient.get(`/order/?id=${id}`)
+  },
   cancelOrder: async (id: string) => {
-    return await axiosClient.patch(`/orders/cancel/?id=${id}`)
+    return await axiosClient.patch(`/order/cancel/?id=${id}`)
   }
 }

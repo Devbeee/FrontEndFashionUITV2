@@ -1,4 +1,4 @@
-import { OrderStatus, SortOptions } from '@/utils/common'
+import { FilterOptions, OrderStatus, SortOptions } from '@/utils/common'
 
 export const getOrderStatusByEnum = (orderEnum: OrderStatus) => {
   return orderEnum === OrderStatus.Delivered
@@ -17,8 +17,19 @@ export const sortByEnumMapping = (value?: string) => {
     'date-decrease': SortOptions.DateDecrease,
     'date-increase': SortOptions.DateIncrease,
     'price-decrease': SortOptions.PriceDecrease,
-    'price-increase': SortOptions.PriceIncrease,
-    none: SortOptions.None
+    'price-increase': SortOptions.PriceIncrease
   }
-  return value ? stringToEnumMapping[value] : SortOptions.None
+  return value ? stringToEnumMapping[value] : SortOptions.DateDecrease
+}
+
+export const filterEnumMapping = (value?: string) => {
+  const stringToEnumMapping: Record<string, FilterOptions> = {
+    delivering: FilterOptions.Delivering,
+    delivered: FilterOptions.Delivered,
+    confirmed: FilterOptions.Confirmed,
+    pending: FilterOptions.Pending,
+    canceled: FilterOptions.Canceled,
+    none: FilterOptions.None
+  }
+  return value ? stringToEnumMapping[value] : FilterOptions.None
 }

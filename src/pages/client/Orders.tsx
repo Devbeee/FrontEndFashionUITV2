@@ -10,7 +10,6 @@ import {
   PaginationProps,
   Row,
   Select,
-  Spin,
   Table,
   TableColumnsType,
   Tooltip
@@ -20,7 +19,17 @@ import { orderApi } from '@/apis'
 import { OrderDetailModal } from '@/components'
 import { useApi, useBoolean, useWindowSize } from '@/hooks'
 import { IOrderReturn } from '@/interfaces'
-import { ConvertDateString, getOrderStatusByEnum, icons, OrderStatus, sortByEnumMapping, SortOptions } from '@/utils'
+import {
+  ConvertDateString,
+  ConvertTimeString,
+  filterEnumMapping,
+  FilterOptions,
+  getOrderStatusByEnum,
+  icons,
+  OrderStatus,
+  sortByEnumMapping,
+  SortOptions
+} from '@/utils'
 
 type PaginationType = {
   totalPages?: number
@@ -39,8 +48,9 @@ export const Orders = () => {
   const queryParamPage = parseInt(queryParams.get('page') || '1')
   const queryParamLimit = parseInt(queryParams.get('limit') || '4')
   const queryParamSortBy = sortByEnumMapping(queryParams.get('sortBy') ?? undefined)
+  const queryParamFilter = filterEnumMapping(queryParams.get('filter') ?? FilterOptions.None)
 
-  const { loading: callOrderApiLoading, callApi: callOrdertApi } = useApi<void>()
+  const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
 
   const [orders, setOrders] = useState<IOrderReturn[]>([])
   const [selectedOrder, setSelectedOrder] = useState<IOrderReturn>()
@@ -48,6 +58,7 @@ export const Orders = () => {
   const [inputKeyword, setInputKeyword] = useState<string>(queryParams.get('keyword') ?? '')
   const [currentKeyword, setCurrentKeyword] = useState<string>(queryParams.get('keyword') ?? '')
   const [currentSortBy, setCurrentSortBy] = useState<SortOptions>(queryParamSortBy)
+  const [currentFilter, setCurrentFilter] = useState<FilterOptions>(queryParamFilter)
 
   const hanldeSelectOrder = (order: IOrderReturn) => {
     setSelectedOrder(order)
@@ -77,16 +88,39 @@ export const Orders = () => {
     {
       value: SortOptions.PriceIncrease,
       label: getSortOptionElm('Price:', icons.upArrow)
+    }
+  ]
+  const filterOptions = [
+    {
+      value: FilterOptions.Delivered,
+      label: FilterOptions.Delivered
     },
     {
-      value: SortOptions.None,
-      label: getSortOptionElm('None')
+      value: FilterOptions.Delivering,
+      label: FilterOptions.Delivering
+    },
+    {
+      value: FilterOptions.Confirmed,
+      label: FilterOptions.Confirmed
+    },
+
+    {
+      value: FilterOptions.Pending,
+      label: FilterOptions.Pending
+    },
+    {
+      value: FilterOptions.Canceled,
+      label: FilterOptions.Canceled
+    },
+    {
+      value: FilterOptions.None,
+      label: FilterOptions.None
     }
   ]
   const columns = useMemo<TableColumnsType<IOrderReturn>>(
     () => [
       {
-        title: <h2 className='uppercase font-bold text-center w-full'>ID</h2>,
+        title: <h2 className='uppercase font-bold text-center'>ID</h2>,
         key: 'informations',
         dataIndex: 'informations',
         width: 140,
@@ -126,7 +160,7 @@ export const Orders = () => {
         title: <h2 className='uppercase font-bold text-center'>Sản phẩm</h2>,
         key: 'informations',
         dataIndex: 'informations',
-        width: 360,
+        width: 340,
         render: (_, record) => (
           <Row gutter={8} className='w-full flex justify-center'>
             <Col span={orders.length > 4 ? 6 : 6}>
@@ -134,9 +168,9 @@ export const Orders = () => {
             </Col>
             <Col span={orders.length > 4 ? 18 : 18} className='pl-4 flex flex-col justify-between'>
               <div>
-                <h6 className='text-sm font-medium line-clamp-1 text-ellipsis'>{record.products[0]?.name}</h6>
+                <h6 className='text-sm font-medium line-clamp-2 text-ellipsis'>{record.products[0]?.name}</h6>
                 <div className='text-xs capitalize'>
-                  {record.products[0]?.color} / {record.products[0]?.size}
+                  {record.products[0]?.colorName} / {record.products[0]?.size}
                 </div>
               </div>
               <div className='text-red-600 font-bold pb-2'>
@@ -147,21 +181,21 @@ export const Orders = () => {
         )
       },
       {
-        title: <h2 className='uppercase font-bold text-center w-full'>Số sản phẩm</h2>,
+        title: <h2 className='uppercase font-bold text-center'>Số sản phẩm</h2>,
         key: 'informations',
         dataIndex: 'informations',
         width: 100,
 
         render: (_, record) => (
           <Row gutter={8} className='w-full flex justify-center'>
-            <Col span={24} className='text-sm font-medium line-clamp-2 text-center'>
+            <Col span={24} className='text-sm font-medium line-clamp-1 text-center'>
               {record.products.reduce((total, product) => total + product.quantity, 0)}
             </Col>
           </Row>
         )
       },
       {
-        title: <h2 className='uppercase font-bold text-center w-full'>Tổng tiền</h2>,
+        title: <h2 className='uppercase font-bold text-center'>Tổng tiền</h2>,
         dataIndex: 'quantity',
         key: 'quantity',
         width: 120,
@@ -172,66 +206,96 @@ export const Orders = () => {
         )
       },
       {
-        title: <h2 className='uppercase font-bold !text-center w-full flex'>Tình trạng</h2>,
+        title: <h2 className='uppercase font-bold !text-center flex'>Tình trạng</h2>,
         dataIndex: 'totalPrice',
         key: 'totalPrice',
-        width: 100,
+        width: 120,
         render: (_, record) => (
           <div
-            className={` text-center font-semibold ${record?.orderStatus === OrderStatus.Delivered ? 'text-green-500' : record?.orderStatus === OrderStatus.Pending ? 'text-slate-500' : 'text-red-500'}`}
+            className={` text-center font-semibold ${
+              [OrderStatus.Delivered, OrderStatus.Confirmed, OrderStatus.Delivering].includes(record?.orderStatus)
+                ? 'text-green-500'
+                : record?.orderStatus === OrderStatus.Pending
+                  ? 'text-slate-500'
+                  : 'text-red-500'
+            }`}
           >
             {getOrderStatusByEnum(record?.orderStatus)}
           </div>
         )
       },
       {
-        title: <h2 className='uppercase font-bold text-center w-full'>Ngày đặt hàng</h2>,
+        title: <h2 className='uppercase font-bold text-center'>Ngày đặt hàng</h2>,
         dataIndex: 'totalPrice',
         key: 'totalPrice',
         width: 140,
-        render: (_, record) => <div className='text-center'>{ConvertDateString(record.createdAt)}</div>
+        render: (_, record) => (
+          <div>
+            <div className='text-center'>{ConvertTimeString(record.createdAt)}</div>
+            <div className='text-center'>{ConvertDateString(record.createdAt)}</div>
+          </div>
+        )
       }
     ],
     [callOrderApiLoading]
   )
-  const getNavigateParams = (limit: number = 4, keyword?: string, sortBy?: SortOptions) => {
+  const getNavigateParams = (limit: number = 4, keyword?: string, sortBy?: SortOptions, filter?: FilterOptions) => {
     return {
-      sortBy: sortBy !== SortOptions.None ? `&sortBy=${sortBy}` : '',
+      sortBy: sortBy ? `&sortBy=${sortBy}` : '',
+      filter: filter ? `&filter=${filter}` : '',
       limit: limit ? `&limit=${limit}` : '',
       keyword: keyword ? `&keyword=${keyword}` : ''
     }
   }
-  const fetchOrders = (page: number = 1, limit: number = 4, keyword?: string, sortBy?: SortOptions) => {
-    callOrdertApi(async () => {
-      const data = await orderApi.getOrders(page, limit, keyword, sortBy)
+  const fetchOrders = (
+    page: number = 1,
+    limit: number = 4,
+    keyword?: string,
+    sortBy?: SortOptions,
+    filter?: FilterOptions
+  ) => {
+    callOrderApi(async () => {
+      const data = await orderApi.getOrders(page, limit, keyword, sortBy, filter)
       if (data) {
         setOrders(data?.data?.orders || [])
         setPagination(data?.data?.pagination || {})
-        const param = getNavigateParams(limit, keyword, sortBy)
-        navigate(`?page=${data?.data?.pagination?.currentPage}${param.limit}${param.keyword}${param.sortBy}`)
+        const param = getNavigateParams(limit, keyword, sortBy, filter)
+        navigate(
+          `?page=${data?.data?.pagination?.currentPage}${param.limit}${param.keyword}${param.sortBy}${param.filter}`
+        )
       } else {
         message.error('Đã xảy ra lỗi khi lấy thông tin đơn hàng!')
       }
     })
   }
   const fetchOrderWithCurrentParams = () => {
-    fetchOrders(queryParamPage, queryParamLimit, currentKeyword ? currentKeyword : undefined, currentSortBy)
+    fetchOrders(
+      queryParamPage,
+      queryParamLimit,
+      currentKeyword ? currentKeyword : undefined,
+      currentSortBy,
+      currentFilter
+    )
   }
   const onChangePage: PaginationProps['onChange'] = (page, size) => {
     if (inputKeyword !== currentKeyword) {
       setInputKeyword(currentKeyword)
     }
-    fetchOrders(page, size, currentKeyword, currentSortBy)
+    fetchOrders(page, size, currentKeyword, currentSortBy, currentFilter)
   }
   const handleSearchOrder = () => {
     if (inputKeyword !== currentKeyword) {
       setCurrentKeyword(inputKeyword)
-      fetchOrders(1, pagination.limit, inputKeyword ? inputKeyword : undefined, currentSortBy)
+      fetchOrders(1, pagination.limit, inputKeyword ? inputKeyword : undefined, currentSortBy, currentFilter)
     }
   }
   const handleChangeSortOption = (value: SortOptions) => {
     setCurrentSortBy(value)
-    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, value)
+    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, value, currentFilter)
+  }
+  const handleChangeFilterOption = (value: FilterOptions) => {
+    setCurrentFilter(value)
+    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, currentSortBy, value)
   }
   useEffect(() => {
     fetchOrderWithCurrentParams()
@@ -261,28 +325,37 @@ export const Orders = () => {
           />
         </div>
       </div>
-      <div className='w-full gap-2 items-center flex justify-end mb-2'>
-        <div className='gap-2 items-center flex'>
-          <span className='font-semibold text-lg'>Sort by: </span>
-          <Select
-            className='w-24'
-            options={sortOptions}
-            value={currentSortBy}
-            onChange={(e) => handleChangeSortOption(e)}
-          />
+      <div className='w-full gap-2 items-end flex justify-end mb-2'>
+        <div className={`flex gap-1 ${windowSize.width < 400 && 'flex-col !items-start'}`}>
+          <div className='gap-2 items-center flex'>
+            <span className='font-semibold text-base w-11'>Filter: </span>
+            <Select
+              className='w-28 text-left'
+              options={filterOptions}
+              value={currentFilter}
+              onChange={(e) => handleChangeFilterOption(e)}
+            />
+          </div>
+          <div className='gap-2 items-center flex'>
+            <span className='font-semibold text-base w-11'>Sort: </span>
+            <Select
+              className='w-24'
+              options={sortOptions}
+              value={currentSortBy}
+              onChange={(e) => handleChangeSortOption(e)}
+            />
+          </div>
         </div>
       </div>
-      {callOrderApiLoading ? (
-        <Spin />
-      ) : orders?.length > 0 ? (
+      {orders?.length > 0 ? (
         <div className='w-full border-[1px] border-gray-200 border-solid rounded-md'>
           <Table<IOrderReturn>
+            loading={callOrderApiLoading}
             columns={columns}
             dataSource={orders}
             rowKey={(record) => record.id}
-            scroll={{ y: orders.length > 4 ? 480 : undefined, x: 'fit-content' }}
+            scroll={{ y: orders.length > 4 ? 480 : undefined, x: 'max-content' }}
             pagination={false}
-            className=''
           />
         </div>
       ) : (
@@ -300,6 +373,7 @@ export const Orders = () => {
             pageSize={pagination?.limit}
             pageSizeOptions={[4, 8, 10, 20]}
             showSizeChanger={true}
+            showLessItems
           />
         </div>
       )}
