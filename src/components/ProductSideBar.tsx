@@ -1,6 +1,7 @@
+import { Checkbox } from 'antd'
+
 import { IUseBoolean } from '@/interfaces'
 import { collectionLinks, filterTiers, icons } from '@/utils'
-import { Checkbox } from 'antd'
 
 type query = {
   sortStyle: string
