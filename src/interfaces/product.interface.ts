@@ -48,3 +48,13 @@ export interface IVoucher {
     description: string,
     quantity: number
 }
+
+export interface IGetProductsParams {
+    page: number;
+    limit: number;
+    sortStyle?: string;
+    categoryGender?: string;
+    price?: string;
+    categoryType?: string;
+    colorName?: string;
+}
