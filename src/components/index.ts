@@ -21,6 +21,7 @@ export * from './Tags'
 
 export * from './CustomBreadcrumb'
 export * from './ProductsList'
+export * from './ProductSideBar'
 export * from './Vouchers'
 export * from './QuickViewProduct'
 
