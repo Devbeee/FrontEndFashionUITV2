@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Col, Row, Table, Image, Modal, message } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
@@ -10,13 +10,14 @@ import { useApi, useBoolean, useDebouncedCallback } from '@/hooks'
 
 import { cartApi } from '@/apis'
 
-import { icons } from '@/utils'
+import { errorResponseCases, icons } from '@/utils'
 
 import { ICartProduct, IFetchedCartItem } from '@/interfaces'
 
 import { CustomBtn, CustomBreadcrumb, CustomInput } from '@/components'
 
 export function Cart() {
+  const navigate = useNavigate()
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
   const {
@@ -114,7 +115,7 @@ export function Cart() {
       render: (_, record) => (
         <div className='relative flex items-center max-w-[8rem]'>
           <CustomBtn
-            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
             onClick={() => {
               handleChangeQuantity(Math.max(record.quantity - 1, 1), record)
             }}
@@ -127,13 +128,13 @@ export function Cart() {
             placeholder='Nhập số lượng'
             type='text'
             value={record.quantity}
-            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
             onChange={(e) => {
               handleChangeQuantity(parseInt(e.target.value, 10) || 1, record)
             }}
           />
           <CustomBtn
-            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-none rounded-e-lg !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg rounded-l-none !mt-0 p-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-none'
             onClick={() => {
               handleChangeQuantity(Math.min(record.quantity + 1, record.stock), record)
             }}
@@ -240,7 +241,12 @@ export function Cart() {
   }, [productCount])
 
   useEffect(() => {
-    if (errorMessage) message.error(errorMessage)
+    if (errorMessage) {
+      message.error(errorMessage)
+      if (errorMessage === errorResponseCases['Login']) {
+        navigate('/login')
+      }
+    }
   }, [errorMessage])
 
   useEffect(() => {
@@ -289,6 +295,7 @@ export function Cart() {
         <Row className='mt-2' gutter={12}>
           <Col span={width >= 1024 ? 18 : 24}>
             <Table<ICartProduct>
+              pagination={cartItems.length > 10 ? undefined : false}
               columns={columns}
               rowSelection={{ type: 'checkbox', ...rowSelection }}
               dataSource={cartItems}
@@ -297,7 +304,7 @@ export function Cart() {
                 columns.length > 0 ? { y: cartItems.length > 5 ? 100 * 5 : undefined, x: 'max-content' } : undefined
               }
             />
-            <Row justify='space-between' align='bottom'>
+            <Row justify='space-between' align='bottom' className='mt-3'>
               <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0 '>
                 <CustomBtn title='Tiếp tục mua hàng' to='/products' icon={icons.prevPage} className='w-full' />
               </Col>
@@ -305,7 +312,7 @@ export function Cart() {
                 <div className='flex flex-col-reverse xl:flex-row items-end w-full xs:mb-2'>
                   <Col span={width > 1024 ? 12 : 24} className='px-5 w-full xs:p-0'>
                     <CustomBtn
-                      className={`w-[97%] ${
+                      className={`w-[92%] ${
                         !(checkoutItems.length === 0) &&
                         '!text-rose-500 !border-rose-500 hover:!border-rose-500 hover:!text-rose-500 hover:!text-opacity-50 hover:!border-opacity-50'
                       }`}
@@ -342,7 +349,7 @@ export function Cart() {
                       </Col>
                     </Row>
                     <CustomBtn
-                      className='w-[97%]'
+                      className='w-[92%]'
                       type='primary'
                       disabled={checkoutItems.length === 0}
                       title='Thanh toán'

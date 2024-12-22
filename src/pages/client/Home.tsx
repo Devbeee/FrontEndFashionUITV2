@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Carousel, Row } from 'antd'
+import { Carousel, Row, Skeleton } from 'antd'
 import { Link } from 'react-router-dom'
 import pLimit from 'p-limit'
 
@@ -42,7 +42,7 @@ const tabImages = [
   'src/assets/images/img_banner_tab.webp',
   'src/assets/images/tab-nam.webp',
   'src/assets/images/tab-nu.webp',
-  'src/assets/images/tab-gym.webp'
+  'src/assets/images/tab-kid.png'
 ]
 
 const bannerBigImage = 'src/assets/images/img_banner_big.webp'
@@ -116,7 +116,13 @@ export function Home() {
     callProductApi(async () => {
       const { data } = await productApi.getProducts({ page: 1, limit: 6 })
       if (data) {
-        setProducts(data.data)
+        const bestSellProducts: Product[] = data.data.map((product: Product, index: number) => ({
+          ...product,
+          ranking: index + 1,
+          productCount: true,
+          sold: 200 // set tạm đợi order xong
+        }))
+        setProducts(bestSellProducts)
       }
     })
   }
@@ -148,6 +154,45 @@ export function Home() {
     })
   }
 
+  const getDiscountProducts = async () => {
+    callProductApi(async () => {
+      const { data } = await productApi.getDiscountProduct()
+      if (data) {
+        const categorizedProducts: Product[][] = [[], [], [], []]
+
+        data.forEach((product: Product) => {
+          product.discounts.forEach((discount) => {
+            const timeRange = discount.timeRange
+            let index = -1
+
+            switch (timeRange) {
+              case '0h-6h':
+                index = 0
+                break
+              case '6h-12h':
+                index = 1
+                break
+              case '12h-18h':
+                index = 2
+                break
+              case '18h-24h':
+                index = 3
+                break
+            }
+
+            if (index !== -1) {
+              product.saleCount = discount.sold
+              product.productCountSale = true
+              categorizedProducts[index].push(product)
+            }
+          })
+        })
+
+        setSaleProductsInTabIndex(categorizedProducts)
+      }
+    })
+  }
+
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
 
@@ -161,6 +206,7 @@ export function Home() {
     const fetchProducts = async () => {
       try {
         await limit(() => getProducts())
+        await limit(() => getDiscountProducts())
         await limit(() => getMaleProducts())
         await limit(() => getFemaleProducts())
         await limit(() => getKidProducts())
@@ -182,7 +228,7 @@ export function Home() {
     setStatus(newStatus)
   }, [])
   return (
-    <div className=''>
+    <>
       {showQuickView && quickViewProduct && (
         <QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />
       )}
@@ -190,14 +236,14 @@ export function Home() {
         <div className=''>
           <div className=''>
             <Carousel {...settings}>
-              <div className=''>
-                <img className='w-full h-full' src={sliderImages[0]} draggable={false} alt='slider' />
+              <div className='w-full h-full'>
+                <img src={sliderImages[0]} draggable={false} alt='slider' loading='lazy' />
               </div>
               <div className='w-full h-full'>
-                <img src={sliderImages[1]} draggable={false} alt='slider' />
+                <img src={sliderImages[1]} draggable={false} alt='slider' loading='lazy' />
               </div>
               <div className='w-full h-full'>
-                <img src={sliderImages[2]} draggable={false} alt='slider' />
+                <img src={sliderImages[2]} draggable={false} alt='slider' loading='lazy' />
               </div>
             </Carousel>
           </div>
@@ -262,13 +308,16 @@ export function Home() {
                   Top <span className='font-semibold text-blue-cyan'>Bán Chạy</span>
                 </h2>
               </div>
-              <Swiper spaceBetween={10} slidesPerView={width > 768 ? 5 : 2} modules={[Navigation]} navigation>
-                {products?.length &&
+              <Swiper spaceBetween={10} slidesPerView={width > 768 ? 4 : 2} modules={[Navigation]} navigation>
+                {products?.length ? (
                   products?.map((product: Product) => (
                     <SwiperSlide key={product.id} className='relative mb-3.5 bg-white rounded'>
                       <Product product={product} handleClickEye={handleClickEye(product)} />
                     </SwiperSlide>
-                  ))}
+                  ))
+                ) : (
+                  <Skeleton active className='h-96' />
+                )}
               </Swiper>
             </div>
           </Row>
@@ -303,7 +352,6 @@ export function Home() {
                                 ? 'Đã diễn ra'
                                 : 'Sắp diễn ra'}
                           </div>
-
                         </div>
                       </Tab>
                     ))}
@@ -318,28 +366,31 @@ export function Home() {
                         className={` overflow-hidden ${tabIndex === index ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0'}`}
                       >
                         <div className='block'>
-                          {saleProductsInTabIndex &&
-                            (saleProductsInTabIndex[index]?.length > 0 ? (
+                          {saleProductsInTabIndex.length ? (
+                            saleProductsInTabIndex[index]?.length > 0 ? (
                               <Swiper
                                 spaceBetween={10}
-                                slidesPerView={width > 768 ? 5 : 2}
+                                slidesPerView={width > 768 ? 4 : 2}
                                 modules={[Navigation]}
                                 navigation
                               >
-                                {saleProductsInTabIndex[index].map((product, productIndex) => (
-                                  <SwiperSlide key={productIndex} className='relative mb-3 bg-white p-2.5 rounded-lg'>
-                                    <Product product={product} />
+                                {saleProductsInTabIndex[index].map((product) => (
+                                  <SwiperSlide key={product.id} className='relative mb-3 bg-white p-2.5 rounded-lg'>
+                                    <Product product={product} handleClickEye={handleClickEye(product)} />
                                   </SwiperSlide>
                                 ))}
                               </Swiper>
                             ) : (
-                              <div className='flex flex-col justify-center items-center h-96'>
+                              <div className='flex flex-col justify-center items-center h-96 my-2'>
                                 <span className='text-7xl text-white block'>{icons.info.white}</span>
-                                <span className='text-white text-xl mt-5'>
+                                <span className='text-white text-xl'>
                                   Không có sản phẩm nào được giảm giá vào khung giờ này
                                 </span>
                               </div>
-                            ))}
+                            )
+                          ) : (
+                            <Skeleton active className='h-96' />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -365,7 +416,10 @@ export function Home() {
                     Men's
                   </p>
                 </div>
-                <Link to='/products?keyword=nam' className='absolute inset-0 cursor-pointer'></Link>
+                <Link
+                  to='/products?page=1&limit=12&categoryGender=Nam'
+                  className='absolute inset-0 cursor-pointer'
+                ></Link>
               </div>
             </div>
             <div className='lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2'>
@@ -380,7 +434,10 @@ export function Home() {
                     Women's
                   </p>
                 </div>
-                <Link to='/products?keyword=nam' className='absolute inset-0 cursor-pointer'></Link>
+                <Link
+                  to='/products?page=1&limit=12&categoryGender=Nữ'
+                  className='absolute inset-0 cursor-pointer'
+                ></Link>
               </div>
             </div>
             <div className='lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2'>
@@ -395,7 +452,10 @@ export function Home() {
                     Kid's
                   </p>
                 </div>
-                <Link to='/products?keyword=nam' className='absolute inset-0 cursor-pointer'></Link>
+                <Link
+                  to='/products?page=1&limit=12&categoryGender=Trẻ+em'
+                  className='absolute inset-0 cursor-pointer'
+                ></Link>
               </div>
             </div>
             <div className='lg:w-3/12 md:w-3/12 sm:w-6/12 w-6/12 px-2'>
@@ -410,7 +470,10 @@ export function Home() {
                     Gym's
                   </p>
                 </div>
-                <Link to='/products?keyword=nam' className='absolute inset-0 cursor-pointer'></Link>
+                <Link
+                  to='/products?page=1&limit=12&categoryType=Gym'
+                  className='absolute inset-0 cursor-pointer'
+                ></Link>
               </div>
             </div>
           </Row>
@@ -435,15 +498,18 @@ export function Home() {
                   <TabPanel>
                     <div className='p-0 m-2.5'>
                       <div
-                        className={`${tabProductIndex === 0 ? 'opacity-100 visible h-auto w-full' : 'opacity-0 invisible h-0 overflow-hidden'}`}
+                        className={`${tabProductIndex === 0 ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 overflow-hidden'}`}
                       >
                         <Swiper spaceBetween={10} slidesPerView={width > 768 ? 4 : 2} modules={[Navigation]} navigation>
-                          {maleProducts.length &&
-                            maleProducts?.map((product: Product) => (
+                          {maleProducts.length ? (
+                            maleProducts?.map((product) => (
                               <SwiperSlide key={product.id} className='relative mb-3.5 bg-white rounded lg:!w-[24%]'>
                                 <Product product={product} handleClickEye={handleClickEye(product)} />
                               </SwiperSlide>
-                            ))}
+                            ))
+                          ) : (
+                            <Skeleton active className='h-96' />
+                          )}
                         </Swiper>
                       </div>
                     </div>
@@ -453,24 +519,17 @@ export function Home() {
                       <div
                         className={`${tabProductIndex === 1 ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 overflow-hidden'}`}
                       >
-                        <div className='block'>
-                          <Swiper
-                            spaceBetween={0}
-                            slidesPerView={width > 768 ? 4 : 2}
-                            modules={[Navigation]}
-                            navigation
-                          >
-                            {femaleProducts.length &&
-                              femaleProducts?.map((product) => (
-                                <SwiperSlide
-                                  key={product.id}
-                                  className='relative mb-3 bg-white p-2.5 rounded-lg !w-1/4'
-                                >
-                                  <Product product={product} />
-                                </SwiperSlide>
-                              ))}
-                          </Swiper>
-                        </div>
+                        <Swiper spaceBetween={10} slidesPerView={width > 768 ? 4 : 2} modules={[Navigation]} navigation>
+                          {femaleProducts.length ? (
+                            femaleProducts?.map((product) => (
+                              <SwiperSlide key={product.id} className='relative mb-3.5 bg-white rounded lg:!w-[24%]'>
+                                <Product product={product} handleClickEye={handleClickEye(product)} />
+                              </SwiperSlide>
+                            ))
+                          ) : (
+                            <Skeleton active className='h-96' />
+                          )}
+                        </Swiper>
                       </div>
                     </div>
                   </TabPanel>
@@ -479,24 +538,17 @@ export function Home() {
                       <div
                         className={`${tabProductIndex === 2 ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 overflow-hidden'}`}
                       >
-                        <div className='block'>
-                          <Swiper
-                            spaceBetween={0}
-                            slidesPerView={width > 768 ? 4 : 2}
-                            modules={[Navigation]}
-                            navigation
-                          >
-                            {kidProducts.length &&
-                              kidProducts?.map((product) => (
-                                <SwiperSlide
-                                  key={product.id}
-                                  className='relative mb-3 bg-white p-2.5 rounded-lg !w-1/4'
-                                >
-                                  <Product product={product} />
-                                </SwiperSlide>
-                              ))}
-                          </Swiper>
-                        </div>
+                        <Swiper spaceBetween={10} slidesPerView={width > 768 ? 4 : 2} modules={[Navigation]} navigation>
+                          {kidProducts.length ? (
+                            kidProducts?.map((product) => (
+                              <SwiperSlide key={product.id} className='relative mb-3.5 bg-white rounded lg:!w-[24%]'>
+                                <Product product={product} handleClickEye={handleClickEye(product)} />
+                              </SwiperSlide>
+                            ))
+                          ) : (
+                            <Skeleton active className='h-96' />
+                          )}
+                        </Swiper>
                       </div>
                     </div>
                   </TabPanel>
@@ -507,7 +559,7 @@ export function Home() {
                       <div
                         className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 0 ? 'border-blue-cyan' : 'border-gray-500'}`}
                       >
-                        <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[1]} alt='tab nam' />
+                        <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[2]} alt='tab nu' />
                       </div>
                       <p className='my-0 leading-4'>
                         Thời trang Nam
@@ -517,7 +569,7 @@ export function Home() {
                       </p>
                     </Tab>
                     <Tab
-                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 ${tabProductIndex === 1 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
+                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 1 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
                     >
                       <div
                         className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 1 ? 'border-blue-cyan' : 'border-gray-500'}`}
@@ -532,12 +584,16 @@ export function Home() {
                       </p>
                     </Tab>
                     <Tab
-                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 ${tabProductIndex === 2 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
+                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 2 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
                     >
                       <div
                         className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 2 ? 'border-blue-cyan' : 'border-gray-500'}`}
                       >
-                        <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[3]} alt='tab gym' />
+                        <img
+                          className='border-0 max-w-full h-auto bg-transparent'
+                          src={tabImages[3]}
+                          alt='tab tre em'
+                        />
                       </div>
                       <p className='my-0 leading-4'>
                         Thời trang Trẻ em
@@ -575,12 +631,15 @@ export function Home() {
               </h2>
             </div>
             <Swiper modules={[Navigation]} spaceBetween={10} slidesPerView={width > 768 ? 4 : 2} navigation>
-              {products.length &&
-                products.map((product) => (
+              {kidProducts.length ? (
+                kidProducts.map((product) => (
                   <SwiperSlide key={product.id} className='relative mb-4 bg-white p-2.5 rounded-md'>
                     <Product product={product} handleClickEye={handleClickEye(product)} />
                   </SwiperSlide>
-                ))}
+                ))
+              ) : (
+                <Skeleton active className='h-96' />
+              )}
             </Swiper>
           </Row>
         </div>
@@ -633,6 +692,6 @@ export function Home() {
           </Row>
         </div>
       </section>
-    </div>
+    </>
   )
 }

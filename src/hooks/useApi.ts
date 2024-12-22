@@ -35,6 +35,8 @@ export const useApi = <T>(): UseApiRequestReturn<T> => {
       const errorStatus = axiosError.response?.data?.status
       if (errorStatus === 429) {
         setErrorMessage('Bạn đang gửi yêu cầu lên server quá nhiều!!!')
+      } else if (errorStatus === 401) {
+        setErrorMessage(errorResponseCases['Login'])
       } else {
         setErrorMessage(
           errorCode && errorResponseCases[errorCode] ? errorResponseCases[errorCode] : errorResponseCases['All']
