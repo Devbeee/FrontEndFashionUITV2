@@ -13,4 +13,7 @@ export const blogApi = {
     getAuthors: async () => {
         return axiosClient.get('/blogs/authors');
     },
+    getOne: async (slug : string) => {
+        return axiosClient.get(`/blogs/${slug}`);
+    },
 }
