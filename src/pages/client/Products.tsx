@@ -25,15 +25,14 @@ export const AllProducts: React.FC = () => {
   const sideBarVisible = useBoolean(window.innerWidth > 980)
 
   const [selectedFilter, setSelectedFilter] = useState<string[]>([])
-  const [products, setProducts] = useState<IProduct[]>([])
+  const [products, setProducts] = useState<IProduct[] | null>(null)
   const [totalProducts, setTotalProducts] = useState(0)
-  const [limit] = useState(12)
   const [currentPage, setCurrentPage] = useState(1)
   const {value: initialRender, setFalse: setFalseInitial, setTrue: setTrueInitial} = useBoolean(true)
   const {value: isUpdate, setFalse: setFalseUpdate} = useBoolean(true)
 
   const handleChangePage = (page: number) => {
-    updateSearchParams(page, limit);
+    updateSearchParams(page);
     setCurrentPage(page);
   };
 
@@ -46,10 +45,9 @@ export const AllProducts: React.FC = () => {
   })
   const { loading, callApi: callApiGetProduct } = useApi<void>()
 
-  const getProducts = async (page: number, limit: number) => {
+  const getProducts = async (page: number) => {
     const params: IGetProductsParams = {
       page,
-      limit,
       ...(query.sortStyle && { sortStyle: query.sortStyle }),
       ...(query.categoryGender && { categoryGender: query.categoryGender }),
       ...(query.price.length > 0 && { price: query.price.join(',') }),
@@ -104,10 +102,9 @@ export const AllProducts: React.FC = () => {
     );
   }
 
-  const updateSearchParams = (page: number, limit: number) => {
+  const updateSearchParams = (page: number) => {
     setSearchParams({
       page: page.toString(),
-      limit: limit.toString(),
       ...(query.sortStyle && { sortStyle: query.sortStyle }),
       ...(query.categoryGender && { categoryGender: query.categoryGender }),
       ...(query.price.length > 0 && { price: query.price.join(',') }),
@@ -143,14 +140,14 @@ export const AllProducts: React.FC = () => {
   
   useEffect(() => {
     if (!isUpdate) {
-      updateSearchParams(currentPage, limit);
+      updateSearchParams(currentPage);
     } else {
       setFalseUpdate();
     }
 
     if (!initialRender) {
       setTrueInitial();
-      getProducts(currentPage, limit);
+      getProducts(currentPage);
     }
   }, [query]);
 
@@ -272,11 +269,11 @@ export const AllProducts: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ) : products.length === 0 ? (
+            ) : products && products.length === 0 ? (
               <div className={'w-full flex justify-center'}>
                 <div className={'text-2xl font-semibold text-gray-400'}>Không có sản phẩm phù hợp</div>
               </div>
-            ) : products.map((product: IProduct) => (
+            ) : products?.map((product: IProduct) => (
               <div className={'md:w-[23.5%] mt-2 w-[46%]'} key={product.id}>
                 <Product
                   product={product}
@@ -293,7 +290,7 @@ export const AllProducts: React.FC = () => {
               defaultCurrent={1}
               current={currentPage}
               total={totalProducts}
-              pageSize={limit}
+              pageSize={12}
               onChange={handleChangePage}
               showSizeChanger={false}
             />
