@@ -65,7 +65,7 @@ export function Blog() {
       setChoosedAuthors(params.authors);
       setCreateDateRange(params.createDateRange);
       setSearch(params.keyword || '');
-      callGetBlogsApi(async () => {
+      await callGetBlogsApi(async () => {
         const response = await blogApi.getAll(params);
         setBlogs(response.data.data);
         setTotalRecords(response.data.total);
@@ -82,7 +82,7 @@ export function Blog() {
   const getAuthors = async () => {
     try {
       setLoadingAuthors(true);
-      callGetBlogsApi(async () => {
+      await callGetBlogsApi(async () => {
         const response = await blogApi.getAuthors();
         setAllAuthors(response.data);
       });
@@ -148,7 +148,7 @@ export function Blog() {
 
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white">
-      <div className="flex flex-row flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
+      <div className="flex flex-col lg:flex-row flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
         <div className="flex-1 flex flex-col gap-5">
           <div className='flex items-center'>
             <div className='w-full p-4 bg-gray-100 text-blue-cyan rounded border'>
@@ -165,11 +165,10 @@ export function Blog() {
             <div className='w-full p-4 bg-gray-100 text-blue-cyan rounded border'>
               <div className="flex flex-col justify-center items-start gap-2">
                 <span className='font-bold uppercase'>Ngày tạo</span>
-                <div className='flex justify-center items-center gap-1'>
+                <div className='flex justify-center items-center gap-1 w-full'>
                   <DatePicker.RangePicker
                     value={createDateRange && createDateRange.length>0 ? [dayjs(createDateRange[0]), dayjs(createDateRange[1])] : undefined}
                     placeholder={['', 'Hôm nay']}
-                    defaultValue={[dayjs().startOf('day'), dayjs().endOf('day')] as [Dayjs, Dayjs]}
                     allowEmpty={[false, true]}
                     disabledDate={(current) => current && current > dayjs().endOf('day')}
                     onChange={(date) => {
@@ -240,7 +239,7 @@ export function Blog() {
                   </div>
                 ) :
                   <div className='flex flex-col gap-5 justify-between items-center'>
-                    <div className="grid grid-cols-3 gap-4 min-h-[65vh]">
+                    <div className="text-center grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 min-h-[65vh]">
                       {blogs.map((blog) => (
                         <NewsCard blog={blog} />
                       ))}
