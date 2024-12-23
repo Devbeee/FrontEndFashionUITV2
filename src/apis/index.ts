@@ -5,3 +5,5 @@ export * from './address.api'
 
 export * from './product.api'
 export * from './cart.api'
+export * from './order.api'
+export * from './checkout.api'
