@@ -116,21 +116,6 @@ export function Checkout() {
     setCurrentProvinces(provincesList)
   }
 
-  useEffect(() => {
-    let mounted = true
-
-    if (mounted) {
-      fetchAddresses()
-      fetchDefaultAddress()
-      if (currentProvinces.length <= 0) fetchProvinces()
-      setCheckoutObj({ checkoutItems: location?.state?.checkoutItems, totalPrice: location?.state?.totalPrice })
-    }
-
-    return () => {
-      mounted = false
-    }
-  }, [])
-
   const handleChangePaymentMethod = (value: PaymentMethod) => {
     setPaymentMethod(value)
   }
@@ -211,6 +196,20 @@ export function Checkout() {
       handleCreateStripeOrder()
     }
   }
+  useEffect(() => {
+    let mounted = true
+
+    if (mounted) {
+      fetchAddresses()
+      fetchDefaultAddress()
+      if (currentProvinces.length <= 0) fetchProvinces()
+      setCheckoutObj({ checkoutItems: location?.state?.checkoutItems, totalPrice: location?.state?.totalPrice })
+    }
+
+    return () => {
+      mounted = false
+    }
+  }, [])
   return (
     <div className='xl:w-1200 mx-auto my-2'>
       <h1 className='uppercase text-left font-bold p-3 bg-gray-100'>Đơn hàng của bạn</h1>
@@ -222,7 +221,7 @@ export function Checkout() {
               <div className='justify-self-start w-full'>
                 <div className='flex items-center justify-between w-full'>
                   <div className='font-semibold justify-self-start flex gap-2'>
-                    <span className='text-red-600 text-2xl'>{icons.filledLocation}</span>{' '}
+                    <span className='text-red-600 text-2xl'>{icons.filledLocation}</span>
                     <span className='text-lg text-red-800'>Địa chỉ nhận hàng:</span>
                   </div>
                   {selectedAddress ? (
@@ -268,7 +267,7 @@ export function Checkout() {
                     </div>
                     <div className='justify-self-start text-slate-700'>Đảm bảo nhận hàng sau 3-5 ngày</div>
                   </div>
-                  <div className='w-0 border-dashed border-r-[1px] border-gray-400'></div>
+                  <div className='w-0 border-dashed border-r border-gray-400'></div>
                   <div className='flex items-end flex-col'>
                     <div className='line-through text-gray-500'>16.000đ</div>
                     <div className='font-semibold'>0đ</div>
@@ -309,7 +308,7 @@ export function Checkout() {
                       alt='MÃ GIẢM GIÁ'
                       src='//bizweb.dktcdn.net/100/451/884/themes/857425/assets/code_dis.gif?1727683533447'
                       className='max-w-6 mix-blend-multiply align-middle'
-                    />{' '}
+                    />
                     <span className='uppercase font-semibold text-amber-700'>Mã giảm giá:</span>
                   </div>
                   <Input
@@ -386,7 +385,7 @@ export function Checkout() {
                       <Button
                         size='large'
                         className='w-[97%] h-12 text-lg font-semibold rounded-md bg-green-600 text-white hover:!bg-green-600 hover:opacity-90 disabled:bg-green-600 disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white border-green-600 border-solid
-                        border-[1px] '
+                        border '
                         type='primary'
                         disabled={checkoutObj?.checkoutItems?.length ? false : true}
                         onClick={handleCreateOrder}

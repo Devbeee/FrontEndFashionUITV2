@@ -1,7 +1,9 @@
+import React from 'react'
+
+import { Button, Col, Modal, Row, Table, TableColumnsType } from 'antd'
+
 import { IAddressReturn, IUseBoolean } from '@/interfaces'
 import { icons } from '@/utils'
-import { Button, Col, Modal, Row, Table, TableColumnsType } from 'antd'
-import React from 'react'
 
 type SelectAddressModalProps = {
   modalControl: IUseBoolean

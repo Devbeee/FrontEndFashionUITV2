@@ -91,10 +91,10 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
     callOrderApi(async () => {
       const data = await checkoutApi.verifyPayment(defaultData.id)
       if (data) {
-        if (data.data.status == 'success') {
+        if (data.data.status == 'SUCCESS') {
           message.success('Xác nhận thành công. Đơn hàng đã được thanh toán!')
-          fetchOrders()
           modalControl.setFalse()
+          fetchOrders()
         } else {
           message.error('Xác nhận thất bại. Đơn hàng chưa được thanh toán!!')
           modalControl.setFalse()
@@ -278,8 +278,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
             )}
             <div className='flex items-end gap-2'>
               <div className='font-bold text-base'>
-                {' '}
-                {windowSize.width > 640 ? 'Tình trạng đơn hàng:' : 'Tình trạng:'}{' '}
+                {windowSize.width > 640 ? 'Tình trạng đơn hàng:' : 'Tình trạng:'}
               </div>
               <div
                 className={`font-semibold text-base ${[OrderStatus.Delivered, OrderStatus.Confirmed, OrderStatus.Delivering].includes(order.orderStatus) ? 'text-green-500' : order?.orderStatus === OrderStatus.Pending ? 'text-slate-500' : 'text-red-500'}`}
@@ -289,9 +288,11 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
             </div>
             <div className='justify-start items-start flex flex-col gap-2'>
               <div className='text-lg font-bold'>Lời nhắn:</div>
-              <div className='border-[1px] border-gray-300 border-solid h-20 overflow-y-scroll w-full bg-gray-100 px-2 py-1'>
-                {order?.message}
-              </div>
+              {order?.message && (
+                <div className='border-[1px] border-gray-300 border-solid h-20 overflow-y-scroll w-full bg-gray-100 px-2 py-1'>
+                  {order?.message}
+                </div>
+              )}
             </div>
           </div>
           <div className='w-full border-[1px] border-gray-400 border-solid'>

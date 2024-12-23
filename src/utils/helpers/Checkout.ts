@@ -12,16 +12,6 @@ export const getOrderStatusByEnum = (orderEnum: OrderStatus) => {
           : 'Đã hủy'
 }
 
-export const sortByEnumMapping = (value?: string) => {
-  const stringToEnumMapping: Record<string, SortOptions> = {
-    'date-decrease': SortOptions.DateDecrease,
-    'date-increase': SortOptions.DateIncrease,
-    'price-decrease': SortOptions.PriceDecrease,
-    'price-increase': SortOptions.PriceIncrease
-  }
-  return value ? stringToEnumMapping[value] : SortOptions.DateDecrease
-}
-
 export const filterEnumMapping = (value?: string) => {
   const stringToEnumMapping: Record<string, FilterOptions> = {
     delivering: FilterOptions.Delivering,

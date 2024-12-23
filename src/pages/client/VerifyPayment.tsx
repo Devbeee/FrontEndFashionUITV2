@@ -25,7 +25,7 @@ export const VerifyPayment = () => {
       initialized.current = true
       if (orderId && sessionId) {
         callOrderApi(async () => {
-          const data = await checkoutApi.verifyPayment(orderId, sessionId)
+          const data = await checkoutApi.verifyPayment(orderId)
           if (data) {
             setStatus(data.data)
             if (data.data.status === VerifyPaymentStatus.Success) {

@@ -1,5 +1,5 @@
-import { IAddressReturn } from '@/interfaces/address.interface'
-import { OrderStatus, PaymentMethod, PaymentStatus } from '@/utils'
+import { IAddressReturn } from './address.interface'
+import { FilterOptions, OrderStatus, PaymentMethod, PaymentStatus, SortOptions } from '@/utils'
 
 export interface IOrder {
   products: {
@@ -34,4 +34,11 @@ export interface IOrderReturn {
   createdAt: string
   paidAt: string
   totalPrice: number
+}
+export interface IOrderQuery {
+  page: number
+  limit: number
+  keyword?: string
+  sortBy?: SortOptions
+  filter?: FilterOptions
 }

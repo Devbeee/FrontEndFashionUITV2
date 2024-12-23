@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import {
   Col,
@@ -18,16 +18,14 @@ import {
 import { orderApi } from '@/apis'
 import { OrderDetailModal } from '@/components'
 import { useApi, useBoolean, useWindowSize } from '@/hooks'
-import { IOrderReturn } from '@/interfaces'
+import { IOrderQuery, IOrderReturn } from '@/interfaces'
 import {
   ConvertDateString,
   ConvertTimeString,
-  filterEnumMapping,
   FilterOptions,
   getOrderStatusByEnum,
   icons,
   OrderStatus,
-  sortByEnumMapping,
   SortOptions
 } from '@/utils'
 
@@ -39,26 +37,23 @@ type PaginationType = {
 }
 
 export const Orders = () => {
-  const location = useLocation()
   const viewOrderModalControl = useBoolean()
-  const navigate = useNavigate()
   const windowSize = useWindowSize()
 
-  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const queryParamPage = parseInt(queryParams.get('page') || '1')
-  const queryParamLimit = parseInt(queryParams.get('limit') || '4')
-  const queryParamSortBy = sortByEnumMapping(queryParams.get('sortBy') ?? undefined)
-  const queryParamFilter = filterEnumMapping(queryParams.get('filter') ?? FilterOptions.None)
-
-  const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
-
+  const [searchParam, setSearchParam] = useSearchParams()
   const [orders, setOrders] = useState<IOrderReturn[]>([])
   const [selectedOrder, setSelectedOrder] = useState<IOrderReturn>()
   const [pagination, setPagination] = useState<PaginationType>({})
-  const [inputKeyword, setInputKeyword] = useState<string>(queryParams.get('keyword') ?? '')
-  const [currentKeyword, setCurrentKeyword] = useState<string>(queryParams.get('keyword') ?? '')
-  const [currentSortBy, setCurrentSortBy] = useState<SortOptions>(queryParamSortBy)
-  const [currentFilter, setCurrentFilter] = useState<FilterOptions>(queryParamFilter)
+  const [inputKeyword, setInputKeyword] = useState<string>(searchParam.get('keyword') || '')
+  const [currentSearchParams, setCurrentSearchParams] = useState<IOrderQuery>({
+    page: parseInt(searchParam.get('page') || '1'),
+    limit: parseInt(searchParam.get('limit') || '5'),
+    sortBy: (searchParam.get('sortBy') as SortOptions) ?? SortOptions.DateDecrease,
+    filter: (searchParam.get('filter') as FilterOptions) ?? FilterOptions.None,
+    keyword: searchParam.get('keyword') ?? ''
+  })
+
+  const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
 
   const hanldeSelectOrder = (order: IOrderReturn) => {
     setSelectedOrder(order)
@@ -239,63 +234,65 @@ export const Orders = () => {
     ],
     [callOrderApiLoading]
   )
-  const getNavigateParams = (limit: number = 4, keyword?: string, sortBy?: SortOptions, filter?: FilterOptions) => {
-    return {
-      sortBy: sortBy ? `&sortBy=${sortBy}` : '',
-      filter: filter ? `&filter=${filter}` : '',
-      limit: limit ? `&limit=${limit}` : '',
-      keyword: keyword ? `&keyword=${keyword}` : ''
-    }
+  const getSearchParams = (params: IOrderQuery) => {
+    const queryString = [
+      `page=${params.page}`,
+      `limit=${params.limit}`,
+      params.keyword && `keyword=${params.keyword}`,
+      params.sortBy && `sortBy=${params.sortBy}`,
+      params.filter && `filter=${params.filter}`
+    ]
+      .filter(Boolean)
+      .join('&')
+    return `?${queryString}`
   }
-  const fetchOrders = (
-    page: number = 1,
-    limit: number = 4,
-    keyword?: string,
-    sortBy?: SortOptions,
-    filter?: FilterOptions
-  ) => {
+  const fetchOrders = (params: IOrderQuery) => {
     callOrderApi(async () => {
-      const data = await orderApi.getOrders(page, limit, keyword, sortBy, filter)
+      const data = await orderApi.getOrders(params)
       if (data) {
         setOrders(data?.data?.orders || [])
         setPagination(data?.data?.pagination || {})
-        const param = getNavigateParams(limit, keyword, sortBy, filter)
-        navigate(
-          `?page=${data?.data?.pagination?.currentPage}${param.limit}${param.keyword}${param.sortBy}${param.filter}`
-        )
+        const search = getSearchParams(params)
+        setSearchParam(search, { replace: true })
+        setCurrentSearchParams(params)
       } else {
         message.error('Đã xảy ra lỗi khi lấy thông tin đơn hàng!')
       }
     })
   }
   const fetchOrderWithCurrentParams = () => {
-    fetchOrders(
-      queryParamPage,
-      queryParamLimit,
-      currentKeyword ? currentKeyword : undefined,
-      currentSortBy,
-      currentFilter
-    )
+    fetchOrders(currentSearchParams)
   }
   const onChangePage: PaginationProps['onChange'] = (page, size) => {
-    if (inputKeyword !== currentKeyword) {
-      setInputKeyword(currentKeyword)
+    if (page !== pagination.currentPage || size != pagination.limit) {
+      if (inputKeyword !== currentSearchParams.keyword) {
+        setInputKeyword(currentSearchParams.keyword || '')
+      }
+      fetchOrders({
+        ...currentSearchParams,
+        page,
+        limit: size
+      })
     }
-    fetchOrders(page, size, currentKeyword, currentSortBy, currentFilter)
   }
   const handleSearchOrder = () => {
-    if (inputKeyword !== currentKeyword) {
-      setCurrentKeyword(inputKeyword)
-      fetchOrders(1, pagination.limit, inputKeyword ? inputKeyword : undefined, currentSortBy, currentFilter)
+    if (inputKeyword !== currentSearchParams.keyword) {
+      setCurrentSearchParams({ ...currentSearchParams, keyword: inputKeyword })
+      fetchOrders({
+        ...currentSearchParams,
+        page: 1,
+        limit: pagination.limit || 5,
+        keyword: inputKeyword ? inputKeyword : undefined
+      })
     }
   }
-  const handleChangeSortOption = (value: SortOptions) => {
-    setCurrentSortBy(value)
-    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, value, currentFilter)
+  const handleChangeSortOption = (sortBy: SortOptions) => {
+    setCurrentSearchParams({ ...currentSearchParams, sortBy: sortBy })
+    fetchOrders({ ...currentSearchParams, sortBy })
   }
-  const handleChangeFilterOption = (value: FilterOptions) => {
-    setCurrentFilter(value)
-    fetchOrders(queryParamPage, queryParamLimit, currentKeyword, currentSortBy, value)
+  const handleChangeFilterOption = (filter: FilterOptions) => {
+    setCurrentSearchParams({ ...currentSearchParams, filter: filter })
+    fetchOrders({ ...currentSearchParams, filter })
   }
   useEffect(() => {
     fetchOrderWithCurrentParams()
@@ -332,7 +329,7 @@ export const Orders = () => {
             <Select
               className='w-28 text-left'
               options={filterOptions}
-              value={currentFilter}
+              value={currentSearchParams.filter}
               onChange={(e) => handleChangeFilterOption(e)}
             />
           </div>
@@ -341,7 +338,7 @@ export const Orders = () => {
             <Select
               className='w-24'
               options={sortOptions}
-              value={currentSortBy}
+              value={currentSearchParams.sortBy}
               onChange={(e) => handleChangeSortOption(e)}
             />
           </div>

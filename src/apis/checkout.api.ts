@@ -9,10 +9,8 @@ export const checkoutApi = {
   createStripeUrl: async (orderData: IOrder) => {
     return await axiosClient.post('/stripe/create-payment-url', orderData)
   },
-  verifyPayment: async (orderId: string, sessionId?: string) => {
-    return await axiosClient.patch(
-      `/stripe/verify-payment/?orderId=${orderId}${sessionId ? `&sessionId=${sessionId}` : ''}`
-    )
+  verifyPayment: async (orderId: string) => {
+    return await axiosClient.patch(`/stripe/verify-payment/${orderId}`)
   },
   createRepayStripeUrl: async (orderId: string) => {
     return await axiosClient.post('/stripe/create-repay-url', { orderId })
