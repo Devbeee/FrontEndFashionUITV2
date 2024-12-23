@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { message, Spin } from 'antd'
 import Lottie from 'react-lottie'
@@ -12,11 +12,9 @@ import { PATH, VerifyPaymentStatus } from '@/utils'
 
 export const VerifyPayment = () => {
   const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
-
+  const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<{ status: VerifyPaymentStatus; message: string }>()
   const navigate = useNavigate()
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
   const orderId = searchParams.get('orderId')
   const sessionId = searchParams.get('sessionId')
   const initialized = useRef(false)
@@ -45,31 +43,21 @@ export const VerifyPayment = () => {
     }
   }, [])
 
-  const failOptions = {
-    loop: false,
-    autoplay: true,
-    animationData: failAnimationData,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
+  const getLottieAnimation = (status: VerifyPaymentStatus) => {
+    return {
+      loop: false,
+      autoplay: true,
+      animationData: status === VerifyPaymentStatus.Failed ? successAnimationData : successAnimationData,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
     }
   }
-  const successOptions = {
-    loop: false,
-    autoplay: true,
-    animationData: successAnimationData,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  }
-
   return !callOrderApiLoading ? (
     <div>
-      <Lottie
-        options={status?.status === VerifyPaymentStatus.Failed ? failOptions : successOptions}
-        height={400}
-        width={400}
-        isStopped={false}
-      />
+      {status?.status && (
+        <Lottie options={getLottieAnimation(status?.status)} height={400} width={400} isStopped={false} />
+      )}
       {status?.status === VerifyPaymentStatus.Failed && (
         <div className='mb-10 delay-75'>
           <div className='text-3xl text-red-600 font-bold uppercase'>{status.message}</div>

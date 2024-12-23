@@ -235,23 +235,16 @@ export const Orders = () => {
     [callOrderApiLoading]
   )
   const getSearchParams = (params: IOrderQuery) => {
-    const queryString = [
-      `page=${params.page}`,
-      `limit=${params.limit}`,
-      params.keyword && `keyword=${params.keyword}`,
-      params.sortBy && `sortBy=${params.sortBy}`,
-      params.filter && `filter=${params.filter}`
-    ]
-      .filter(Boolean)
-      .join('&')
+    const filteredParams = Object.fromEntries(Object.entries(params).filter(([, value]) => value))
+    const queryString = new URLSearchParams(filteredParams as Record<string, string>).toString()
     return `?${queryString}`
   }
   const fetchOrders = (params: IOrderQuery) => {
     callOrderApi(async () => {
-      const data = await orderApi.getOrders(params)
+      const { data } = await orderApi.getOrders(params)
       if (data) {
-        setOrders(data?.data?.orders || [])
-        setPagination(data?.data?.pagination || {})
+        setOrders(data?.orders || [])
+        setPagination(data?.pagination || {})
         const search = getSearchParams(params)
         setSearchParam(search, { replace: true })
         setCurrentSearchParams(params)
