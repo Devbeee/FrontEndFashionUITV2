@@ -198,7 +198,6 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                 -
               </Button>
               <Input
-                placeholder=''
                 value={count}
                 onChange={(e) => handleInputChange(e.target.value)}
                 className='w-20 border border-blue-cyan text-center'

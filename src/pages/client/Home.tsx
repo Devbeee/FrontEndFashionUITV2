@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Carousel, Row, Skeleton } from 'antd'
 import { Link } from 'react-router-dom'
-import pLimit from 'p-limit'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation } from 'swiper/modules'
@@ -193,6 +192,18 @@ export function Home() {
     })
   }
 
+  const tabData = [
+    { timeRangeDesktop: '00:00 - 06:00', timeRangeMobile: '0h - 6h', start: 0, end: 6 },
+    { timeRangeDesktop: '06:00 - 12:00', timeRangeMobile: '6h - 12h', start: 6, end: 12 },
+    { timeRangeDesktop: '12:00 - 18:00', timeRangeMobile: '12h - 18h', start: 12, end: 18 },
+    { timeRangeDesktop: '18:00 - 24:00', timeRangeMobile: '18h - 24h', start: 18, end: 24 }
+  ]
+
+  const getStatus = (currentHour: number, start: number, end: number, status: boolean) => {
+    if (currentHour >= start && currentHour < end) return 'Đang diễn ra'
+    return status ? 'Đã diễn ra' : 'Sắp diễn ra'
+  }
+
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
 
@@ -201,18 +212,13 @@ export function Home() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
   useEffect(() => {
-    const limit = pLimit(1)
 
     const fetchProducts = async () => {
-      try {
-        await limit(() => getProducts())
-        await limit(() => getDiscountProducts())
-        await limit(() => getMaleProducts())
-        await limit(() => getFemaleProducts())
-        await limit(() => getKidProducts())
-      } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error)
-      }
+      getProducts()
+      getDiscountProducts()
+      getMaleProducts()
+      getFemaleProducts()
+      getKidProducts()
     }
 
     fetchProducts()
@@ -330,27 +336,21 @@ export function Home() {
               <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
                 <div className='block'>
                   <TabList className='flex h-16 items-center justify-center rounded-t w-full text-center'>
-                    {[0, 1, 2, 3].map((index) => (
+                    {tabData.map((tab, index) => (
                       <Tab
                         key={index}
-                        className={`relative md:p-1 font-semibold h-16 rounded-t-lg flex-1 cursor-pointer mr-0 ${tabIndex === index ? 'bg-red-800 text-white border-none outline-none' : 'text-slate-800 bg-white border-r border-gray-600'}`}
+                        className={`relative md:p-1 font-semibold h-16 rounded-t-lg flex-1 cursor-pointer mr-0 ${
+                          tabIndex === index
+                            ? 'bg-red-800 text-white border-none outline-none'
+                            : 'text-slate-800 bg-white border-r border-gray-600'
+                        }`}
                       >
                         <div className='mt-2 md:mt-0'>
                           <div className='m-0 p-0 border-none rounded-none border border-transparent opacity-100 bg-transparent text-inherit font-bold md:text-xl text-sm overflow-hidden inline-block line-clamp-1 transition-colors duration-300 ease-linear'>
-                            {index === 0 && (width >= 768 ? '00:00 - 06:00' : '0h - 6h')}
-                            {index === 1 && (width >= 768 ? '06:00 - 12:00' : '6h - 12h')}
-                            {index === 2 && (width >= 768 ? '12:00 - 18:00' : '12h - 18h')}
-                            {index === 3 && (width >= 768 ? '18:00 - 24:00' : '18h - 24h')}
+                            {width >= 768 ? tab.timeRangeDesktop : tab.timeRangeMobile}
                           </div>
                           <div className='m-0 p-0 border-none rounded-none border border-transparent opacity-100 bg-transparent text-inherit font-medium md:text-sm text-xs overflow-hidden block line-clamp-1 transition-colors duration-300 ease-linear'>
-                            {(index === 0 && currentTime.getHours() >= 0 && currentTime.getHours() < 6) ||
-                            (index === 1 && currentTime.getHours() >= 6 && currentTime.getHours() < 12) ||
-                            (index === 2 && currentTime.getHours() >= 12 && currentTime.getHours() < 18) ||
-                            (index === 3 && currentTime.getHours() >= 18 && currentTime.getHours() < 24)
-                              ? 'Đang diễn ra'
-                              : status[index]
-                                ? 'Đã diễn ra'
-                                : 'Sắp diễn ra'}
+                            {getStatus(currentTime.getHours(), tab.start, tab.end, status[index])}
                           </div>
                         </div>
                       </Tab>
