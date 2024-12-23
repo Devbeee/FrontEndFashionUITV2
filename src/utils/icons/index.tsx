@@ -5,7 +5,7 @@ import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { FaGift, FaPlus, FaFilter, FaMinus, FaMapLocationDot, FaLocationDot } from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart, FaSortAmountDown } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
 import { GrNext, GrPrevious } from 'react-icons/gr'
 import { MdOutlineWatchLater } from 'react-icons/md'
@@ -49,5 +49,6 @@ export const icons = {
   },
   map: <FaMapLocationDot />,
   currentLocation: <BiCurrentLocation />,
-  filledLocation: <FaLocationDot />
+  filledLocation: <FaLocationDot />,
+  sort: <FaSortAmountDown />,
 }
