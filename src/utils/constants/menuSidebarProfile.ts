@@ -9,7 +9,7 @@ export const menuSidebar = [
   {
     key: 'orders',
     title: 'Đơn hàng của bạn',
-    linkTo: '/orders'
+    linkTo: PATH.orders
   },
   {
     key: 'changePassword',
@@ -19,6 +19,6 @@ export const menuSidebar = [
   {
     key: 'address',
     title: 'Sổ địa chỉ',
-    linkTo: '/address'
+    linkTo: PATH.address
   }
 ]

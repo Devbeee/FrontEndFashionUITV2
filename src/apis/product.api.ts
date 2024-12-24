@@ -8,9 +8,9 @@ export const productApi = {
     findOneProduct: async (productId: string) => {
         return await axiosClient.get(`/product/${productId}`)
     },
-    getProducts: async ({ page, limit, ...optionalParams }: IGetProductsParams) => {
+    getProducts: async ({ page, ...optionalParams }: IGetProductsParams) => {
         const validParams = Object.fromEntries(
-            Object.entries({ page, limit, ...optionalParams }).filter(([, value]) => value !== undefined)
+            Object.entries({ page,...optionalParams }).filter(([, value]) => value !== undefined)
         ) as Partial<IGetProductsParams>;
     
         const queryString = new URLSearchParams(validParams as Record<string, string>).toString();
