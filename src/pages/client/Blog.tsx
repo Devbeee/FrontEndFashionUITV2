@@ -168,8 +168,7 @@ export function Blog() {
                 <div className='flex justify-center items-center gap-1 w-full'>
                   <DatePicker.RangePicker
                     value={createDateRange && createDateRange.length>0 ? [dayjs(createDateRange[0]), dayjs(createDateRange[1])] : undefined}
-                    placeholder={['', 'Hôm nay']}
-                    allowEmpty={[false, true]}
+                    placeholder={['Từ', 'Đến']}
                     disabledDate={(current) => current && current > dayjs().endOf('day')}
                     onChange={(date) => {
                       handleChangeCreateDateRange(date as [Dayjs, Dayjs]);
