@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import type { MenuProps } from 'antd'
 import { Input, Menu, Dropdown, Badge } from 'antd'
@@ -95,7 +95,7 @@ export function Header() {
             </div>
             <div className='flex items-center space-x-2'>
               <span className='text-xl'>{icons.location}</span>
-              <Link to='/he-thong-cua-hang' className='font-semibold hover:text-blue-600 uppercase'>
+              <Link to='/store-system' className='font-semibold hover:text-blue-600 uppercase'>
                 Hệ thống cửa hàng
               </Link>
             </div>
