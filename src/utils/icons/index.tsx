@@ -1,9 +1,19 @@
 import { LiaPhoneSolid } from 'react-icons/lia'
 import { CiLocationOn, CiSettings } from 'react-icons/ci'
-import { BsSearch, BsSortDown } from 'react-icons/bs'
+import { BsBank2, BsCashStack, BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
-import { FaGift, FaPlus, FaFilter, FaMinus, FaMapLocationDot, FaLocationDot } from 'react-icons/fa6'
+import {
+  FaGift,
+  FaPlus,
+  FaFilter,
+  FaMinus,
+  FaMapLocationDot,
+  FaLocationDot,
+  FaTruck,
+  FaArrowDownLong,
+  FaArrowUpLong
+} from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
 import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
@@ -45,11 +55,13 @@ export const icons = {
   login: <SlLogin />,
   logout: <SlLogout />,
   register: <PiUserPlus />,
-  filter: {
-    white: <FaFilter className='text-white' />,
-    darkBlue: <FaFilter className='text-dark-blue' />
-  },
+  filter: <FaFilter />,
   map: <FaMapLocationDot />,
   currentLocation: <BiCurrentLocation />,
-  filledLocation: <FaLocationDot />
+  filledLocation: <FaLocationDot />,
+  delivery: <FaTruck />,
+  bank: <BsBank2 />,
+  cash: <BsCashStack />,
+  downArrow: <FaArrowDownLong />,
+  upArrow: <FaArrowUpLong />
 }

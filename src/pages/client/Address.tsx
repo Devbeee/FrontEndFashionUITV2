@@ -15,9 +15,9 @@ export const Address = () => {
   const updateModalControl = useBoolean(false)
   const [updatingAddress, setUpdatingAddress] = useState<IAddressReturn>()
   const [defaultAddress, setDefaultAddress] = useState<IAddressReturn>()
+  const [addressesList, setAddressesList] = useState<IAddressReturn[]>()
 
   const { loading: addressLoading, callApi: callApiAddAddress } = useApi<void>()
-  const [addressesList, setAddressesList] = useState<IAddressReturn[]>()
   const { setCurrentProvinces, currentProvinces } = useProvincesStore()
   const windowSize = useWindowSize()
   const fetchAddresses = async () => {
@@ -115,7 +115,7 @@ export const Address = () => {
   return (
     <section className='px-2 xs:px-4 '>
       <div className='flex items-center justify-between w-full'>
-        <div className='text-2xl font-bold xs:text-3xl text-dark-blue'>
+        <div className='text-2xl font-bold xs:text-2xl text-dark-blue'>
           {windowSize.width > 640 ? 'Địa chỉ của bạn' : 'Địa chỉ'}
         </div>
         <div className='w-fit flex items-center'>

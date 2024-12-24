@@ -51,7 +51,6 @@ export interface IVoucher {
 
 export interface IGetProductsParams {
     page: number;
-    limit: number;
     sortStyle?: string;
     categoryGender?: string;
     price?: string;

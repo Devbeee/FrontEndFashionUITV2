@@ -59,6 +59,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
 
   const handleCancel = async () => {
     await reset()
+    mapVisible.setFalse()
     modalControl.setFalse()
   }
   const defaultWardData = {
@@ -211,6 +212,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
             {title}
           </div>
         ]}
+        maskClosable={false}
         open={modalControl.value}
         onOk={handleSubmit(onSubmit)}
         onCancel={handleCancel}

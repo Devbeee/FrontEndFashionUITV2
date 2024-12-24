@@ -10,7 +10,7 @@ export const ProfileLayout = () => {
   return (
     <section className='flex mt-4'>
       <Row className='m-auto w-1200'>
-        <Col span={6}>
+        <Col span={4}>
           <div className='text-left'>
             <h3 className='text-lg font-medium'>TRANG TÀI KHOẢN</h3>
             <span className='text-base font-medium'>Xin chào, </span>
@@ -32,7 +32,7 @@ export const ProfileLayout = () => {
             </ul>
           </div>
         </Col>
-        <Col span={18}>
+        <Col span={20}>
           <Outlet />
         </Col>
       </Row>
