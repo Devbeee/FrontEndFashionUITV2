@@ -27,17 +27,17 @@ export function NewsCard ({ blog } : INewsCardProps) {
             </Link>
         </div>
         <div className="h-44 overflow-hidden py-2 px-3 -mt-8 border rounded-md shadow-md z-50 w-11/12 bg-white">
-          <Title level={5} className="text-center ">
-            <Link to={`/blogs/${blog.slug}`} title={blog.title} className='font-bold line-clamp-2'>
-              <span className='text-blue-cyan hover:text-primary transition duration-300 ease-in-out'>{blog.title}</span>
+          <Title level={5}>
+            <Link to={`/blogs/${blog.slug}`} title={blog.title} className='font-bold h-12 flex justify-center items-center'>
+              <span className='text-blue-cyan hover:text-primary transition duration-300 ease-in-out line-clamp-2'>{blog.title}</span>
             </Link>
           </Title>
-          <Paragraph className="text-xs text-gray-600 text-center my-2 relative">
+          <div className="text-xs text-gray-600 text-center my-2 relative">
             <span className="bg-blue-cyan border border-white text-white px-2 py-[1px] rounded-full z-10 relative">
               {convertStringDate(blog.createdAt)}
             </span>
             <span className="absolute inset-0 border-b-[1px] border-blue-cyan opacity-30 transform -translate-y-1/2"></span>
-          </Paragraph>
+          </div>
           <Paragraph className="text-center text-gray-600 line-clamp-3">
             {blog.description}
           </Paragraph>
