@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Col, Row, Table, Image, Modal, message } from 'antd'
+import { Col, Row, Table, Image, Modal, message, Button } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
 import { useCartStore } from '@/stores'
@@ -47,7 +47,7 @@ export function Cart() {
         <>
           <Row gutter={8}>
             <Col span={6}>
-              <Image src={record.image} alt={record.name} />
+              <Image src={record.imgUrl} alt={record.name} />
             </Col>
             <Col span={18} className='pl-4'>
               <h6 className='text-sm font-medium line-clamp-2'>{record.name}</h6>
@@ -163,13 +163,15 @@ export function Cart() {
       if (data) {
         const cartProducts: ICartProduct[] = data.cartProducts?.map((item: IFetchedCartItem) => ({
           id: item.id,
+          productDetailId: item.productDetail.id,
           name: item.productDetail.product.name,
+          slug: item.productDetail.product.slug,
           price: item.productDetail.product.price,
           discount: item.productDetail.product.discount,
           size: item.productDetail.size,
           color: item.productDetail.colorName,
           quantity: item.quantity,
-          image: item.productDetail.imgUrl,
+          imgUrl: item.productDetail.imgUrl,
           stock: item.productDetail.stock
         }))
         setCartItems(cartProducts)
@@ -348,12 +350,28 @@ export function Cart() {
                         </div>
                       </Col>
                     </Row>
-                    <CustomBtn
-                      className='w-[92%]'
+
+                    <Button
+                      size='large'
+                      className='w-[97%] h-12 text-lg mt-4 font-semibold rounded-md bg-dark-blue text-white hover:!bg-blue-cyan hover:opacity-90 disabled:bg-blue-cyan disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white'
                       type='primary'
                       disabled={checkoutItems.length === 0}
-                      title='Thanh toán'
-                    />
+                    >
+                      <Link
+                        to='/checkout'
+                        state={{
+                          checkoutItems,
+                          totalPrice: checkoutItems.length
+                            ? checkoutItems.reduce(
+                                (acc, item) => acc + (item.price - (item.price * item.discount) / 100) * item.quantity,
+                                0
+                              )
+                            : 0
+                        }}
+                      >
+                        Thanh toán
+                      </Link>
+                    </Button>
                   </Col>
                 </div>
               </Col>

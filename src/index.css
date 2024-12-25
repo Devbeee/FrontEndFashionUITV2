@@ -24,3 +24,6 @@
 .ant-dropdown-menu-item:hover .ant-dropdown-menu-title-content {
   color: #fff !important;
 }
+.ant-table {
+  scrollbar-color: unset !important;
+}
