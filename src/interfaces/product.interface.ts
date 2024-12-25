@@ -28,15 +28,6 @@ export interface IProductComp extends IProduct {
     saleCount?: number;
 }
 
-export interface ICartProduct extends Pick<IProduct, 'name' | 'price' | 'discount'> {
-    id: string;
-    size: string;
-    color: string;
-    quantity: number,
-    image: string,
-}
-
-
 export interface IImage {
     imgUrl: string
 }
@@ -56,4 +47,13 @@ export interface IVoucher {
     discount: number,
     description: string,
     quantity: number
+}
+
+export interface IGetProductsParams {
+    page: number;
+    sortStyle?: string;
+    categoryGender?: string;
+    price?: string;
+    categoryType?: string;
+    colorName?: string;
 }

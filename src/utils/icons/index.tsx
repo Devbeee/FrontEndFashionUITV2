@@ -1,15 +1,25 @@
 import { LiaPhoneSolid } from 'react-icons/lia'
 import { CiLocationOn, CiSettings } from 'react-icons/ci'
-import { BsSearch, BsSortDown } from 'react-icons/bs'
+import { BsBank2, BsCashStack, BsSearch, BsSortDown } from 'react-icons/bs'
 import { SlUser, SlLogin, SlLogout } from 'react-icons/sl'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
-import { FaGift, FaPlus, FaFilter } from 'react-icons/fa6'
+import {
+  FaGift,
+  FaPlus,
+  FaFilter,
+  FaMinus,
+  FaMapLocationDot,
+  FaLocationDot,
+  FaTruck,
+  FaArrowDownLong,
+  FaArrowUpLong
+} from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
 import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
 import { GrNext, GrPrevious } from 'react-icons/gr'
 import { MdOutlineWatchLater } from 'react-icons/md'
-import { BiSolidDiscount } from "react-icons/bi";
+import { BiCurrentLocation, BiSolidDiscount } from 'react-icons/bi'
 import { PiUserPlus } from 'react-icons/pi'
 
 export const icons = {
@@ -25,7 +35,10 @@ export const icons = {
   instagram: <FaInstagram />,
   settings: <CiSettings />,
   eye: <IoEyeOutline />,
-  info: <FiInfo />,
+  info: {
+    white: <FiInfo className='text-white' />,
+    red: <FiInfo className='text-rose-600' />
+  },
   faUser: <FaUser />,
   watch: <MdOutlineWatchLater />,
   heart: <FaRegHeart />,
@@ -35,12 +48,18 @@ export const icons = {
   close: <FiX />,
   nextPage: <GrNext />,
   prevPage: <GrPrevious />,
+  minus: <FaMinus />,
   plus: <FaPlus />,
   login: <SlLogin />,
   logout: <SlLogout />,
   register: <PiUserPlus />,
-  filter: {
-    white: <FaFilter className='text-white' />,
-    darkBlue: <FaFilter className='text-dark-blue' />
-  }
+  filter: <FaFilter />,
+  map: <FaMapLocationDot />,
+  currentLocation: <BiCurrentLocation />,
+  filledLocation: <FaLocationDot />,
+  delivery: <FaTruck />,
+  bank: <BsBank2 />,
+  cash: <BsCashStack />,
+  downArrow: <FaArrowDownLong />,
+  upArrow: <FaArrowUpLong />
 }

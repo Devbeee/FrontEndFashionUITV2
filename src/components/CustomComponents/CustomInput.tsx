@@ -7,11 +7,14 @@ type CustomInputProps = {
   name: string
   control?: any
   errors?: any
+  value?: number
+  maxLength?: number
   label?: string
   placeholder: string
   size: 'large' | 'middle' | 'small'
   className?: string
   type?: string
+  disabled?: boolean
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
   prefixIcon?: JSX.Element
@@ -23,17 +26,20 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   control,
   errors,
   placeholder,
+  value,
+  maxLength,
   size = 'small',
   className,
   prefixIcon = null,
   type = 'text',
+  disabled = false,
   onChange,
   onKeyDown,
-  status,
+  status
 }) => {
   return control ? (
     <Form.Item
-      className='w-full border-0 mt-4 mb-0 text-lg font-normal text-left'
+      className='w-full mt-4 mb-0 text-lg font-normal text-left border-0'
       validateStatus={errors[name] ? 'error' : ''}
       help={errors[name]?.message}
     >
@@ -44,6 +50,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           return type === 'text' ? (
             <Input
               {...field}
+              disabled={disabled}
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
@@ -52,6 +59,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           ) : (
             <Input.Password
               {...field}
+              disabled={disabled}
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
@@ -64,7 +72,10 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   ) : (
     <Input
       name={name}
+      disabled={disabled}
       size={size}
+      value={value}
+      maxLength={maxLength}
       status={status}
       onChange={onChange}
       onKeyDown={onKeyDown}

@@ -9,12 +9,12 @@ export const ProfileLayout = () => {
 
   return (
     <section className='flex mt-4'>
-      <Row className='w-1200 m-auto'>
-        <Col span={8}>
+      <Row className='m-auto w-1200'>
+        <Col span={4}>
           <div className='text-left'>
             <h3 className='text-lg font-medium'>TRANG TÀI KHOẢN</h3>
             <span className='text-base font-medium'>Xin chào, </span>
-            <span className='capitalize text-base  text-dark-blue font-medium'>{currentUser?.fullName} !</span>
+            <span className='text-base font-medium capitalize text-dark-blue'>{currentUser?.fullName} !</span>
             <ul className='mt-3'>
               {menuSidebar.map((menuItem) => (
                 <li key={menuItem.key}>
@@ -32,7 +32,7 @@ export const ProfileLayout = () => {
             </ul>
           </div>
         </Col>
-        <Col>
+        <Col span={20}>
           <Outlet />
         </Col>
       </Row>

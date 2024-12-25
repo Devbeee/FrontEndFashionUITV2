@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Button, Divider, Image, Typography, Input } from 'antd';
+import { Tabs, Button, Divider, Image, Typography, Input, message } from 'antd';
 import type { TabsProps } from 'antd';
 
 import { Navigation } from 'swiper/modules';
@@ -9,8 +9,9 @@ import 'swiper/css';
 import { Product, Vouchers, ProductsList, QuickViewProduct } from "@/components";
 import { icons } from '@/utils';
 import { IProduct, ISize, IImage, IProductDetail } from '@/interfaces';
-import { productApi } from '@/apis';
+import { cartApi, productApi } from '@/apis';
 import { useApi } from '@/hooks';
+import { useCartStore } from '@/stores';
 
 const { Title } = Typography
 type Product = IProduct;
@@ -22,6 +23,8 @@ export function ProductDetail() {
   const { callApi: callProductApi } = useApi<void>();
   const [mainProduct, setMainProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
+  const { setQuantity } = useCartStore()
   const handleColorChange = (index: number) => () => {
     setActivedColorIndex(index);
   }
@@ -114,6 +117,37 @@ export function ProductDetail() {
     })
   };
 
+  const findProductDetailId = (): string | undefined => {
+    const uniqueSizes = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.size))];
+    const uniqueColors = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.color))];
+
+    const selectedSize = uniqueSizes[activedSizeIndex];
+    const selectedColor = uniqueColors[activedColorIndex];
+
+    return mainProduct?.productDetails.find(
+      (detail: IProductDetail) => detail.size === selectedSize && detail.color === selectedColor
+    )?.id;
+  };
+
+  const handleAddToCart = (quantity: number) => {
+    const productDetailId = findProductDetailId()
+    callCartApi(async () => {
+      const { data } = await cartApi.addToCart({
+        productDetailId,
+        quantity
+      })
+      if (data) {
+        message.success("Thêm sản phẩm vào giỏ thành công!")
+        setQuantity(data.cartProductLength)
+      }
+    })
+  }
+  useEffect(() => {
+    if (errorMessage) {
+      message.error(errorMessage)
+    }
+  }, [errorMessage])
+
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -188,7 +222,7 @@ export function ProductDetail() {
                           (item, index, self) =>
                             index === self.findIndex((t) => t.color === item.color)
                         )
-                        .map((productDetail : IProductDetail, index: number) => (
+                        .map((productDetail: IProductDetail, index: number) => (
                           <button
                             key={productDetail.color}
                             onClick={handleColorChange(index)}
@@ -232,7 +266,14 @@ export function ProductDetail() {
                       <Button shape="circle" onClick={handleIncrease} className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'>+</Button>
                     </div>
                     <div className='flex flex-row gap-1'>
-                      <Button className='bg-blue-cyan text-white uppercase'>Thêm vào giỏ hàng</Button>
+                      <Button
+                        className='bg-blue-cyan text-white uppercase'
+                        onClick={() => handleAddToCart(count)}
+                        disabled={loading}
+                        loading={loading}
+                      >
+                        Thêm vào giỏ hàng
+                      </Button>
                       <Button className='bg-blue-cyan text-white uppercase text-xl w-fit'>{icons.heart}</Button>
                     </div>
                   </div>

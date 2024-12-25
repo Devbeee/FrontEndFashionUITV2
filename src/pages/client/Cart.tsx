@@ -1,42 +1,105 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Col, Row, Table, InputNumber, Image } from 'antd'
+import { Col, Row, Table, Image, Modal, message, Button } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
+
+import { useCartStore } from '@/stores'
+
+import { useApi, useBoolean, useDebouncedCallback } from '@/hooks'
+
+import { cartApi } from '@/apis'
 
 import { icons } from '@/utils'
 
-import { ICartProduct } from '@/interfaces'
+import { ICartProduct, IFetchedCartItem } from '@/interfaces'
 
-import { CustomBtn, CustomBreadcrumb } from '@/components'
+import { CustomBtn, CustomBreadcrumb, CustomInput } from '@/components'
 
 export function Cart() {
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
+  const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
+  const {
+    value: isOpenDeleteMultipleModal,
+    setTrue: openDeleteMultipleModal,
+    setFalse: closeDeleteMultipleModal
+  } = useBoolean()
+  const [cartItems, setCartItems] = useState<ICartProduct[]>([])
+  const [checkoutItems, setCheckoutItems] = useState<ICartProduct[]>([])
+  const { productCount, removeFromCart } = useCartStore()
+  const [width, setWidth] = useState(window.innerWidth)
+  const openDeleteModal = (id: string) => {
+    setSelectedRowId(id)
+  }
+
+  const closeDeleteModal = () => {
+    setSelectedRowId(null)
+  }
+
   const columns: TableColumnsType<ICartProduct> = [
     {
       title: <h2 className='uppercase font-bold text-center'>Thông tin sản phẩm</h2>,
       key: 'informations',
       dataIndex: 'informations',
+      width: 390,
       render: (_, record) => (
-        <Row gutter={8}>
-          <Col span={6}>
-            <Image src={record.image} alt={record.name} />
-          </Col>
-          <Col span={18} className='pl-4'>
-            <h3 className='text-base font-semibold'>{record.name}</h3>
-            <div className='text-base'>
-              {record.color} / {record.size}
-            </div>
-            <button type='button' title='Xóa' className='text-rose-600 text-base hover:underline !bg-transparent'>
-              Xoá
-            </button>
-          </Col>
-        </Row>
+        <>
+          <Row gutter={8}>
+            <Col span={6}>
+              <Image src={record.imgUrl} alt={record.name} />
+            </Col>
+            <Col span={18} className='pl-4'>
+              <h6 className='text-sm font-medium line-clamp-2'>{record.name}</h6>
+              <div className='text-xs capitalize'>
+                {record.color} / {record.size}
+              </div>
+              <CustomBtn
+                type='text'
+                title='Xóa'
+                className='!text-rose-600 !text-base !hover:underline !bg-transparent !border-none !w-fit !mt-0 !p-0 !h-fit'
+                onClick={() => openDeleteModal(record.id)}
+              />
+            </Col>
+          </Row>
+          <Modal
+            className='bg-inherit'
+            open={selectedRowId === record.id}
+            title='Xóa'
+            onClose={closeDeleteModal}
+            onCancel={closeDeleteModal}
+            footer={() => (
+              <div className='flex justify-end'>
+                <div className='flex w-fit gap-3'>
+                  <CustomBtn
+                    key='cancel'
+                    title='Hủy'
+                    onClick={closeDeleteModal}
+                    type='default'
+                    className='px-5 py-1 !w-fit !h-9'
+                  />
+                  <CustomBtn
+                    key='delete'
+                    title='Xóa'
+                    onClick={() => handleDeleteCartItem(record.id)}
+                    loading={loading}
+                    disabled={loading}
+                    type='primary'
+                    className='px-5 py-1 !w-fit !h-9'
+                  />
+                </div>
+              </div>
+            )}
+          >
+            Bạn có muốn xóa sản phẩm này không?
+          </Modal>
+        </>
       )
     },
     {
       title: <h2 className='uppercase font-bold text-center'>Đơn giá</h2>,
       dataIndex: 'price',
       key: 'price',
+      width: 150,
       render: (_, record) => (
         <div className='text-red-600 font-bold text-center p-2'>
           {(record.price * (1 - record.discount / 100)).toLocaleString('de-DE')}đ
@@ -47,13 +110,37 @@ export function Cart() {
       title: <h2 className='uppercase font-bold text-center'>Số lượng</h2>,
       dataIndex: 'quantity',
       key: 'quantity',
+      width: 150,
       render: (_, record) => (
-        <InputNumber
-          min={1}
-          max={99}
-          value={record.quantity}
-          onChange={(value: number | null) => handleChangeQuantity(value, record.id)}
-        />
+        <div className='relative flex items-center max-w-[8rem]'>
+          <CustomBtn
+            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            onClick={() => {
+              handleChangeQuantity(Math.max(record.quantity - 1, 1), record)
+            }}
+            disabled={record.quantity <= 1}
+            children={icons.minus}
+          />
+          <CustomInput
+            name={record.name}
+            size='small'
+            placeholder='Nhập số lượng'
+            type='text'
+            value={record.quantity}
+            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            onChange={(e) => {
+              handleChangeQuantity(parseInt(e.target.value, 10) || 1, record)
+            }}
+          />
+          <CustomBtn
+            className='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-none rounded-e-lg !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            onClick={() => {
+              handleChangeQuantity(Math.min(record.quantity + 1, record.stock), record)
+            }}
+            disabled={record.quantity >= record.stock || record.quantity >= 99}
+            children={icons.plus}
+          />
+        </div>
       )
     },
     {
@@ -68,102 +155,179 @@ export function Cart() {
       )
     }
   ]
-  const [cartItems, setCartItems] = useState<ICartProduct[]>([
-    {
-      id: '1',
-      image: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg',
-      name: '123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd',
-      color: 'Đen',
-      size: 'S',
-      price: 500000,
-      quantity: 2,
-      discount: 20
-    },
-    {
-      id: '2',
-      image: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg',
-      name: '123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd',
-      color: 'Đen',
-      size: 'S',
-      price: 100000,
-      quantity: 2,
-      discount: 20
-    },
-    {
-      id: '3',
-      image: '/src/assets/images/set-do-tap-nu-ao-ngan-tay-icado-ah1-va-quan-legging-icado-qd23-0.jpg',
-      name: '123 asdadad asdasd asdasd asd asda asd asd 123 asdadad asdasd asdasd asd asda asd asd',
-      color: 'Đen',
-      size: 'S',
-      price: 100000,
-      quantity: 2,
-      discount: 20
-    }
-  ])
 
-  const [checkoutItems, setCheckoutItems] = useState<ICartProduct[]>([])
+  const getCartItems = () => {
+    callCartApi(async () => {
+      const { data } = await cartApi.getCart()
+      if (data) {
+        const cartProducts: ICartProduct[] = data.cartProducts?.map((item: IFetchedCartItem) => ({
+          id: item.id,
+          productDetailId: item.productDetail.id,
+          name: item.productDetail.product.name,
+          slug: item.productDetail.product.slug,
+          price: item.productDetail.product.price,
+          discount: item.productDetail.product.discount,
+          size: item.productDetail.size,
+          color: item.productDetail.colorName,
+          quantity: item.quantity,
+          imgUrl: item.productDetail.imgUrl,
+          stock: item.productDetail.stock
+        }))
+        setCartItems(cartProducts)
+      }
+    })
+  }
 
   const rowSelection: TableProps<ICartProduct>['rowSelection'] = {
     onChange: (_, selectedRows: ICartProduct[]) => {
       setCheckoutItems(selectedRows)
     }
   }
-  const handleChangeQuantity = (value: number | null, id: string) => {
+
+  const { debouncedCallback } = useDebouncedCallback(async (id: string, value: number) => {
+    await cartApi.updateCartItem(id, { quantity: value })
+  }, 500)
+
+  const handleChangeQuantity = (value: number, cartItem: ICartProduct) => {
     if (value) {
-      setCartItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: value } : item)))
-      setCheckoutItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: value } : item)))
+      setCartItems((prevItems) =>
+        prevItems.map((item) => (item.id === cartItem.id ? { ...item, quantity: value } : item))
+      )
+      setCheckoutItems((prevItems) =>
+        prevItems.map((item) => (item.id === cartItem.id ? { ...item, quantity: value } : item))
+      )
+      if (value <= Math.min(99, cartItem.stock)) debouncedCallback(cartItem.id, value)
+      else message.error('Vượt quá số lượng tối đa')
     }
   }
 
-  const handleDeleteCartItems = () => {
+  const handleDeleteCartItem = async (id: string) => {
+    const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== id)
+    const updatedCheckoutItems = checkoutItems.filter((checkoutItem) => checkoutItem.id !== id)
+    await callCartApi(async () => {
+      const { data } = await cartApi.deleteCartItem(id)
+      if (data) {
+        message.success('Xóa sản phẩm thành công')
+        setCartItems(updatedCartItems)
+        removeFromCart(1)
+        setCheckoutItems(updatedCheckoutItems)
+        closeDeleteModal()
+      }
+    })
+  }
+
+  const handleDeleteMultipleCartItems = async () => {
     const updatedCartItems = cartItems.filter(
       (cartItem) => !checkoutItems.some((checkoutItem) => cartItem.id === checkoutItem.id)
     )
-    setCartItems(updatedCartItems)
-    setCheckoutItems([])
+
+    const deleteIds = checkoutItems.map((item) => item.id)
+
+    await callCartApi(async () => {
+      const { data } = await cartApi.deleteMultipleCartItems(deleteIds)
+      if (data) {
+        message.success('Xóa sản phẩm thành công')
+        removeFromCart(checkoutItems.length)
+        setCartItems(updatedCartItems)
+        setCheckoutItems([])
+        closeDeleteMultipleModal()
+      }
+    })
   }
 
   const items = [{ title: <Link to='/'>Trang chủ</Link> }, { title: 'Giỏ hàng' }]
 
+  useEffect(() => {
+    getCartItems()
+  }, [productCount])
+
+  useEffect(() => {
+    if (errorMessage) message.error(errorMessage)
+  }, [errorMessage])
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div>
       <CustomBreadcrumb items={items} />
-      <div className='w-1200 mx-auto my-2'>
+      <Modal
+        open={isOpenDeleteMultipleModal}
+        title='Xóa'
+        onClose={closeDeleteMultipleModal}
+        onCancel={closeDeleteMultipleModal}
+        footer={() => (
+          <div className='flex justify-end'>
+            <div className='flex w-fit gap-3'>
+              <CustomBtn
+                key='cancel'
+                title='Hủy'
+                onClick={closeDeleteMultipleModal}
+                type='default'
+                className='px-5 py-1 !w-fit !h-9'
+              />
+              <CustomBtn
+                key='delete'
+                title='Xóa'
+                onClick={handleDeleteMultipleCartItems}
+                loading={loading}
+                disabled={loading}
+                type='primary'
+                className='px-5 py-1 !w-fit !h-9'
+              />
+            </div>
+          </div>
+        )}
+      >
+        Bạn có muốn xóa những sản phẩm này không?
+      </Modal>
+      <div className='xl:w-1200 mx-auto my-2'>
         <h1 className='uppercase text-left font-bold p-3 bg-gray-100'>Giỏ hàng của bạn</h1>
         <Row className='mt-2' gutter={12}>
-          <Col span={18}>
+          <Col span={width >= 1024 ? 18 : 24}>
             <Table<ICartProduct>
               columns={columns}
               rowSelection={{ type: 'checkbox', ...rowSelection }}
               dataSource={cartItems}
               rowKey={(record) => record.id}
+              scroll={
+                columns.length > 0 ? { y: cartItems.length > 5 ? 100 * 5 : undefined, x: 'max-content' } : undefined
+              }
             />
-            <Row justify='space-between' align='bottom' className=' mr-2'>
-              <Col className='mb-2'>
-                <CustomBtn title='Tiếp tục mua hàng' to='/products' icon={icons.prevPage} className='text-black' />
+            <Row justify='space-between' align='bottom'>
+              <Col className='mb-2 w-full px-5 xs:w-fit xs:p-0 '>
+                <CustomBtn title='Tiếp tục mua hàng' to='/products' icon={icons.prevPage} className='w-full' />
               </Col>
-              <Col span={11}>
-                <Row align='bottom'>
-                  <Col span={12}>
+              <Col className='w-full xs:w-1/2 md:w-1/3 xl:w-1/2'>
+                <div className='flex flex-col-reverse xl:flex-row items-end w-full xs:mb-2'>
+                  <Col span={width > 1024 ? 12 : 24} className='px-5 w-full xs:p-0'>
                     <CustomBtn
-                      className={`my-2 px-2  ${
+                      className={`w-[97%] ${
                         !(checkoutItems.length === 0) &&
                         '!text-rose-500 !border-rose-500 hover:!border-rose-500 hover:!text-rose-500 hover:!text-opacity-50 hover:!border-opacity-50'
                       }`}
                       disabled={checkoutItems.length === 0}
-                      onClick={handleDeleteCartItems}
+                      onClick={openDeleteMultipleModal}
                       title='Xóa các mục đã chọn'
                     />
                   </Col>
-                  <Col span={12}>
+                  <Col
+                    span={width > 1024 ? 12 : 24}
+                    className='w-full fixed bottom-0 bg-white z-10 rounded p-5 xs:static xs:bg-inherit xs:p-0 xs:rounded-none'
+                  >
                     <Row gutter={12} justify='space-between'>
                       <Col>
-                        <div className='font-bold uppercase'>
+                        <div className='font-bold uppercase w-full text-base'>
                           <span>tổng tiền: </span>
                         </div>
                       </Col>
                       <Col>
-                        <div className='font-bold text-red-500 text-end'>
+                        <div className='font-bold text-red-500 text-end w-full text-base'>
                           <span>
                             {checkoutItems.length
                               ? checkoutItems
@@ -179,19 +343,34 @@ export function Cart() {
                         </div>
                       </Col>
                     </Row>
-                    <CustomBtn
-                      className='p-5 m-2 w-full'
+
+                    <Button
+                      size='large'
+                      className='w-[97%] h-12 text-lg mt-4 font-semibold rounded-md bg-dark-blue text-white hover:!bg-blue-cyan hover:opacity-90 disabled:bg-blue-cyan disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white'
                       type='primary'
                       disabled={checkoutItems.length === 0}
-                      onClick={handleDeleteCartItems}
-                      title='Thanh toán'
-                    />
+                    >
+                      <Link
+                        to='/checkout'
+                        state={{
+                          checkoutItems,
+                          totalPrice: checkoutItems.length
+                            ? checkoutItems.reduce(
+                                (acc, item) => acc + (item.price - (item.price * item.discount) / 100) * item.quantity,
+                                0
+                              )
+                            : 0
+                        }}
+                      >
+                        Thanh toán
+                      </Link>
+                    </Button>
                   </Col>
-                </Row>
+                </div>
               </Col>
             </Row>
           </Col>
-          <Col span={6} className='relative w-full'>
+          <Col span={width >= 1024 ? 6 : 24} className='relative w-full'>
             <fieldset className='relative bg-white rounded mb-5 mt-2.5 p-3 border border-dashed border-blue-cyan bg-dark-blue-02'>
               <legend className='flex justify-center items-center w-auto text-dark-blue font-semibold bg-dark-blue-02 rounded border border-solid border-current text-base mb-0 px-2.5 uppercase whitespace-normal text-left'>
                 <img
@@ -219,7 +398,7 @@ export function Cart() {
                   </div>
                   <div className='p-1 mt-1 relative bg-gray-100 rounded flex justify-between items-center'>
                     <span className='mb-0 inline-block text-base uppercase font-semibold'>BFAS10</span>
-                    <CustomBtn className='float-right !m-0 w-[80px] h-[35px]' type='primary' title='Copy' />
+                    <CustomBtn className='float-right !m-0 !w-[80px] h-[35px]' type='primary' title='Copy' />
                   </div>
                 </div>
               ))}
