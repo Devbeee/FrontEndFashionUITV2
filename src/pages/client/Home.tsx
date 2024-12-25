@@ -113,13 +113,12 @@ export function Home() {
   }
   const getProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, limit: 6 })
+      const { data } = await productApi.getTopSellingProducts()
       if (data) {
-        const bestSellProducts: Product[] = data.data.map((product: Product, index: number) => ({
+        const bestSellProducts: Product[] = data.map((product: Product, index: number) => ({
           ...product,
           ranking: index + 1,
           productCount: true,
-          sold: 200 // set tạm đợi order xong
         }))
         setProducts(bestSellProducts)
       }
@@ -128,7 +127,7 @@ export function Home() {
 
   const getMaleProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, limit: 6, categoryGender: 'Nam' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Nam' })
       if (data) {
         setMaleProducts(data.data)
       }
@@ -137,7 +136,7 @@ export function Home() {
 
   const getFemaleProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, limit: 6, categoryGender: 'Nữ' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Nữ' })
       if (data) {
         setFemaleProducts(data.data)
       }
@@ -146,7 +145,7 @@ export function Home() {
 
   const getKidProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, limit: 6, categoryGender: 'Trẻ em' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Trẻ em' })
       if (data) {
         setKidProducts(data.data)
       }
@@ -417,7 +416,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&limit=12&categoryGender=Nam'
+                  to='/products?page=1&categoryGender=Nam'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -435,7 +434,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&limit=12&categoryGender=Nữ'
+                  to='/products?page=1&categoryGender=Nữ'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -453,7 +452,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&limit=12&categoryGender=Trẻ+em'
+                  to='/products?page=1&categoryGender=Trẻ+em'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -471,7 +470,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&limit=12&categoryType=Gym'
+                  to='/products?page=1&categoryType=Gym'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>

@@ -20,5 +20,8 @@ export const productApi = {
   },
   getDiscountProduct: async () => {
     return await axiosClient.get('/product/discounted')
+  },
+  getTopSellingProducts: async () => {
+    return await axiosClient.get('/product/top-selling')
   }
 }

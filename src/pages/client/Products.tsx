@@ -224,7 +224,7 @@ export const AllProducts: React.FC = () => {
                 <div className={'text-2xl font-semibold text-gray-400'}>Không có sản phẩm phù hợp</div>
               </div>
             ) : products?.map((product: IProduct) => (
-              <div className={'md:w-[23.5%] mt-2 w-[46%]'} key={product.id}>
+              <div className={'md:w-[23.5%] mt-2 w-[46%] h-fit'} key={product.id}>
                 <Product
                   product={product}
                   handleClickEye={handleClickEye(product)}
