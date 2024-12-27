@@ -127,6 +127,7 @@ export function Cart() {
             size='small'
             placeholder='Nhập số lượng'
             type='text'
+            maxLength={2}
             value={record.quantity}
             className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
             onChange={(e) => {
@@ -197,7 +198,8 @@ export function Cart() {
       setCheckoutItems((prevItems) =>
         prevItems.map((item) => (item.id === cartItem.id ? { ...item, quantity: value } : item))
       )
-      if (value <= Math.min(99, cartItem.stock)) debouncedCallback(cartItem.id, value)
+      if (value <= Math.min(99, cartItem.stock) && value > 0) debouncedCallback(cartItem.id, value)
+      else if (value <= 0) message.error('Số lượng không được nhỏ hơn 1')
       else message.error('Vượt quá số lượng tối đa')
     }
   }
@@ -234,6 +236,10 @@ export function Cart() {
         closeDeleteMultipleModal()
       }
     })
+  }
+
+  const isCheckoutDisabled = (items: ICartProduct[]) => {
+    return items.length === 0 || items.some((item) => item.quantity > Math.min(99, item.stock) || item.quantity < 1)
   }
 
   const items = [{ title: <Link to='/'>Trang chủ</Link> }, { title: 'Giỏ hàng' }]
@@ -355,7 +361,7 @@ export function Cart() {
                       size='large'
                       className='w-[97%] h-12 text-lg mt-4 font-semibold rounded-md bg-dark-blue text-white hover:!bg-blue-cyan hover:opacity-90 disabled:bg-blue-cyan disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white'
                       type='primary'
-                      disabled={checkoutItems.length === 0}
+                      disabled={isCheckoutDisabled(checkoutItems)}
                     >
                       <Link
                         to='/checkout'
