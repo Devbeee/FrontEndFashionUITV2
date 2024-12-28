@@ -5,9 +5,9 @@ import { Select, Pagination } from 'antd'
 
 import { useApi, useBoolean } from '@/hooks'
 
-import { IGetProductsParams, IProduct } from '@/interfaces'
+import { IGetProductsParams, IProduct, IProductComp } from '@/interfaces'
 
-import { Product, ProductSideBar } from '@/components'
+import { Product, QuickViewProduct, ProductSideBar } from '@/components'
 
 import { icons, sortOptions } from '@/utils'
 import { productApi } from '@/apis/product.api'
@@ -112,6 +112,16 @@ export const AllProducts: React.FC = () => {
     })
   }
 
+  const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null)
+  const [showQuickView, setShowQuickView] = useState<boolean>(false)
+  const handleClickEye = (product: IProductComp) => () => {
+    setQuickViewProduct(product)
+    setShowQuickView(true)
+  }
+  const handleClosePopup = () => {
+    setShowQuickView(false)
+  }
+
   useEffect(() => {
     if (initialRender) {
       setFalseInitial()
@@ -150,29 +160,30 @@ export const AllProducts: React.FC = () => {
     }
   }, [query])
 
-  const handleClickCart = () => {}
-  const handleClickEye = () => {}
-
   return (
-    <div className={'w-full flex justify-center mb-10 relative top-0'}>
-      {sideBarVisible.value ? (
-        <div
-          onClick={() => sideBarVisible.toggle()}
-          className={
-            'transform translate-x-0 w-screen h-screen bg-opacity-70 z-10 fixed top-0 bg-black xl:hidden block'
-          }
-        ></div>
-      ) : undefined}
-      <div className={'mt-10 w-1200 flex gap-5'}>
-        <div
-          onClick={() => sideBarVisible.toggle()}
-          className={
-            'bg-dark-blue w-14 h-14 fixed top-56 flex justify-center items-center rounded-tr-xl rounded-br-xl z-10 transition-all duration-500 hover:cursor-pointer xl:hidden' +
-            (sideBarVisible.value ? ' left-80' : ' left-0')
-          }
-        >
-          <div className='text-white'>{icons.filter}</div>
-        </div>
+    <>
+      {showQuickView && quickViewProduct && (
+        <QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />
+      )}
+      <div className={'w-full flex justify-center mb-10 relative top-0'}>
+        {sideBarVisible.value ? (
+          <div
+            onClick={() => sideBarVisible.toggle()}
+            className={
+              'transform translate-x-0 w-screen h-screen bg-opacity-70 z-10 fixed top-0 bg-black xl:hidden block'
+            }
+          ></div>
+        ) : undefined}
+        <div className={'mt-10 w-1200 flex gap-5'}>
+          <div
+            onClick={() => sideBarVisible.toggle()}
+            className={
+              'bg-dark-blue w-14 h-14 fixed top-56 flex justify-center items-center rounded-tr-xl rounded-br-xl z-10 transition-all duration-500 hover:cursor-pointer xl:hidden' +
+              (sideBarVisible.value ? ' left-80' : ' left-0')
+            }
+          >
+            <div className='text-white'>{icons.filter}</div>
+          </div>
         <ProductSideBar
           handleCheckFilter={handleCheckFilter}
           handleClearFilter={handleClearFilter}
@@ -212,17 +223,14 @@ export const AllProducts: React.FC = () => {
               <div className={'w-full flex justify-center'}>
                 <div className={'text-2xl font-semibold text-gray-400'}>Không có sản phẩm phù hợp</div>
               </div>
-            ) : (
-              products?.map((product: IProduct) => (
-                <div className={'md:w-[23.5%] mt-2 w-[46%]'} key={product.id}>
-                  <Product
-                    product={product}
-                    handleClickCart={() => handleClickCart()}
-                    handleClickEye={() => handleClickEye()}
-                  />
-                </div>
-              ))
-            )}
+            ) : products?.map((product: IProduct) => (
+              <div className={'md:w-[23.5%] mt-2 w-[46%] h-fit'} key={product.id}>
+                <Product
+                  product={product}
+                  handleClickEye={handleClickEye(product)}
+                />
+              </div>
+            ))}
           </div>
           <div className='flex justify-center mt-5'>
             <Pagination
@@ -239,5 +247,6 @@ export const AllProducts: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
