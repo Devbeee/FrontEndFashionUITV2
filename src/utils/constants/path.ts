@@ -5,7 +5,7 @@ export const PATH = {
   products: '/products',
   cart: '/cart',
   blog: '/blogs',
-  blogDetail: '/blog-detail',
+  blogDetail: '/blogs/:slug',
   storeSystem: '/store-system',
   contact: '/contact',
   productDetail: '/product-detail',
