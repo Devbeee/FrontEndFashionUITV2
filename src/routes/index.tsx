@@ -6,7 +6,7 @@ import {
   Cart,
   AllProducts,
   Blog,
-  BLogDetail,
+  BlogDetail,
   Contact,
   Register,
   Login,
@@ -168,7 +168,7 @@ export const router = createBrowserRouter([
       },
       {
         path: PATH.blogDetail,
-        element: <BLogDetail />
+        element: <BlogDetail />
       },
       {
         path: PATH.contact,

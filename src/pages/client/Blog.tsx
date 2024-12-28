@@ -1,110 +1,259 @@
-import { Tags, HotNews, NewsCard} from '@/components';
-import { Typography } from 'antd';
-import { IBlog } from '@/interfaces';
+import { useEffect, useState } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
+import { useSearchParams } from "react-router-dom";
+
+import { Typography, Pagination, DatePicker, Input, Spin, Checkbox, Dropdown } from 'antd';
+import { ItemType } from 'antd/es/menu/interface';
+import type { CheckboxProps } from 'antd';
+
+import { NewsCard } from '@/components';
+import { IBlog, IAuthor, IGetBlogsParams } from '@/interfaces';
+import { blogApi } from "@/apis";
+import { useApi } from "@/hooks";
+import { sortStyle, icons, initFilters } from '@/utils';
 
 const { Title } = Typography;
 
-// Data mẫu
-const blogsData: IBlog[] = [
-    {
-      title: "Nhà thiết kế vĩ đại đầu tiên của năm 2022 Nhà thiết kế vĩ đại đầu tiên của năm 2022",
-      description: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-      slug: "ao-trang-nho",
-      createdAt: "2022-04-05T12:22:12",
-      shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-    },
-    {
-      title: "Cách phối đồ phong cách mùa hè",
-      description: "Phong cách mùa hè luôn mang đến sự thoải mái và tươi mới. Những kiểu trang phục mới sẽ giúp bạn tận hưởng mùa hè trọn vẹn...",
-      slug: "phoi-do-mua-he",
-      createdAt: "2023-06-15T10:30:00",
-      shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-    },
-    {
-      title: "Xu hướng thời trang thu đông 2023",
-      description: "Thu đông 2023 mang đến các mẫu áo khoác oversize và boots cao cổ đang làm mưa làm gió trong giới thời trang...",
-      slug: "xu-huong-thoi-trang-thu-dong",
-      createdAt: "2023-09-01T14:00:00",
-      shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-    },
-    {
-      title: "Những phụ kiện không thể thiếu trong năm 2024",
-      description: "Phụ kiện là phần không thể thiếu trong phong cách thời trang. Năm 2024, xu hướng phụ kiện tập trung vào sự tinh tế và sáng tạo...",
-      slug: "phu-kien-2024",
-      createdAt: "2024-01-10T09:00:00",
-      shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-    },
-    {
-      title: "Câu chuyện về chiếc đầm đen huyền thoại",
-      description: "Chiếc đầm đen được xem là biểu tượng của sự thanh lịch và sang trọng. Hãy cùng tìm hiểu về câu chuyện đằng sau trang phục này...",
-      slug: "chiec-dam-den-huyen-thoai",
-      createdAt: "2023-11-25T16:45:00",
-      shortdesc: "Đó là buổi trình diễn lớn đầu tiên của Tuần lễ thời trang Milan: 1 giờ chiều ngày 1. Mọi chiếc ghế trong không gian nhà kho hang động...",
-    },
-  ];
-
-  // data mẫu
-const hotNews = [
-    {
-      title: '4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng',
-      link: '/4-kieu-trang-phuc-denim-dang-hot-nhat-hack-moi-do-tuoi-cho-cac-nang',
-      date: '05/04/2022',
-      image: 'logo.webp',
-    },
-    {
-      title: '4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng',
-      link: '/4-kieu-trang-phuc-denim-dang-hot-nhat-hack-moi-do-tuoi-cho-cac-nang',
-      date: '05/04/2022',
-      image: 'logo.webp',
-    },
-    {
-      title: '4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng',
-      link: '/4-kieu-trang-phuc-denim-dang-hot-nhat-hack-moi-do-tuoi-cho-cac-nang',
-      date: '05/04/2022',
-      image: 'logo.webp',
-    },
-    {
-      title: '4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng',
-      link: '/4-kieu-trang-phuc-denim-dang-hot-nhat-hack-moi-do-tuoi-cho-cac-nang',
-      date: '05/04/2022',
-      image: 'logo.webp',
-    },
-    // Thêm các bài viết khác vào đây...
-  ];
-
-  
-//Data mẫu
-const tagsData = [
-    { name: 'Anna Zhou', link: '/tin-tuc/anna-zhou' },
-    { name: 'Denim', link: '/tin-tuc/denim' },
-    { name: 'Đường phố', link: '/tin-tuc/duong-pho' },
-    { name: 'Mùa thu 2022', link: '/tin-tuc/mua-thu-2022' },
-    { name: 'Năm 2022', link: '/tin-tuc/nam-2022' },
-    { name: 'Nhà thiết kế', link: '/tin-tuc/nha-thiet-ke' },
-    { name: 'Phong cách', link: '/tin-tuc/phong-cach' },
-    { name: 'Quần âu', link: '/tin-tuc/quan-au' },
-    { name: 'Thời trang', link: '/tin-tuc/thoi-trang' },
-    { name: 'Thời trang nữ', link: '/tin-tuc/thoi-trang-nu' },
-  ];
-
 export function Blog() {
+  const [blogs, setBlogs] = useState<IBlog[]>([]);
+  const [current, setCurrent] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(6);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [createDateRange, setCreateDateRange] = useState<Date[]>();
+  const [allAuthors, setAllAuthors] = useState<IAuthor[]>([]);
+  const [choosedAuthors, setChoosedAuthors] = useState<string[]>([]);
+  const [selectedSortStyle, setSelectedSortStyle] = useState<ItemType>(sortStyle[0]);
+  const { callApi: callGetBlogsApi } = useApi<void>();
+  const [loadingBlogs, setLoadingBlogs] = useState<boolean>(false);
+  const [loadingAuthors, setLoadingAuthors] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleFilterChange = (filterKey: string, value: string, isMultiFilter: boolean) => {
+    const currentValues = searchParams.get(filterKey)?.split(',') || [];
+    if (!isMultiFilter) {
+      searchParams.set(filterKey, value);
+      !searchParams.get(filterKey) && searchParams.delete(filterKey);
+    }
+    else if (currentValues.includes(value)) {
+      currentValues.splice(currentValues.indexOf(value), 1);
+      currentValues.length === 0 ?
+        searchParams.delete(filterKey)
+        :
+        searchParams.set(filterKey, currentValues.join(','));
+    }
+    else {
+      currentValues.push(value);
+      searchParams.set(filterKey, currentValues.join(','));
+    }
+  }
+
+  const getBlogs = async (page: number, limit: number) => {
+    try {
+      setLoadingBlogs(true);
+      const params: IGetBlogsParams = {
+        page: Number(searchParams.get(initFilters.page.name)) || page,
+        limit: limit,
+        sortStyle: searchParams.get(initFilters.sortStyle.name) || '',
+        authors: searchParams.get(initFilters.authors.name)?.split(',') || [],
+        keyword: searchParams.get(initFilters.search.name) || '',
+        createDateRange: searchParams.get(initFilters.createDateRange.name)?.split(',').map(date => new Date(date)) || [],
+      }
+      setCurrent(params.page);
+      setLimit(params.limit);
+      setSelectedSortStyle(sortStyle.find(style => style?.key === params.sortStyle) || sortStyle[0]);
+      setChoosedAuthors(params.authors);
+      setCreateDateRange(params.createDateRange);
+      setSearch(params.keyword || '');
+      await callGetBlogsApi(async () => {
+        const response = await blogApi.getAll(params);
+        setBlogs(response.data.data);
+        setTotalRecords(response.data.total);
+      });
+      setLoadingBlogs(false);
+    } catch (error) {
+      setLoadingBlogs(false);
+      setBlogs([]);
+      setTotalRecords(0);
+      console.error('Failed to fetch blogs: ', error);
+    }
+  }
+
+  const getAuthors = async () => {
+    try {
+      setLoadingAuthors(true);
+      await callGetBlogsApi(async () => {
+        const response = await blogApi.getAuthors();
+        setAllAuthors(response.data);
+      });
+      setLoadingAuthors(false);
+    }
+    catch (error) {
+      setLoadingAuthors(false);
+      console.error('Failed to fetch authors: ', error);
+    }
+  }
+
+  const handleChangeSortStyle = (event: ItemType) => {
+    if (event?.key) {
+      handleFilterChange(initFilters.sortStyle.name, event.key.toString(), initFilters.sortStyle.isMultiFilter);
+      setSearchParams(searchParams);
+    }
+  }
+
+  const onChoosedAuthorsChange: CheckboxProps['onChange'] = (event) => {
+    const choosedAuthorsTemp = [...choosedAuthors];
+    if (event.target.checked) {
+      choosedAuthorsTemp.push(event.target.value);
+    }
+    else {
+      choosedAuthorsTemp.splice(choosedAuthorsTemp.indexOf(event.target.value), 1);
+    }
+    setChoosedAuthors(choosedAuthorsTemp);
+    handleFilterChange(initFilters.page.name, '1', initFilters.page.isMultiFilter);
+    handleFilterChange(initFilters.authors.name, event.target.value, initFilters.authors.isMultiFilter);
+    setSearchParams(searchParams);
+  }
+
+  const handleChangeCreateDateRange = (dates: [Dayjs, Dayjs] | null) => {
+    handleFilterChange(initFilters.page.name, '1', initFilters.page.isMultiFilter);
+    const createDateRangeTemp: Date[] = dates && dates.length > 0
+      ? [
+        (dates[0] || new Date()).toDate(),
+        (dates[1] || new Date()).toDate()
+      ]
+      : [];
+    handleFilterChange(initFilters.createDateRange.name, createDateRangeTemp.join(','), initFilters.createDateRange.isMultiFilter);
+    setSearchParams(searchParams);
+  }
+
+  const handlePageChange = (page: number) => {
+    handleFilterChange(initFilters.page.name, page.toString(), initFilters.page.isMultiFilter);
+    setSearchParams(searchParams);
+  }
+
+  const handleSearch = (value: string) => {
+    handleFilterChange(initFilters.page.name, '1', initFilters.page.isMultiFilter);
+    handleFilterChange(initFilters.search.name, value, initFilters.search.isMultiFilter);
+    setSearchParams(searchParams);
+  }
+
+  useEffect(() => {
+    getBlogs(1, limit);
+  }, [searchParams])
+
+  useEffect(() => {
+    getAuthors();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white">
-      <div className="flex flex-row flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
-        <div className="flex-[3]">
-          <Title level={5} className="text-left uppercase font-bold bg-gray-100 rounded-md pl-2 py-2 shadow-sm mb-5">
-            Tin tức
-          </Title>
-          <div className="flex flex-wrap gap-x-5 gap-y-5 sm:justify-center md:justify-start">
-            {blogsData.map((blog) => (
-              <NewsCard blog={blog} />
-            ))}
+      <div className="flex flex-col lg:flex-row flex-wrap gap-6 justify-between w-full max-w-1200 px-4 mt-5 mb-5">
+        <div className="flex-1 flex flex-col gap-5">
+          <div className='flex items-center'>
+            <div className='w-full p-4 bg-gray-100 text-blue-cyan rounded border'>
+              <Input.Search
+                placeholder='Tìm kiếm blog'
+                className='rounded-none'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onSearch={handleSearch}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col gap-5 sm:flex-row lg:flex-col'>
+            <div className='w-full p-4 bg-gray-100 text-blue-cyan rounded border'>
+              <div className="flex flex-col justify-center items-start gap-2">
+                <span className='font-bold uppercase'>Ngày tạo</span>
+                <div className='flex justify-center items-center gap-1 w-full'>
+                  <DatePicker.RangePicker
+                    value={createDateRange && createDateRange.length>0 ? [dayjs(createDateRange[0]), dayjs(createDateRange[1])] : undefined}
+                    placeholder={['Từ', 'Đến']}
+                    disabledDate={(current) => current && current > dayjs().endOf('day')}
+                    onChange={(date) => {
+                      handleChangeCreateDateRange(date as [Dayjs, Dayjs]);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className='w-full p-4 bg-gray-100 text-blue-cyan rounded border'>
+              <div className="flex flex-col justify-center items-start gap-2">
+                <span className='font-bold uppercase'>Tác giả</span>
+                {loadingAuthors ? (
+                  <div className='flex justify-center items-center w-full'>
+                    <Spin size="large" />
+                  </div>
+                ) : (
+                  allAuthors.map((author) => (
+                    <div key={author.id} className='flex items-center gap-2'>
+                      <Checkbox
+                        value={author.id}
+                        checked={choosedAuthors.includes(author.id)}
+                        onChange={onChoosedAuthorsChange}
+                        className={`hover:text-primary ${choosedAuthors.includes(author.id)? 'text-primary' : 'text-blue-cyan'} transition duration-300 ease-in-out`}
+                      >
+                        {author.fullName}
+                      </Checkbox>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex-[1]">
-          <Tags tags={tagsData} />
-          <HotNews newsItems={hotNews} />
+        <div className="flex-[3]">
+          <Title level={4} className="flex justify-start items-center text-left uppercase font-bold bg-gray-100 border rounded pl-2 py-2 shadow-sm mb-5 h-16">
+            <span className='text-blue-cyan'>Tin tức</span>
+          </Title>
+          <div className="w-full flex justify-end items-center gap-1 my-3">
+            <span className="text-blue-cyan flex items-center gap-1">{icons.sort}Sắp xếp:</span>
+            <Dropdown
+              trigger={['hover']}
+              menu={{
+                items: sortStyle,
+                selectable: true,
+                defaultSelectedKeys: ['3'],
+                onClick: (e) => { handleChangeSortStyle(e) }
+              }}
+              className="w-max text-primary text-sm border-none bg-gray-100 rounded-none px-3 py-1"
+            >
+              <span className="text-lg">{
+                sortStyle.find(style => style.key === selectedSortStyle?.key?.toString())?.label
+              }</span>
+            </Dropdown>
+          </div>
+          {loadingBlogs ? (
+            <div className='flex justify-center items-center w-full min-h-[65vh]'>
+              <Spin size="large" />
+            </div>
+          ) : (
+            <div className='flex flex-col gap-5 justify-between items-center'>
+              {
+                blogs.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center min-h-[65vh] w-full">
+                    <div className='flex flex-col items-center justify-center w-full bg-gray-50 m-7 p-4 min-h-[65vh]'>
+                      <span className="text-2xl font-bold text-gray-500">Không tìm thấy blog</span>
+                    </div>
+                  </div>
+                ) :
+                  <div className='flex flex-col gap-5 justify-between items-center'>
+                    <div className="text-center grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 min-h-[65vh]">
+                      {blogs.map((blog) => (
+                        <NewsCard blog={blog} />
+                      ))}
+                    </div>
+                    <Pagination
+                      align="center"
+                      current={current}
+                      total={totalRecords}
+                      pageSize={limit}
+                      onChange={handlePageChange}
+                    />
+                  </div>
+              }
+            </div>
+          )}
         </div>
       </div>
     </div>
