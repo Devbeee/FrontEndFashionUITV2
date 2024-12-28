@@ -38,6 +38,7 @@ import {
 } from '@/components'
 
 import { ProtectedRoute } from './ProtectedRoute'
+import { StoreSystem } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -181,7 +182,11 @@ export const router = createBrowserRouter([
       {
         path: PATH.productDetail,
         element: <ProductDetail />
-      }
+        },
+      {
+        path: PATH.storeSystem,
+        element: <StoreSystem />,
+    }
     ]
   }
 ])
