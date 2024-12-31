@@ -305,6 +305,7 @@ export function Cart() {
             <Table<ICartProduct>
               pagination={cartItems.length > 10 ? undefined : false}
               columns={columns}
+              loading={loading}
               rowSelection={{ type: 'checkbox', ...rowSelection }}
               dataSource={cartItems}
               rowKey={(record) => record.id}

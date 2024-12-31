@@ -210,7 +210,7 @@ export const AllProducts: React.FC = () => {
             </div>
           </div>
           <div
-            className={'w-full min-h-[900px] flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}
+            className={'w-full flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}
           >
             {loading ? (
               <div className={'w-full flex justify-center items-center'}>
