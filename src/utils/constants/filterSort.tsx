@@ -14,14 +14,14 @@ export const filterTiers = [
     typeFilter: 'categoryType',
     title: 'LOẠI SẢN PHẨM',
     options: [
-      { value: 'Áo', label: 'Áo' },
-      { value: 'Quần', label: 'Quần' },
-      { value: 'Váy', label: 'Váy' },
-      { value: 'Đồ gym', label: 'Đồ tập Gym' },
-      { value: 'Áo cotton', label: 'Áo cotton' },
-      { value: 'Áo khoác', label: 'Áo khoác' },
-      { value: 'Áo phông', label: 'Áo phông' },
-      { value: 'Áo polo', label: 'Áo polo' }
+      { value: 'áo', label: 'Áo' },
+      { value: 'quần', label: 'Quần' },
+      { value: 'váy', label: 'Váy' },
+      { value: 'đồ gym', label: 'Đồ tập Gym' },
+      { value: 'áo cotton', label: 'Áo cotton' },
+      { value: 'áo khoác', label: 'Áo khoác' },
+      { value: 'áo phông', label: 'Áo phông' },
+      { value: 'áo polo', label: 'Áo polo' }
     ]
   },
   {
@@ -54,8 +54,7 @@ export const sortOptions = {
   ]
 }
 export const collectionLinks = [
-  { value: 'Nam', label: 'Thời Trang Nam' },
-  { value: 'Nữ', label: 'Thời Trang Nữ' },
-  { value: 'Trẻ Em', label: 'Thời Trang Trẻ Em' },
-  { value: 'Gym', label: 'Thời Trang Tập Gym' }
+  { value: 'nam', label: 'Thời Trang Nam' },
+  { value: 'nữ', label: 'Thời Trang Nữ' },
+  { value: 'trẻ em', label: 'Thời Trang Trẻ Em' }
 ]
