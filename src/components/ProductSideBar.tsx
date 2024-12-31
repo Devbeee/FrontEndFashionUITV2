@@ -40,9 +40,9 @@ export const ProductSideBar: React.FC<ProductSideBarProps> = ({
                 <div className={'group-hover:h-5 group-hover:bg-dark-blue'}></div>
                 <div
                   className={'m-0 pl-1.5 ml-2 user-select-none  group-hover:text-dark-blue'}
-                  onClick={() => handleCheckFilter('categoryGender', link)}
+                  onClick={() => handleCheckFilter('categoryGender', link.value)}
                 >
-                  {link}
+                  {link.label}
                 </div>
               </div>
               <div className='text-dark-blue'>{icons.filter}</div>

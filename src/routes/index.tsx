@@ -6,7 +6,7 @@ import {
   Cart,
   AllProducts,
   Blog,
-  BLogDetail,
+  BlogDetail,
   Contact,
   Register,
   Login,
@@ -38,6 +38,7 @@ import {
 } from '@/components'
 
 import { ProtectedRoute } from './ProtectedRoute'
+import { StoreSystem } from '@/pages'
 
 export const router = createBrowserRouter([
   {
@@ -168,7 +169,7 @@ export const router = createBrowserRouter([
       },
       {
         path: PATH.blogDetail,
-        element: <BLogDetail />
+        element: <BlogDetail />
       },
       {
         path: PATH.contact,
@@ -181,7 +182,11 @@ export const router = createBrowserRouter([
       {
         path: PATH.productDetail,
         element: <ProductDetail />
-      }
+        },
+      {
+        path: PATH.storeSystem,
+        element: <StoreSystem />,
+    }
     ]
   }
 ])

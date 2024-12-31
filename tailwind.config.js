@@ -10,7 +10,8 @@ export default {
         'off-white': '#f7f8f9',
         'dark-blue': '#01567f',
         'green-success': '#52c41a',
-        'dark-blue-02': '#01567f05'
+        'dark-blue-02': '#01567f05',
+        'light-blue': '#8db5dd'
       },
       boxShadow: {
         'dark-blue': '0 0 0 1px #01567f',
@@ -21,6 +22,9 @@ export default {
       },
       maxWidth: {
         1200: '1200px'
+      },
+      maxHeight: {
+        380: '380px'
       },
       screens: {
         xs: '480px'

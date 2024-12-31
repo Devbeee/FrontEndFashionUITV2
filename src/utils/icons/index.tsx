@@ -15,7 +15,7 @@ import {
   FaArrowUpLong
 } from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart, FaSortAmountDown } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
 import { GrNext, GrPrevious } from 'react-icons/gr'
 import { MdOutlineWatchLater } from 'react-icons/md'
@@ -24,7 +24,9 @@ import { PiUserPlus } from 'react-icons/pi'
 
 export const icons = {
   phone: <LiaPhoneSolid />,
+  phoneDarkBlue: <LiaPhoneSolid className='text-blue-cyan' />,
   location: <CiLocationOn />,
+  locationDarkBlue: <CiLocationOn className='text-blue-cyan' />,
   search: <BsSearch />,
   user: <SlUser />,
   shoppingBag: <HiOutlineShoppingBag />,
@@ -57,6 +59,7 @@ export const icons = {
   map: <FaMapLocationDot />,
   currentLocation: <BiCurrentLocation />,
   filledLocation: <FaLocationDot />,
+  sort: <FaSortAmountDown />,
   delivery: <FaTruck />,
   bank: <BsBank2 />,
   cash: <BsCashStack />,

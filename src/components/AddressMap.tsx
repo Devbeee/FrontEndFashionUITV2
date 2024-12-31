@@ -109,7 +109,7 @@ export const AddressMap: React.FC<AddressMapProps> = ({ handlePickLocation, isFe
   )
 }
 
-const CenterMapOnCurrentLocation: React.FC<{ coords: LatLngExpression }> = ({ coords }) => {
+export const CenterMapOnCurrentLocation: React.FC<{ coords: LatLngExpression }> = ({ coords }) => {
   const map = useMap()
 
   useEffect(() => {

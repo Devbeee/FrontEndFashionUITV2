@@ -1,25 +1,28 @@
-import { useEffect, useState } from 'react';
-import { Button, Divider, Image, Typography, message } from 'antd';
+import { useEffect, useState } from 'react'
+import { Button, Divider, Image, Typography, message } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
-import { Navigation } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import { Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
 
-import { icons } from '@/utils';
-import { IProduct, ISize, IProductDetail } from "@/interfaces"
-import { useApi } from '@/hooks';
-import { cartApi } from '@/apis';
-import { useCartStore } from '@/stores';
+import { icons } from '@/utils'
+import { IProduct, ISize, IProductDetail } from '@/interfaces'
+import { useApi } from '@/hooks'
+import { cartApi } from '@/apis'
+import { useCartStore } from '@/stores'
+import { errorResponseCases } from '@/utils'
 import { CustomBtn, CustomInput } from '@/components'
 
 const { Title } = Typography
 
 type QuickViewProductProps = {
-    product: IProduct,
-    handleClosePopup: () => void
+  product: IProduct
+  handleClosePopup: () => void
 }
 
 export function QuickViewProduct({ product, handleClosePopup }: QuickViewProductProps) {
+    const navigate = useNavigate()
     const [activedColorIndex, setActivedColorIndex] = useState<number>(-1);
     const [activedColor, setActivedColor] = useState<string>('');
     const [activedSizeIndex, setActivedSizeIndex] = useState<number>(-1);
@@ -50,12 +53,12 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
         }
     }
 
-    const findProductDetailId = (): string | undefined => {
-        const uniqueSizes = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.size))];
-        const uniqueColors = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.color))];
+  const findProductDetailId = (): string | undefined => {
+    const uniqueSizes = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.size))]
+    const uniqueColors = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.color))]
 
-        const selectedSize = uniqueSizes[activedSizeIndex];
-        const selectedColor = uniqueColors[activedColorIndex];
+    const selectedSize = uniqueSizes[activedSizeIndex]
+    const selectedColor = uniqueColors[activedColorIndex]
 
         return product.productDetails.find(
             (detail: IProductDetail) => detail.size === selectedSize && detail.color === selectedColor
@@ -77,6 +80,9 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
     useEffect(() => {
         if (errorMessage) {
             message.error(errorMessage)
+            if (errorMessage === errorResponseCases['Login']) {
+              navigate('/login')
+            }
         }
     }, [errorMessage])
 

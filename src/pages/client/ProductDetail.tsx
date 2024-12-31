@@ -1,31 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import { Tabs, Button, Divider, Image, Typography, message, Spin } from 'antd';
-import type { TabsProps } from 'antd';
+import { Tabs, Button, Divider, Image, Typography, message, Spin } from 'antd'
+import type { TabsProps } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
-import { Navigation } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import { Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
 
-import { Product, Vouchers, ProductsList, QuickViewProduct, CustomBtn, CustomInput } from "@/components";
-import { icons, addProductToRecentlyViewed, getRecentlyViewed } from '@/utils';
-import { IProduct, ISize, IProductDetail, IGetRelatedParams } from '@/interfaces';
-import { cartApi, productApi } from '@/apis';
-import { useApi } from '@/hooks';
-import { useCartStore } from '@/stores';
+import { Product, Vouchers, ProductsList, QuickViewProduct, CustomBtn, CustomInput } from '@/components'
+import { errorResponseCases, icons, addProductToRecentlyViewed, getRecentlyViewed } from '@/utils'
+import { IProduct, ISize, IProductDetail, IGetRelatedParams } from '@/interfaces'
+import { cartApi, productApi } from '@/apis'
+import { useApi } from '@/hooks'
+import { useCartStore } from '@/stores'
 
 const { Title } = Typography
-type Product = IProduct;
+type Product = IProduct
 
 export function ProductDetail() {
+  const navigate = useNavigate()
   const [activedColorIndex, setActivedColorIndex] = useState<number>(-1);
-  const [activedColor, setActivedColor] = useState<string>('');
+  const [activedColor, setActivedColor] = useState<string>('')
   const [activedSizeIndex, setActivedSizeIndex] = useState<number>(-1);
-  const [activedSize, setActivedSize] = useState<string>('');
-  const [count, setCount] = useState<number>(1);
-  const { callApi: callProductApi } = useApi<void>();
-  const [mainProduct, setMainProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [activedSize, setActivedSize] = useState<string>('')
+  const [count, setCount] = useState<number>(1)
+  const { callApi: callProductApi } = useApi<void>()
+  const [mainProduct, setMainProduct] = useState<Product | null>(null)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [productsYouMayLike, setProductsYouMayLike] = useState<Product[]>([]);
   const [viewedProducts, setViewedProducts] = useState<Product[]>([]);
   const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
@@ -49,9 +51,9 @@ export function ProductDetail() {
   };
   const handleChangeQuantity = (value: number) => {
     if (!isNaN(value) && value >= 1) {
-      setCount(value);
+      setCount(value)
     } else {
-      setCount(1);
+      setCount(1)
     }
   }
 
@@ -59,12 +61,10 @@ export function ProductDetail() {
     {
       key: '1',
       label: <span className='font-bold text-blue-cyan uppercase'>Mô tả sản phẩm</span>,
-      children: (
-        mainProduct?.description ? (
-          <div className='text-left' dangerouslySetInnerHTML={{ __html: mainProduct?.description }}></div>
-        ) : (
-          <p>Không có mô tả</p>
-        )
+      children: mainProduct?.description ? (
+        <div className='text-left' dangerouslySetInnerHTML={{ __html: mainProduct?.description }}></div>
+      ) : (
+        <p>Không có mô tả</p>
       )
     },
     {
@@ -77,29 +77,40 @@ export function ProductDetail() {
           <p className='text-left'>+ Sản phẩm còn nguyên tem mác chưa qua sử dụng và chưa giặt là</p>
           <p className='text-left'>+ Thời gian đổi trả nhỏ hơn 15 ngày kể từ ngày nhận hàng</p>
           <p className='text-left'>+ Chi phí bảo hành về sản phẩm, vận chuyển khách hàng chịu chi phí </p>
-          <p className='text-left'><b>Điều kiện đổi trả hàng</b></p>
-          <p className='text-left'>Điều kiện về thời gian đổi trả: trong vòng 01 ngày kể từ khi nhận được hàng và phải liên hệ gọi ngay cho chúng tôi theo số điện thoại trên để được xác nhận đổi trả hàng.</p>
-          <p className='text-left'><b>Điều kiện đổi trả hàng:</b></p>
+          <p className='text-left'>
+            <b>Điều kiện đổi trả hàng</b>
+          </p>
+          <p className='text-left'>
+            Điều kiện về thời gian đổi trả: trong vòng 01 ngày kể từ khi nhận được hàng và phải liên hệ gọi ngay cho
+            chúng tôi theo số điện thoại trên để được xác nhận đổi trả hàng.
+          </p>
+          <p className='text-left'>
+            <b>Điều kiện đổi trả hàng:</b>
+          </p>
           <p className='text-left'>- Sản phẩm gửi lại phải còn nguyên đai nguyên kiện</p>
           <p className='text-left'>- Phiếu bảo hành (nếu có) và tem của công ty trên sản phẩm còn nguyên vẹn.</p>
-          <p className='text-left'>- Sản phẩm đổi/ trả phải còn đầy đủ hộp, giấy Hướng dẫn sử dụng và chưa qua sử dụng.</p>
-          <p className='text-left'>- Quý khách chịu chi phí vận chuyển, đóng gói, thu hộ tiền, chi phí liên lạc tối đa tương đương 20% giá trị đơn hàng.	</p>
+          <p className='text-left'>
+            - Sản phẩm đổi/ trả phải còn đầy đủ hộp, giấy Hướng dẫn sử dụng và chưa qua sử dụng.
+          </p>
+          <p className='text-left'>
+            - Quý khách chịu chi phí vận chuyển, đóng gói, thu hộ tiền, chi phí liên lạc tối đa tương đương 20% giá trị
+            đơn hàng.{' '}
+          </p>
         </div>
-      ),
+      )
     }
-  ];
+  ]
 
-
-  const [width, setWidth] = useState<number>(window.innerWidth);
+  const [width, setWidth] = useState<number>(window.innerWidth)
 
   const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
   const [showQuickView, setShowQuickView] = useState<boolean>(false);
   const handleClickEye = (product: Product) => () => {
-    setQuickViewProduct(product);
-    setShowQuickView(true);
+    setQuickViewProduct(product)
+    setShowQuickView(true)
   }
   const handleClosePopup = () => {
-    setShowQuickView(false);
+    setShowQuickView(false)
   }
 
   const getMainProduct = async (slug: string) => {
@@ -153,16 +164,16 @@ export function ProductDetail() {
   };
 
   const findProductDetailId = (): string | undefined => {
-    const uniqueSizes = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.size))];
-    const uniqueColors = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.color))];
+    const uniqueSizes = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.size))]
+    const uniqueColors = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.color))]
 
-    const selectedSize = uniqueSizes[activedSizeIndex];
-    const selectedColor = uniqueColors[activedColorIndex];
+    const selectedSize = uniqueSizes[activedSizeIndex]
+    const selectedColor = uniqueColors[activedColorIndex]
 
     return mainProduct?.productDetails.find(
       (detail: IProductDetail) => detail.size === selectedSize && detail.color === selectedColor
-    )?.id;
-  };
+    )?.id
+  }
 
   const handleAddToCart = (quantity: number) => {
     const productDetailId = findProductDetailId()
@@ -172,7 +183,7 @@ export function ProductDetail() {
         quantity
       })
       if (data) {
-        message.success("Thêm sản phẩm vào giỏ thành công!")
+        message.success('Thêm sản phẩm vào giỏ thành công!')
         setQuantity(data.cartProductLength)
       }
     })
@@ -180,14 +191,17 @@ export function ProductDetail() {
   useEffect(() => {
     if (errorMessage) {
       message.error(errorMessage)
+      if (errorMessage === errorResponseCases['Login']) {
+        navigate('/login')
+      }
     }
   }, [errorMessage])
 
   useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -444,5 +458,5 @@ export function ProductDetail() {
         )}
       </div>
     </div>
-  );
+  )
 }

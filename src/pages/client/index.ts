@@ -9,6 +9,7 @@ export * from './ProductDetail'
 
 export * from './Profile'
 export * from './ChangePassword'
+export * from './StoreSystem'
 export * from './Address'
 export * from './Checkout'
 export * from './Orders'

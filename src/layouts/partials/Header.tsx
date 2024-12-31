@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import type { MenuProps } from 'antd'
 import { Input, Menu, Dropdown, Badge } from 'antd'
@@ -11,11 +11,16 @@ import { useAuthStore, useCartStore } from '@/stores'
 
 import { icons, NAVIGATION_ITEMS, PATH } from '@/utils'
 
+import { findActiveKey } from '@/utils'
+
 import logo from '@/assets/images/logo.webp'
 
 export function Header() {
   const { currentUser, setCurrentUser } = useAuthStore()
   const { productCount, setQuantity } = useCartStore()
+  const location = useLocation()
+
+  const currentKey = findActiveKey(NAVIGATION_ITEMS, location.search)
 
   const { callApi: callApiLogout } = useApi<void>()
 
@@ -95,7 +100,7 @@ export function Header() {
             </div>
             <div className='flex items-center space-x-2'>
               <span className='text-xl'>{icons.location}</span>
-              <Link to='/he-thong-cua-hang' className='font-semibold hover:text-blue-600 uppercase'>
+              <Link to='/store-system' className='font-semibold hover:text-blue-600 uppercase'>
                 Hệ thống cửa hàng
               </Link>
             </div>
@@ -108,7 +113,15 @@ export function Header() {
             </div>
           </div>
 
-          <Menu mode='horizontal' className='flex justify-between uppercase' items={NAVIGATION_ITEMS} />
+          <Menu
+            mode='horizontal'
+            className='flex justify-between uppercase flex-1 text-center'
+            items={NAVIGATION_ITEMS.map((item) => ({
+              ...item,
+              style: { flex: 1, textAlign: 'center' }
+            }))}
+            selectedKeys={currentKey ? [currentKey] : []}
+          />
         </div>
 
         <div className='flex items-center text-base space-x-4'>
@@ -124,10 +137,7 @@ export function Header() {
             </button>
           </Dropdown>
 
-          <Link
-            to={'/cart'}
-            className='flex flex-col justify-center items-center relative text-center group'
-          >
+          <Link to={'/cart'} className='flex flex-col justify-center items-center relative text-center group'>
             <Badge count={productCount} showZero className='p-3 rounded-full border border-gray-300'>
               <span>{icons.shoppingBag}</span>
             </Badge>
