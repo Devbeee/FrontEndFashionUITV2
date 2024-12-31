@@ -239,7 +239,7 @@ export const NAVIGATION_ITEMS = [
       }
     ]
   },
-  { label: <Link to='#'>Tin tức</Link>, key: 'news' },
+  { label: <Link to='/blogs'>Tin tức</Link>, key: 'news' },
   { label: <Link to='#'>Liên hệ</Link>, key: 'contact' },
   {
     label: (

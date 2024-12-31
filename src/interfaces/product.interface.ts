@@ -57,3 +57,11 @@ export interface IGetProductsParams {
     categoryType?: string;
     colorName?: string;
 }
+
+export interface IGetRelatedParams {
+    page: number;
+    limit: number;
+    productId?: string;
+    categoryGender?: string;
+    categoryType?: string;
+}

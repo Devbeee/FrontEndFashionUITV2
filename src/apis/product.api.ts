@@ -1,5 +1,5 @@
 import { instance as axiosClient } from '@/configs'
-import { IGetProductsParams } from '@/interfaces'
+import { IGetProductsParams, IGetRelatedParams } from '@/interfaces'
 
 export const productApi = {
     findAllProducts: async () => {
@@ -17,5 +17,11 @@ export const productApi = {
     
         const url = `/product/list?${queryString}`;
         return axiosClient.get(url);
+    },
+    findOneBySlug: async (slug: string) => {
+        return await axiosClient.get(`/product/slug/${slug}`)
+    },
+    findRelatedProducts: async (params: IGetRelatedParams) => {
+        return axiosClient.get('/product/related', {params});
     }
 }

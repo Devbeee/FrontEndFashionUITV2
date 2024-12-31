@@ -7,7 +7,7 @@ import { useApi, useBoolean } from '@/hooks'
 
 import { IGetProductsParams, IProduct } from '@/interfaces'
 
-import { Product, ProductSideBar } from '@/components'
+import { Product, ProductSideBar, QuickViewProduct } from '@/components'
 
 import { icons, sortOptions } from '@/utils'
 import { productApi } from '@/apis/product.api'
@@ -151,10 +151,20 @@ export const AllProducts: React.FC = () => {
   }, [query])
 
   const handleClickCart = () => {}
-  const handleClickEye = () => {}
+
+  const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
+  const [showQuickView, setShowQuickView] = useState<boolean>(false);
+  const handleClickEye = (product: IProduct) => () => {
+    setQuickViewProduct(product);
+    setShowQuickView(true);
+  }
+  const handleClosePopup = () => {
+    setShowQuickView(false);
+  }
 
   return (
     <div className={'w-full flex justify-center mb-10 relative top-0'}>
+      {showQuickView && quickViewProduct && (<QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />)}
       {sideBarVisible.value ? (
         <div
           onClick={() => sideBarVisible.toggle()}
@@ -218,7 +228,7 @@ export const AllProducts: React.FC = () => {
                   <Product
                     product={product}
                     handleClickCart={() => handleClickCart()}
-                    handleClickEye={() => handleClickEye()}
+                    handleClickEye={handleClickEye(product)}
                   />
                 </div>
               ))
