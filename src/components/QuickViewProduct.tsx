@@ -125,9 +125,9 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                         <div className='border-l border-gray-300 hidden md:block'></div>
                         <span className='text-left'>Tình trạng:  
                             {outOfStock ? (
-                                <span className='text-left text-red-500'>Hết hàng</span>
+                                <span className='ml-1 text-left text-red-500'>Hết hàng</span>
                             ) : (
-                                <span className='text-left text-primary'>Còn hàng</span>
+                                <span className='ml-1 text-left text-primary'>Còn hàng</span>
                             )}
                         </span>
                     </div>
@@ -143,7 +143,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                     </div>
                     <Divider className='border-gray-200' />
                     <div className='flex flex-col'>
-                        <span className='text-left'>Màu sắc:
+                        <span className='text-left flex gap-1'>Màu sắc:
                             {activedColorIndex >= 0 && (
                                 <span className='text-left text-primary'>
                                     {product.productDetails
