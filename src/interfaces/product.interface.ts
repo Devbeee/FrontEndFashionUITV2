@@ -59,18 +59,22 @@ export interface IVoucher {
 }
 
 export interface IGetProductsParams {
-    page: number;
-    sortStyle?: string;
-    categoryGender?: string;
-    price?: string;
-    categoryType?: string;
-    colorName?: string;
+  page: number;
+  sortStyle?: string;
+  categoryGender?: string;
+  price?: string;
+  categoryType?: string;
+  colorName?: string;
 }
 
 export interface IGetRelatedParams {
-    page: number;
-    limit: number;
-    productId?: string;
-    categoryGender?: string;
-    categoryType?: string;
+  page: number;
+  limit: number;
+  productId?: string;
+  categoryGender?: string;
+  categoryType?: string;
+}
+export interface IGetBySearchQueryParams {
+  page?: number;
+  searchQuery: string;
 }

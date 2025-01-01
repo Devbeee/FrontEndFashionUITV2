@@ -242,6 +242,7 @@ export const AllProducts: React.FC = () => {
               pageSize={12}
               onChange={handleChangePage}
               showSizeChanger={false}
+              hideOnSinglePage={true}
             />
           </div>
         </div>

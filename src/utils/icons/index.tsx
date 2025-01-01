@@ -15,7 +15,7 @@ import {
   FaArrowUpLong
 } from 'react-icons/fa6'
 import { IoEyeOutline, IoCaretForwardOutline } from 'react-icons/io5'
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart, FaSortAmountDown, FaBan } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaUser, FaRegHeart, FaSortAmountDown, FaFireAlt, FaBan } from 'react-icons/fa'
 import { FiX, FiInfo } from 'react-icons/fi'
 import { GrNext, GrPrevious } from 'react-icons/gr'
 import { MdOutlineWatchLater } from 'react-icons/md'
@@ -65,5 +65,6 @@ export const icons = {
   cash: <BsCashStack />,
   downArrow: <FaArrowDownLong />,
   upArrow: <FaArrowUpLong />,
-  ban: <FaBan />
+  ban: <FaBan />,
+  topSearch: <FaFireAlt />
 }

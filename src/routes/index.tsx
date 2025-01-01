@@ -18,7 +18,8 @@ import {
   Address,
   Checkout,
   Orders,
-  VerifyPayment
+  VerifyPayment,
+  ProductSearch
 } from '@/pages'
 import {
   CollabPolicies,
@@ -186,7 +187,11 @@ export const router = createBrowserRouter([
       {
         path: PATH.storeSystem,
         element: <StoreSystem />,
-    }
+      },
+      {
+        path: PATH.searchProduct,
+        element: <ProductSearch />,
+      }
     ]
   }
 ])
