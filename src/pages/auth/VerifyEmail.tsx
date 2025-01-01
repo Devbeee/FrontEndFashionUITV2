@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useParams } from 'react-router-dom'
 
@@ -16,6 +16,8 @@ type ParamsProps = {
 export function VerifyEmail() {
   const { userId } = useParams<ParamsProps>()
 
+  const initialized = useRef(false)
+
   const { loading, errorMessage, callApi: callApiVerifyEmail } = useApi<void>()
 
   const handleVerifyEmail = (userId: string) => {
@@ -25,7 +27,8 @@ export function VerifyEmail() {
   }
 
   useEffect(() => {
-    if (userId) {
+    if (userId && !initialized.current) {
+      initialized.current = true
       handleVerifyEmail(userId)
     }
   }, [userId])
@@ -33,7 +36,7 @@ export function VerifyEmail() {
   return (
     <div className='flex items-center justify-center bg-white'>
       {loading && <Spin size='large' />}
-      {errorMessage ? (
+      {!loading && errorMessage ? (
         <Result
           status='error'
           title='Xác thực email thất bại'

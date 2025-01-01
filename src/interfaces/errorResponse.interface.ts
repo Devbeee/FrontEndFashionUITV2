@@ -1,6 +1,5 @@
-import { ErrorCode } from '@/utils/common'
-
-export interface ErrorResponseData {
-  errorCode: ErrorCode
+export interface IErrorResponse {
+  errorCode: string
+  message: string
   status: number
 }
