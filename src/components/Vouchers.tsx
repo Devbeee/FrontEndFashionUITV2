@@ -5,7 +5,7 @@ import { icons } from '@/utils';
 import { IVoucher } from '@/interfaces';
 
 export function Vouchers() {
-    const [copiedText, copy] = useCopyToClipboard();
+    const [, copy] = useCopyToClipboard();
     const handleCopy = (text : string) => async () => {
         const success = await copy(text);
         if (success) {

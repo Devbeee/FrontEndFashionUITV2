@@ -51,7 +51,7 @@ export function BlogDetail() {
                                         </div>
                                     </div>
                                     <div className="flex flex-col min-w-fit items-center justify-start gap-1">
-                                        <Avatar src={blog.author.avatar} size={65} className="object-cover" />
+                                        <Avatar src={blog.author.avatar} icon={icons.faUser} size={65} className="object-cover" />
                                         <span className="text-gray-800 font-semibold">{blog.author.fullName}</span>
                                     </div>
                                 </div>

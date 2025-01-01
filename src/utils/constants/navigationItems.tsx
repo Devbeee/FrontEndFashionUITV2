@@ -31,21 +31,34 @@ const buildNavigationItems = (categories: Record<string, string[]>) => {
   }))
 }
 
-const categories = await processCategories()
+let NAVIGATION_ITEMS: INavigationItem[] = []
 
-export const NAVIGATION_ITEMS: INavigationItem[] = [
-  { label: <Link to='/'>Trang chủ</Link>, key: 'home' },
-  ...buildNavigationItems(categories),
-  { label: <Link to='/products'>Sản phẩm</Link>, key: 'products' },
-  { label: <Link to='/blogs'>Tin tức</Link>, key: 'news' },
-  { label: <Link to='/contact'>Liên hệ</Link>, key: 'contact' },
-  {
-    label: (
-      <Link to='#' className='text-red-500 flex items-center'>
-        <span>{icons.gift}</span>
-        Khuyến mãi
-      </Link>
-    ),
-    key: 'promotion'
-  }
-]
+const getCategories = async () => {
+  const categories = await processCategories()
+  return buildNavigationItems(categories)
+}
+
+const initializeNavigationItems = async () => {
+  const categories = await getCategories()
+  NAVIGATION_ITEMS = [
+    { label: <Link to='/'>Trang chủ</Link>, key: 'home' },
+    ...categories,
+    { label: <Link to='/products'>Sản phẩm</Link>, key: 'products' },
+    { label: <Link to='/blogs'>Tin tức</Link>, key: 'news' },
+    { label: <Link to='/contact'>Liên hệ</Link>, key: 'contact' },
+    {
+      label: (
+        <Link to='#' className='text-red-500 flex items-center'>
+          <span>{icons.gift}</span>
+          Khuyến mãi
+        </Link>
+      ),
+      key: 'promotion'
+    }
+  ]
+}
+
+initializeNavigationItems()
+
+export { NAVIGATION_ITEMS }
+

@@ -6,7 +6,7 @@ import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
-import { icons } from '@/utils'
+import { icons, sizeType } from '@/utils'
 import { IProduct, ISize, IProductDetail } from '@/interfaces'
 import { useApi } from '@/hooks'
 import { cartApi } from '@/apis'
@@ -164,8 +164,17 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                     <button
                                         key={productDetail.color}
                                         onClick={handleColorChange(index, productDetail)}
-                                        disabled={outOfStock || (!product.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '')}
-                                        className={`${outOfStock || (!product.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        disabled={
+                                          outOfStock 
+                                          || (!product.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '')
+                                          || (!product.productDetails.some((value) => value.color === productDetail.color && value.stock > 0))
+                                        }
+                                        className={`${
+                                          outOfStock 
+                                          || (!product.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '') 
+                                          || (!product.productDetails.some((value) => value.color === productDetail.color && value.stock > 0)) 
+                                          ? 'cursor-not-allowed' : 'cursor-pointer'
+                                        }`}
                                     >
                                         <div
                                             style={{ backgroundColor: productDetail.color }}
@@ -174,6 +183,12 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                             {activedColorIndex === index && (
                                                 <div className={`w-full h-full flex justify-end items-start`}>
                                                     <div className="w-2 h-2 bg-green-500 rounded-full border border-gray-200"></div>
+                                                </div>
+                                            )}
+                                            {(!product.productDetails.some((value) => value.color === productDetail.color && value.stock > 0)) 
+                                              && (
+                                                <div className={`w-full h-full flex justify-center items-center p-0`}>
+                                                  <span className='text-lg text-gray-300 bg-white rounded-full font-bold m-0'>{icons.ban}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -189,18 +204,27 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                     (item, index, self) =>
                                         index === self.findIndex((t) => t.size === item.size)
                                 )
+                                .sort((a, b) => sizeType.indexOf(a.size) - sizeType.indexOf(b.size))
                                 .map((productDetail: IProductDetail, index: number) => (
                                     <button
                                         key={productDetail.size}
                                         onClick={handleSizeChange(index, productDetail.size)}
-                                        disabled={outOfStock || (!product.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '')}
-                                        className={`${outOfStock || (!product.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        disabled={
+                                          outOfStock 
+                                          || (!product.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '')
+                                          || (!product.productDetails.some((value) => value.size === productDetail.size && value.stock > 0))
+                                        }
                                     >
                                         <div
                                             className={`w-7 h-7 ${activedSizeIndex === index
                                                 ? 'bg-blue-cyan text-white'
                                                 : 'bg-white text-blue-cyan'
-                                                } border border-gray-200 flex justify-center items-center rounded`}
+                                    }
+                                    ${
+                                      outOfStock 
+                                      || (!product.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '') 
+                                      || (!product.productDetails.some((value) => value.size === productDetail.size && value.stock > 0))
+                                      ? 'cursor-not-allowed text-gray-300 bg-gray-100' : 'cursor-pointer'} border border-gray-200 flex justify-center items-center rounded`}
                                         >
                                             {productDetail.size}
                                         </div>
@@ -210,19 +234,24 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                     </div>
                     {!outOfStock && (
                         activedColor && activedSize ? (
-                            <div>
+                            <div className='text-left'>
                                 <span className='text-left text-primary'> {product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock} sản phẩm có sẵn</span>
                             </div>
                         ) : (
-                            <div>
+                            <div className='text-left'>
                                 <span className='text-left text-red-400'>Hãy chọn phân loại hàng</span>
                             </div>
                         )
                     )}
+                    {activedColor && activedSize && count === (product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock) && (
+                        <div className='text-left'>
+                            <span className='text-left text-red-400'>Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này</span>
+                        </div>
+                    )}
                     <div className='flex flex-col gap-4 md:flex-row mt-4'>
-                        <div className='flex flex-row gap-1'>
+                        <div className='flex flex-row items-center max-w-32'>
                             <CustomBtn
-                                className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+                                className='bg-gray-50 hover:bg-gray-200 border border-gray-300 rounded-s-sm rounded-e-none !mt-0 p-2 !w-8 h-8 focus:ring-gray-100  focus:ring-2 focus:outline-none disabled:bg-gray-300'
                                 onClick={() => {
                                     handleChangeQuantity(Math.max(count - 1, 1))
                                 }}
@@ -235,14 +264,14 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                 placeholder='Nhập số lượng'
                                 type='text'
                                 value={count}
-                                className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
+                                className='bg-gray-50 disabled:border-gray-200 border-x-0 border-gray-300 !max-w-12 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500 block py-2 w-full rounded-none focus-within:!border-blue-500 focus-within:!shadow-none'
                                 onChange={(e) => {
                                     handleChangeQuantity(Math.min(parseInt(e.target.value, 10), (product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock ?? 0)))
                                 }}
                                 disabled={outOfStock || !(activedColor && activedSize)}
                             />
                             <CustomBtn
-                                className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg rounded-l-none !mt-0 p-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-none'
+                                className='bg-gray-50 hover:bg-gray-200 border border-gray-300 rounded-e-sm rounded-l-none !mt-0 p-2 !w-8 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-none disabled:bg-gray-300'
                                 onClick={() => {
                                     activedColor && activedSize &&
                                         handleChangeQuantity(
@@ -256,9 +285,9 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                                 children={icons.plus}
                             />
                         </div>
-                        <div className='flex flex-row gap-1'>
+                        <div className='flex flex-row items-center max-w-40'>
                             <Button
-                                className='bg-blue-cyan text-white uppercase'
+                                className='bg-blue-cyan text-white uppercase rounded-sm'
                                 onClick={() => handleAddToCart(count)}
                                 disabled={outOfStock || loading || !(activedColor && activedSize)}
                                 loading={loading}
