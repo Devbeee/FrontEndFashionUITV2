@@ -12,6 +12,7 @@ import { useAuthStore } from '@/stores'
 
 import { Header, Footer } from './partials'
 import { useCartStore } from '@/stores'
+import { Chat } from '@/components'
 
 const { Content } = Layout
 
@@ -55,6 +56,7 @@ export const DefaultLayout = () => {
       <Header />
       <Content className='text-center min-h-[400px] text-black'>
         <Outlet />
+        <Chat />
       </Content>
       <Footer />
     </Layout>

@@ -16,14 +16,18 @@ const processCategories = async (): Promise<Record<string, string[]>> => {
   }, {})
 }
 
+const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
+
 const buildNavigationItems = (categories: Record<string, string[]>) => {
   return Object.entries(categories).map(([gender, types]) => ({
-    label: <Link to={`/products?page=1&limit=12&categoryGender=${gender}`}>{gender}</Link>,
+    label: <Link to={`/products?page=1&categoryGender=${gender}`}>{capitalize(gender)}</Link>,
     key: `gender-${normalizeKey(gender)}`,
-    children: types.map((type) => ({
-      label: <Link to={`/products?page=1&limit=12&categoryGender=${gender}&categoryType=${type}`}>{type}</Link>,
-      key: `type-${normalizeKey(gender)}-${normalizeKey(type)}`
-    }))
+    children: types
+      .sort((typeA, typeB) => typeA.localeCompare(typeB))
+      .map((type) => ({
+        label: <Link to={`/products?page=1&categoryGender=${gender}&categoryType=${type}`}>{capitalize(type)}</Link>,
+        key: `type-${normalizeKey(gender)}-${normalizeKey(type)}`
+      }))
   }))
 }
 
@@ -33,8 +37,8 @@ export const NAVIGATION_ITEMS: INavigationItem[] = [
   { label: <Link to='/'>Trang chủ</Link>, key: 'home' },
   ...buildNavigationItems(categories),
   { label: <Link to='/products'>Sản phẩm</Link>, key: 'products' },
-  { label: <Link to='#'>Tin tức</Link>, key: 'news' },
-  { label: <Link to='#'>Liên hệ</Link>, key: 'contact' },
+  { label: <Link to='/blogs'>Tin tức</Link>, key: 'news' },
+  { label: <Link to='/contact'>Liên hệ</Link>, key: 'contact' },
   {
     label: (
       <Link to='#' className='text-red-500 flex items-center'>
