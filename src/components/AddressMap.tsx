@@ -52,10 +52,14 @@ export const AddressMap: React.FC<AddressMapProps> = ({ handlePickLocation, isFe
           lat,
           lon: lng,
           zoom: 18
+        },
+        headers: {
+          'Accept-Language': 'vi'
         }
       })
       const data = response.data
       if (data && data.address) {
+        console.log(data.display_name)
         const newFieldValues = addressFilter(data.display_name)
         handlePickLocation(newFieldValues, [lat, lng])
         isFetchingAddress.setFalse()
