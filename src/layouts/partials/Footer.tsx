@@ -1,13 +1,49 @@
+import { useEffect, useState } from 'react';
+
 import { Link } from 'react-router-dom'
 
-import { Layout, Row, Col, Typography, Space } from 'antd'
+import { Layout, Row, Col, Typography, Space, Skeleton } from 'antd'
 
-import { contactInfo, footerInfo, socialMedias } from '@/utils'
+import { contactInfo, footerInfo, socialMedias, sortStyle, convertStringDate } from '@/utils'
+
+import { IGetBlogsParams, IBlog } from '@/interfaces';
+
+import { blogApi } from "@/apis";
+
+import { useApi } from "@/hooks";
 
 const { Footer: AntFooter } = Layout
 const { Title, Text } = Typography
 
 export function Footer() {
+  const [blogs, setBlogs] = useState<IBlog[]>([]);
+  const { callApi: callGetBlogsApi } = useApi<void>();
+  const [loadingBlogs, setLoadingBlogs] = useState<boolean>(false);
+
+  const getBlogs = async () => {
+    try {
+      setLoadingBlogs(true);
+      const params: IGetBlogsParams = {
+        page: 1,
+        limit: 3,
+        sortStyle: sortStyle[3].key,
+        authors: [],
+        keyword: '',
+        createDateRange: [],
+      }
+      await callGetBlogsApi(async () => {
+        const response = await blogApi.getAll(params);
+        setBlogs(response.data.data);
+      });
+      setLoadingBlogs(false);
+    } catch (error) {
+      console.error('Failed to fetch blogs: ', error);
+    }
+  }
+
+  useEffect(() => {
+    getBlogs();
+  }, [])
   return (
     <AntFooter className='mt-auto bg-blue-cyan text-white pt-10'>
       <Row justify='space-around' className='m-auto w-full'>
@@ -42,63 +78,43 @@ export function Footer() {
           <Title level={3} style={{ color: 'white' }}>
             BÀI VIẾT MỚI
           </Title>
-          <div className='space-y-4'>
-            <Row gutter={8}>
-              <Link to='' className='flex items-center'>
-              <Col>
-                <img
-                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
-                  alt='thumb'
-                  className='w-26 h-16'
-                />
-              </Col>
-              <Col className='ml-2'>
-                <Text className='text-white hover:text-yellow'>
-                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
-                </Text>
-                <br />
-                <Text className='text-gray-400'>05/04/2022</Text>
-              </Col>
-              </Link>
-            </Row>
-            <hr />
-            <Row gutter={8}>
-              <Link to='' className='flex items-center'>
-              <Col>
-                <img
-                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
-                  alt='thumb'
-                  className='w-26 h-16'
-                />
-              </Col>
-              <Col className='ml-2'>
-                <Text className='text-white hover:text-yellow'>
-                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
-                </Text>
-                <br />
-                <Text className='text-gray-400'>05/04/2022</Text>
-              </Col>
-              </Link>
-            </Row>
-            <hr />
-            <Row gutter={8}>
-              <Link to='' className='flex items-center'>
-              <Col>
-                <img
-                  src='https://bizweb.dktcdn.net/100/451/884/articles/4-kieu-trang-phuc-demin-hot-nhat.jpg?v=1649173718847'
-                  alt='thumb'
-                  className='w-26 h-16'
-                />
-              </Col>
-              <Col className='ml-2'>
-                <Text className='text-white hover:text-yellow'>
-                  4 kiểu trang phục denim đang hot nhất hack mọi độ tuổi cho các nàng
-                </Text>
-                <br />
-                <Text className='text-gray-400'>05/04/2022</Text>
-              </Col>
-              </Link>
-            </Row>
+          <div className='space-y-2'>
+            {loadingBlogs || !blogs ? (
+              <Space className='flex flex-col items-start space-y-4 overflow-hidden'>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Space key={index}>
+                    <Skeleton.Node active={true} style={{ width: 50, height: 50 }} />
+                    <Skeleton
+                      active
+                      paragraph={{ rows: 1, width: 300 }}
+                    />
+                  </Space>
+                ))}
+              </Space>
+            ) : (
+              blogs.map((blog, index) => (
+                <div key={blog.id} className='space-y-2'>
+                  <Row gutter={8}>
+                    <Link to={`/blogs/${blog.slug}`} className='flex items-center'>
+                    <Col>
+                      <img
+                        src={blog.coverImage}
+                        alt='thumb'
+                        className='w-26 h-16 object-scale-down'
+                      />
+                    </Col>
+                    <Col className='ml-2'>
+                      <Text className='text-white hover:text-yellow line-clamp-2'>
+                        {blog.title}
+                      </Text>
+                      <Text className='text-gray-400'>{convertStringDate(blog.createdAt)}</Text>
+                    </Col>
+                    </Link>
+                  </Row>
+                  {index < blogs.length - 1 && (<hr />)}
+                </div>
+              ))
+            )}
           </div>
         </Col>
 
