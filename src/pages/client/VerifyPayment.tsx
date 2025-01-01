@@ -47,7 +47,7 @@ export const VerifyPayment = () => {
     return {
       loop: false,
       autoplay: true,
-      animationData: status === VerifyPaymentStatus.Failed ? successAnimationData : successAnimationData,
+      animationData: status === VerifyPaymentStatus.Failed ? failAnimationData : successAnimationData,
       rendererSettings: {
         preserveAspectRatio: 'xMidYMid slice'
       }

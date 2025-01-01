@@ -138,12 +138,7 @@ export const Orders = () => {
                   pointAtCenter: true
                 }}
               >
-                <h6
-                  onClick={() => {
-                    hanldeSelectOrder(record)
-                  }}
-                  className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'
-                >
+                <h6 className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'>
                   {record.id}
                 </h6>
               </Tooltip>
@@ -346,6 +341,10 @@ export const Orders = () => {
             rowKey={(record) => record.id}
             scroll={{ y: orders.length > 4 ? 480 : undefined, x: 'max-content' }}
             pagination={false}
+            rowClassName={'hover:cursor-pointer'}
+            onRow={(record) => ({
+              onClick: () => hanldeSelectOrder(record)
+            })}
           />
         </div>
       ) : (

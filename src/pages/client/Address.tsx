@@ -164,7 +164,7 @@ export const Address = () => {
         <AddressModal
           title={'Thêm địa chỉ mới'}
           onSubmit={handleAddAddress}
-          loadingSubmit={false}
+          loadingSubmit={addressLoading}
           modalControl={addModalControl}
         />
       )}
@@ -173,7 +173,7 @@ export const Address = () => {
           title={'Chỉnh sửa địa chỉ'}
           defaultData={updatingAddress}
           onSubmit={handleUpdateAddress}
-          loadingSubmit={false}
+          loadingSubmit={addressLoading}
           modalControl={updateModalControl}
         />
       )}

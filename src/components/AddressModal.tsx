@@ -94,7 +94,13 @@ export const AddressModal: React.FC<AddressModalProps> = ({
   }
 
   const emptyAddressFields = (fields: AddressFields[]) => {
-    fields.forEach((field) => resetField(field))
+    fields.forEach((field) => {
+      if (defaultData) {
+        setValue(field, '')
+      } else {
+        resetField(field)
+      }
+    })
   }
 
   const fetchDefaultData = async () => {
@@ -112,7 +118,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
 
   useEffect(() => {
     fetchDefaultData()
-  }, [])
+  }, [defaultData])
 
   const handleSelectProvince = async (provinceParam: string) => {
     emptyAddressFields(['district', 'ward', 'addressDetail', 'latitude', 'longitude'])
