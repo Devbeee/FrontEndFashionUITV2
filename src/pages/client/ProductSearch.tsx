@@ -27,7 +27,6 @@ export const ProductSearch = () => {
     const handleChangePage = (page: number) => {
         updateSearchParams(page)
         setCurrentPage(page)
-        getProducts(page)
     }
 
     const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null)
@@ -63,7 +62,12 @@ export const ProductSearch = () => {
             const urlSearchQuery = searchParams.get('searchQuery') || ''
 
             setCurrentPage(urlPage)
-            setQuery(urlSearchQuery)
+            if (query !== urlSearchQuery) {
+                setQuery(urlSearchQuery)
+            } else {
+                setTrueInitial()
+                getProducts(urlPage)
+            }
         }
     }, [searchParams])
 
