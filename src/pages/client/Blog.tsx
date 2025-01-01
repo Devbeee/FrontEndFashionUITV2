@@ -240,7 +240,7 @@ export function Blog() {
                   <div className='flex flex-col gap-5 justify-between items-center'>
                     <div className="text-center grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 min-h-[65vh]">
                       {blogs.map((blog) => (
-                        <NewsCard blog={blog} />
+                        <NewsCard key={blog.id} blog={blog} />
                       ))}
                     </div>
                     <Pagination
@@ -249,6 +249,7 @@ export function Blog() {
                       total={totalRecords}
                       pageSize={limit}
                       onChange={handlePageChange}
+                      hideOnSinglePage={true}
                     />
                   </div>
               }
