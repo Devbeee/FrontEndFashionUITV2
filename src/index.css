@@ -27,3 +27,14 @@
 .ant-table {
   scrollbar-color: unset !important;
 }
+.address-select .ant-select-selector:hover {
+  border-color: #01567f !important;
+}
+.address-select .ant-select-selector:focus-within {
+  border-color: #01567f !important;
+  box-shadow: 0 0 0 1px #01567f !important;
+}
+.address-select .ant-select-selector:focus {
+  border-color: #01567f !important;
+  box-shadow: 0 0 0 1px #01567f !important;
+}

@@ -10,6 +10,7 @@ import {
   PaginationProps,
   Row,
   Select,
+  Spin,
   Table,
   TableColumnsType,
   Tooltip
@@ -41,6 +42,8 @@ export const Orders = () => {
   const windowSize = useWindowSize()
 
   const [searchParam, setSearchParam] = useSearchParams()
+  const [fetchOrderCompleted, setFetchOrderCompleted] = useState(false)
+
   const [orders, setOrders] = useState<IOrderReturn[]>([])
   const [selectedOrder, setSelectedOrder] = useState<IOrderReturn>()
   const [pagination, setPagination] = useState<PaginationType>({})
@@ -138,12 +141,7 @@ export const Orders = () => {
                   pointAtCenter: true
                 }}
               >
-                <h6
-                  onClick={() => {
-                    hanldeSelectOrder(record)
-                  }}
-                  className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'
-                >
+                <h6 className='hover:cursor-pointer hover:underline hover:text-primary text-sm font-medium line-clamp-1 text-ellipsis'>
                   {record.id}
                 </h6>
               </Tooltip>
@@ -248,6 +246,7 @@ export const Orders = () => {
         const search = getSearchParams(params)
         setSearchParam(search, { replace: true })
         setCurrentSearchParams(params)
+        setFetchOrderCompleted(true)
       } else {
         message.error('Đã xảy ra lỗi khi lấy thông tin đơn hàng!')
       }
@@ -337,19 +336,27 @@ export const Orders = () => {
           </div>
         </div>
       </div>
-      {orders?.length > 0 ? (
-        <div className='w-full border-[1px] border-gray-200 border-solid rounded-md'>
-          <Table<IOrderReturn>
-            loading={callOrderApiLoading}
-            columns={columns}
-            dataSource={orders}
-            rowKey={(record) => record.id}
-            scroll={{ y: orders.length > 4 ? 480 : undefined, x: 'max-content' }}
-            pagination={false}
-          />
-        </div>
+      {fetchOrderCompleted ? (
+        orders?.length > 0 ? (
+          <div className='w-full border-[1px] border-gray-200 border-solid rounded-md'>
+            <Table<IOrderReturn>
+              loading={callOrderApiLoading}
+              columns={columns}
+              dataSource={orders}
+              rowKey={(record) => record.id}
+              scroll={{ y: orders.length > 4 ? 480 : undefined, x: 'max-content' }}
+              pagination={false}
+              rowClassName={'hover:cursor-pointer'}
+              onRow={(record) => ({
+                onClick: () => hanldeSelectOrder(record)
+              })}
+            />
+          </div>
+        ) : (
+          !callOrderApiLoading && <div className='text-xl mt-10 text-red-500'>Bạn chưa có đơn hàng nào</div>
+        )
       ) : (
-        !callOrderApiLoading && <div className='text-xl mt-10 text-red-500'>Bạn chưa có đơn hàng nào</div>
+        <Spin />
       )}
 
       {pagination && orders.length > 0 && (

@@ -94,7 +94,13 @@ export const AddressModal: React.FC<AddressModalProps> = ({
   }
 
   const emptyAddressFields = (fields: AddressFields[]) => {
-    fields.forEach((field) => resetField(field))
+    fields.forEach((field) => {
+      if (defaultData) {
+        setValue(field, '')
+      } else {
+        resetField(field)
+      }
+    })
   }
 
   const fetchDefaultData = async () => {
@@ -112,7 +118,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
 
   useEffect(() => {
     fetchDefaultData()
-  }, [])
+  }, [defaultData])
 
   const handleSelectProvince = async (provinceParam: string) => {
     emptyAddressFields(['district', 'ward', 'addressDetail', 'latitude', 'longitude'])
@@ -293,7 +299,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}
                     size='large'
@@ -303,6 +309,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                     placeholder='Chọn tỉnh, thành phố'
                     filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
                     options={currentProvinces}
+                    rootClassName='!hover:border-dark-blue'
                   />
                 )}
               />
@@ -318,7 +325,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     size='large'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}
@@ -343,7 +350,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     size='large'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}

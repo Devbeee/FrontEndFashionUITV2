@@ -180,9 +180,7 @@ export function Checkout() {
         const data = await checkoutApi.createStripeUrl(orderData)
         if (data) {
           removeFromCart(checkoutObj?.checkoutItems.length)
-          message.success('Đặt hàng thành công!')
-          window.open(data.data, '_blank')
-          window.close()
+          window.location.href = data.data
         } else {
           message.error('Đã xãy ra lỗi khi tạo đơn hàng!')
         }
@@ -404,7 +402,7 @@ export function Checkout() {
       <AddressModal
         title={'Thêm địa chỉ mới'}
         onSubmit={handleAddAddress}
-        loadingSubmit={false}
+        loadingSubmit={callOrderApiLoading}
         modalControl={addModalControl}
       />
       <SelectAddressModal

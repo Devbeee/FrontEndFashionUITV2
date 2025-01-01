@@ -54,7 +54,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
-              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
+              className={`text-lg font-medium border border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
             />
           ) : (
             <Input.Password
@@ -63,7 +63,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
               size={size}
               placeholder={placeholder}
               prefix={prefixIcon}
-              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
+              className={`text-lg font-medium border border-gray-200 rounded-md hover:border-dark-blue focus-within:!border-dark-blue focus-within:!shadow-dark-blue px-4 py-[9px] ${className}`}
             />
           )
         }}
