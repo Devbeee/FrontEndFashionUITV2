@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
 import { icons, sizeType } from '@/utils'
-import { IProduct, ISize, IProductDetail } from '@/interfaces'
+import { IProduct, IProductDetail } from '@/interfaces'
 import { useApi } from '@/hooks'
 import { cartApi } from '@/apis'
 import { useCartStore } from '@/stores'
@@ -94,9 +94,9 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
       }, [activedColor, activedSize])
 
     return (
-        <div className='flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 top-0 left-0 bottom-0 right-0 fixed overflow-auto'>
-            <div className='flex flex-col w-full max-w-5xl gap-4 md:flex-row bg-white rounded-lg p-5 top-10 bottom-10'>
-                <div className='flex-[10] overflow-hidden'>
+        <div className='flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 top-0 left-0 bottom-0 right-0 fixed'>
+            <div className='flex flex-col w-full max-w-5xl gap-4 md:flex-row bg-white rounded-lg p-5 top-10 bottom-10 max-h-[80%] overflow-scroll no-scrollbar'>
+                <div className='flex-[10]'>
                     <Image src={mainImageUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
                     <Swiper
                         spaceBetween={10}
