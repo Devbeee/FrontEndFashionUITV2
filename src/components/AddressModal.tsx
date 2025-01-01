@@ -299,7 +299,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}
                     size='large'
@@ -309,6 +309,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                     placeholder='Chọn tỉnh, thành phố'
                     filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
                     options={currentProvinces}
+                    rootClassName='!hover:border-dark-blue'
                   />
                 )}
               />
