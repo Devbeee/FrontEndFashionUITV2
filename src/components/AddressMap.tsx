@@ -52,6 +52,9 @@ export const AddressMap: React.FC<AddressMapProps> = ({ handlePickLocation, isFe
           lat,
           lon: lng,
           zoom: 18
+        },
+        headers: {
+          'Accept-Language': 'vi'
         }
       })
       const data = response.data

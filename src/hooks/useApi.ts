@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { AxiosError } from 'axios'
 
-import { ErrorResponseData } from '@/interfaces'
+import { IErrorResponse } from '@/interfaces'
 
 import { errorResponseCases } from '@/utils/common'
 
@@ -29,7 +29,7 @@ export const useApi = <T>(): UseApiRequestReturn<T> => {
       await apiFunc()
       setShowSuccess()
     } catch (error: unknown) {
-      const axiosError = error as AxiosError<ErrorResponseData>
+      const axiosError = error as AxiosError<IErrorResponse>
 
       const errorCode = axiosError.response?.data?.errorCode
       const errorStatus = axiosError.response?.data?.status
