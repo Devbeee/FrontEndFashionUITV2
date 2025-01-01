@@ -14,70 +14,9 @@ import { useApi } from '@/hooks'
 import { productApi } from '@/apis'
 import { icons } from '@/utils'
 import { IProduct, IProductComp } from '@/interfaces'
+import { sliderImages, serviceImages, categoryImages, tabImages, bannerBigImage, threeBannerImages, brandImages } from '@/utils';
 
 type Product = IProductComp
-
-const sliderImages = [
-  'src/assets/images/slider_1.webp',
-  'src/assets/images/banner2.jpg',
-  'src/assets/images/banner3.jpg'
-]
-
-const serviceImages = [
-  'src/assets/images/package.png',
-  'src/assets/images/box.png',
-  'src/assets/images/credit-card.png',
-  'src/assets/images/refund.png'
-]
-
-const categoryImages = [
-  'src/assets/images/img_banner_1.webp',
-  'src/assets/images/img_banner_2.webp',
-  'src/assets/images/img_banner_3.webp',
-  'src/assets/images/img_banner_4.webp'
-]
-
-const tabImages = [
-  'src/assets/images/img_banner_tab.webp',
-  'src/assets/images/tab-nam.webp',
-  'src/assets/images/tab-nu.webp',
-  'src/assets/images/tab-kid.png'
-]
-
-const bannerBigImage = 'src/assets/images/img_banner_big.webp'
-
-const threeBannerImages = [
-  'src/assets/images/img_3banner_1.webp',
-  'src/assets/images/img_3banner_2.webp',
-  'src/assets/images/img_3banner_3.webp'
-]
-
-const brandImages = [
-  {
-    id: 1,
-    path: 'src/assets/images/img_brand_1.webp'
-  },
-  {
-    id: 2,
-    path: 'src/assets/images/img_brand_2.webp'
-  },
-  {
-    id: 3,
-    path: 'src/assets/images/img_brand_3.webp'
-  },
-  {
-    id: 4,
-    path: 'src/assets/images/img_brand_4.webp'
-  },
-  {
-    id: 5,
-    path: 'src/assets/images/img_brand_5.webp'
-  },
-  {
-    id: 6,
-    path: 'src/assets/images/img_brand_6.webp'
-  }
-]
 
 const settings = {
   autoplay: true,
@@ -127,7 +66,7 @@ export function Home() {
 
   const getMaleProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Nam' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'nam' })
       if (data) {
         setMaleProducts(data.data)
       }
@@ -136,7 +75,7 @@ export function Home() {
 
   const getFemaleProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Nữ' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'nữ' })
       if (data) {
         setFemaleProducts(data.data)
       }
@@ -145,7 +84,7 @@ export function Home() {
 
   const getKidProducts = async () => {
     callProductApi(async () => {
-      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'Trẻ em' })
+      const { data } = await productApi.getProducts({ page: 1, categoryGender: 'trẻ em' })
       if (data) {
         setKidProducts(data.data)
       }
@@ -416,7 +355,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&categoryGender=Nam'
+                  to='/products?page=1&categoryGender=nam'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -434,7 +373,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&categoryGender=Nữ'
+                  to='/products?page=1&categoryGender=nữ'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -452,7 +391,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&categoryGender=Trẻ+em'
+                  to='/products?page=1&categoryGender=trẻ+em'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
@@ -470,7 +409,7 @@ export function Home() {
                   </p>
                 </div>
                 <Link
-                  to='/products?page=1&categoryType=Gym'
+                  to='/products?page=1&categoryType=gym'
                   className='absolute inset-0 cursor-pointer'
                 ></Link>
               </div>
