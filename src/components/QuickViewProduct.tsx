@@ -69,6 +69,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
         callCartApi(async () => {
             const { data } = await cartApi.addToCart({
                 productDetailId,
+                categoryId: product?.category.id,
                 quantity
             })
             if (data) {

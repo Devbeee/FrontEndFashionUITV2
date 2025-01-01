@@ -486,7 +486,7 @@ export function Home() {
                 Thời trang <span className='font-semibold text-blue-cyan'>Xu Hướng</span>
               </h2>
             </div>
-            <div className='lg:flex'>
+            <div className='lg:flex lg:w-full'>
               <div className='lg:flex-none lg:w-1/4 lg:max-w-1/4 lg:block hidden'>
                 <div className='relative overflow-hidden block'>
                   <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[0]} alt='banner tab' />

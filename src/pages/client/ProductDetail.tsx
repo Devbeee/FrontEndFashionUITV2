@@ -180,6 +180,7 @@ export function ProductDetail() {
     callCartApi(async () => {
       const { data } = await cartApi.addToCart({
         productDetailId,
+        categoryId: mainProduct?.category.id,
         quantity
       })
       if (data) {
