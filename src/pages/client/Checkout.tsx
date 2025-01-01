@@ -387,7 +387,7 @@ export function Checkout() {
                         className='w-[97%] h-12 text-lg font-semibold rounded-md bg-green-600 text-white hover:!bg-green-600 hover:opacity-90 disabled:bg-green-600 disabled:opacity-70 disabled:cursor-not-allowed disabled:!text-white border-green-600 border-solid
                         border '
                         type='primary'
-                        disabled={checkoutObj?.checkoutItems?.length ? false : true}
+                        disabled={checkoutObj?.checkoutItems?.length && selectedAddress ? false : true}
                         onClick={handleCreateOrder}
                         loading={callOrderApiLoading}
                       >
