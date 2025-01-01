@@ -59,7 +59,6 @@ export const AddressMap: React.FC<AddressMapProps> = ({ handlePickLocation, isFe
       })
       const data = response.data
       if (data && data.address) {
-        console.log(data.display_name)
         const newFieldValues = addressFilter(data.display_name)
         handlePickLocation(newFieldValues, [lat, lng])
         isFetchingAddress.setFalse()
