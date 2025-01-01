@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Tabs, Button, Divider, Image, Typography, Input, message } from 'antd'
+import { useParams } from 'react-router-dom';
+import { Tabs, Button, Divider, Image, Typography, message, Spin } from 'antd'
 import type { TabsProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
@@ -7,9 +8,9 @@ import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
-import { Product, Vouchers, ProductsList, QuickViewProduct } from '@/components'
-import { errorResponseCases, icons } from '@/utils'
-import { IProduct, ISize, IImage, IProductDetail } from '@/interfaces'
+import { Product, Vouchers, ProductsList, QuickViewProduct, CustomBtn, CustomInput } from '@/components'
+import { errorResponseCases, icons, addProductToRecentlyViewed, getRecentlyViewed } from '@/utils'
+import { IProduct, ISize, IProductDetail, IGetRelatedParams } from '@/interfaces'
 import { cartApi, productApi } from '@/apis'
 import { useApi } from '@/hooks'
 import { useCartStore } from '@/stores'
@@ -19,42 +20,41 @@ type Product = IProduct
 
 export function ProductDetail() {
   const navigate = useNavigate()
-  const [activedColorIndex, setActivedColorIndex] = useState<number>(0)
-  const [activedSizeIndex, setActivedSizeIndex] = useState<number>(0)
+  const [activedColorIndex, setActivedColorIndex] = useState<number>(-1);
+  const [activedColor, setActivedColor] = useState<string>('')
+  const [activedSizeIndex, setActivedSizeIndex] = useState<number>(-1);
+  const [activedSize, setActivedSize] = useState<string>('')
   const [count, setCount] = useState<number>(1)
   const { callApi: callProductApi } = useApi<void>()
   const [mainProduct, setMainProduct] = useState<Product | null>(null)
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
+  const [productsYouMayLike, setProductsYouMayLike] = useState<Product[]>([]);
+  const [viewedProducts, setViewedProducts] = useState<Product[]>([]);
   const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
   const { setQuantity } = useCartStore()
-  const handleColorChange = (index: number) => () => {
-    setActivedColorIndex(index)
+  const { slug } = useParams<{ slug: string }>();
+  const [loadingProduct, setLoadingProduct] = useState<boolean>(true);
+  const [mainImageUrl, setMainImageUrl] = useState<string>();
+  const [outOfStock, setOutOfStock] = useState<boolean>(false);
+
+  const handleMainImageChange = (url: string) => () => {
+    setMainImageUrl(url);
   }
-  const handleSizeChange = (index: number) => () => {
-    setActivedSizeIndex(index)
+  const handleColorChange = (index: number, productDetail: IProductDetail) => () => {
+    setActivedColorIndex(index);
+    setActivedColor(productDetail.color);
+    setMainImageUrl(productDetail.imgUrl);
   }
-  const handleDecrease = () => {
-    if (count > 1) {
-      setCount(count - 1)
-    }
-  }
-  const handleIncrease = () => {
-    if (count < 1000) {
-      setCount(count + 1)
-    }
-  }
-  const handleInputChange = (newCount: string) => {
-    let value = parseInt(newCount, 10)
+  const handleSizeChange = (index: number, size: string) => () => {
+    setActivedSizeIndex(index);
+    setActivedSize(size);
+  };
+  const handleChangeQuantity = (value: number) => {
     if (!isNaN(value) && value >= 1) {
       setCount(value)
     } else {
       setCount(1)
     }
-  }
-
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
-  const handleMainImageChange = (index: number) => () => {
-    setSelectedImageIndex(index)
   }
 
   const tabItems: TabsProps['items'] = [
@@ -103,9 +103,8 @@ export function ProductDetail() {
 
   const [width, setWidth] = useState<number>(window.innerWidth)
 
-  //Trạng thái của QuickViewPopup============
-  const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null)
-  const [showQuickView, setShowQuickView] = useState<boolean>(false)
+  const [quickViewProduct, setQuickViewProduct] = useState<IProduct | null>(null);
+  const [showQuickView, setShowQuickView] = useState<boolean>(false);
   const handleClickEye = (product: Product) => () => {
     setQuickViewProduct(product)
     setShowQuickView(true)
@@ -113,20 +112,56 @@ export function ProductDetail() {
   const handleClosePopup = () => {
     setShowQuickView(false)
   }
-  //=========================================
 
-  const getMainProduct = async (productId: string) => {
-    callProductApi(async () => {
-      const { data } = await productApi.findOneProduct(productId)
-      setMainProduct(data)
-    })
-  }
-  const getRelatedProducts = async () => {
-    callProductApi(async () => {
-      const { data } = await productApi.findAllProducts()
-      setRelatedProducts(data)
-    })
-  }
+  const getMainProduct = async (slug: string) => {
+    try {
+      setLoadingProduct(true);
+      await callProductApi(async () => {
+        const { data } = await productApi.findOneBySlug(slug);
+        setMainProduct(data)
+        data && setLoadingProduct(false);
+      })
+    }
+    catch (error) {
+      console.error('Failed to get product', error);
+    }
+  };
+  const getRelatedProducts = async (productId: string, gender: string, type: string) => {
+    try {
+      await callProductApi(async () => {
+        const getProductsParams: IGetRelatedParams = {
+          page: 1,
+          limit: 10,
+          productId: productId,
+          categoryGender: gender,
+          categoryType: type,
+        }
+        const { data } = await productApi.findRelatedProducts(getProductsParams);
+        setRelatedProducts(data.data)
+      })
+    }
+    catch (error) {
+      console.error('Failed to get related products', error);
+    }
+  };
+  const getProductsYouMayLike = async (productId: string, gender: string) => {
+    try {
+      await callProductApi(async () => {
+        const getProductsParams: IGetRelatedParams = {
+          page: 1,
+          limit: 4,
+          productId: productId,
+          categoryGender: gender,
+          categoryType: '',
+        }
+        const { data } = await productApi.findRelatedProducts(getProductsParams);
+        setProductsYouMayLike(data.data)
+      })
+    }
+    catch (error) {
+      console.error('Failed to get products may you like', error);
+    }
+  };
 
   const findProductDetailId = (): string | undefined => {
     const uniqueSizes = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.size))]
@@ -170,202 +205,256 @@ export function ProductDetail() {
   }, [])
 
   useEffect(() => {
-    getMainProduct('5df1da97-f2a1-41ee-b3a9-880e84c04abf')
-    getRelatedProducts()
-  }, [])
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    slug && getMainProduct(slug);
+    setActivedColorIndex(-1);
+    setActivedColor('');
+    setActivedSizeIndex(-1);
+    setActivedSize('');
+    setCount(1);
+  }, [slug]);
+
+  useEffect(() => {
+    if (mainProduct) {
+      addProductToRecentlyViewed(mainProduct);
+      getRelatedProducts(mainProduct.id, mainProduct.category.gender, mainProduct.category.type);
+      getProductsYouMayLike(mainProduct.id, mainProduct.category.gender);
+      setViewedProducts(getRecentlyViewed(mainProduct.id));
+      setMainImageUrl(mainProduct.productDetails[0].imgUrl);
+      const isOutOfStock = !mainProduct.productDetails.some((value) => value.stock > 0);
+      setOutOfStock(isOutOfStock);
+    }
+  }, [mainProduct]);
 
   return (
-    <div className='flex flex-col items-center justify-center w-full bg-white'>
-      {/* QuickViewPopup */}
-      {showQuickView && quickViewProduct && (
-        <QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />
-      )}
-      <div className='w-full max-w-1200'>
-        {mainProduct ? (
-          <div className='flex flex-col flex-wrap gap-6 justify-between lg:flex-row px-4 mt-5 mb-5'>
-            <div className='flex-[3] flex flex-col gap-4'>
-              <div className='flex flex-col gap-4 md:flex-row'>
-                <div className='flex-1 overflow-hidden'>
-                  <Image
-                    src={mainProduct.productDetails[selectedImageIndex].imgUrl}
-                    width={350}
-                    height={450}
-                    className='object-scale-down bg-gray-200'
-                  />
-                  <Swiper spaceBetween={10} slidesPerView={4} modules={[Navigation]} navigation className='w-[350px]'>
-                    {mainProduct.productDetails.map((img: IImage, index: number) => (
-                      <SwiperSlide key={img.imgUrl}>
-                        <div
-                          className={`w-[80px] h-[110px] ${selectedImageIndex === index && 'border border-blue-cyan'} flex justify-center items-center object-scale-down bg-gray-200 cursor-pointer overflow-hidden hover:border hover:border-blue-cyan`}
-                        >
-                          <img onClick={handleMainImageChange(index)} src={img.imgUrl} />
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </div>
-                <div className='flex-1 flex flex-col items-start gap-2'>
-                  <Title level={2} className='text-left'>
-                    {mainProduct.name}
-                  </Title>
-                  <span>
-                    Mã: <span className='text-left text-primary'>BEANFS4001</span>
-                  </span>
-                  <div className='flex flex-col gap-3 md:flex-row'>
-                    <span className='text-left'>
-                      Thương hiệu: <span className='text-left text-primary'>Bean Fashion</span>
-                    </span>
-                    <div className='border-l border-gray-300 hidden md:block'></div>
-                    <span className='text-left'>
-                      Tình trạng: <span className='text-left text-primary'>Còn hàng</span>
-                    </span>
-                  </div>
-                  <div className='flex flex-row gap-2 items-end'>
-                    <span className='text-left text-red-500 font-bold text-2xl'>
-                      {(mainProduct.price - (mainProduct.price * mainProduct.discount) / 100).toLocaleString('de-DE')}₫
-                    </span>
-                    <span className='text-left text-gray-400 line-through text-base'>
-                      {mainProduct.price.toLocaleString('de-DE')}₫
-                    </span>
-                  </div>
-                  <Divider className='border-gray-200 my-2' />
-                  <p
-                    className='text-left line-clamp-2'
-                    dangerouslySetInnerHTML={{ __html: mainProduct.description }}
-                  ></p>
-                  <div className='flex flex-col'>
-                    <span className='text-left'>
-                      Màu sắc:
-                      <span className='text-left text-primary'>
-                        {
-                          mainProduct.productDetails.filter(
-                            (item, index, self) => index === self.findIndex((t) => t.color === item.color)
-                          )[activedColorIndex].colorName
-                        }
-                      </span>
-                    </span>
-                    <div className='flex flex-row items-start gap-4 mt-1'>
-                      {mainProduct.productDetails
-                        .filter((item, index, self) => index === self.findIndex((t) => t.color === item.color))
-                        .map((productDetail: IProductDetail, index: number) => (
-                          <button key={productDetail.color} onClick={handleColorChange(index)}>
-                            <div
-                              style={{ backgroundColor: productDetail.color }}
-                              className={`w-7 h-7 border border-gray-200 rounded-full flex justify-end items-start`}
-                            >
-                              {activedColorIndex === index && (
-                                <div className='w-2 h-2 bg-green-500 rounded-full border border-gray-200'></div>
-                              )}
-                            </div>
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                  <div className='flex flex-col'>
-                    <span className='text-left'>
-                      Kích thước:{' '}
-                      <span className='text-left text-primary'>
-                        {
-                          [...new Set(mainProduct.productDetails.map((product: ISize) => product.size))][
-                            activedSizeIndex
-                          ]
-                        }
-                      </span>
-                    </span>
-                    <div className='flex flex-row items-start space-x-4 mt-1'>
-                      {[...new Set(mainProduct.productDetails.map((product: ISize) => product.size))].map(
-                        (size: string, index: number) => (
-                          <button key={size} onClick={handleSizeChange(index)}>
-                            <div
-                              className={`w-7 h-7 ${
-                                activedSizeIndex === index ? 'bg-blue-cyan text-white' : 'bg-white text-blue-cyan'
-                              } border border-gray-200 flex justify-center items-center rounded`}
-                            >
-                              {size}
-                            </div>
-                          </button>
-                        )
-                      )}
-                    </div>
-                  </div>
-                  <div className='flex flex-col gap-4 md:flex-row mt-4'>
-                    <div className='flex flex-row gap-1'>
-                      <Button
-                        shape='circle'
-                        onClick={handleDecrease}
-                        className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'
-                      >
-                        -
-                      </Button>
-                      <Input
-                        value={count}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        className='w-20 border border-blue-cyan text-center'
-                      />
-                      <Button
-                        shape='circle'
-                        onClick={handleIncrease}
-                        className='bg-blue-cyan text-white font-bold text-xl flex items-end justify-center'
-                      >
-                        +
-                      </Button>
-                    </div>
-                    <div className='flex flex-row gap-1'>
-                      <Button
-                        className='bg-blue-cyan text-white uppercase'
-                        onClick={() => handleAddToCart(count)}
-                        disabled={loading}
-                        loading={loading}
-                      >
-                        Thêm vào giỏ hàng
-                      </Button>
-                      <Button className='bg-blue-cyan text-white uppercase text-xl w-fit'>{icons.heart}</Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Tabs defaultActiveKey='1' items={tabItems} />
-              </div>
-              <div className='flex flex-col overflow-hidden mt-8'>
-                <Title level={2} className='uppercase !text-blue-cyan !font-bold'>
-                  Sản phẩm liên quan
-                </Title>
-                <Divider className='bg-gray-300 rounded-md border-none h-0.5 -mt-2' />
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={width > 768 ? 4 : width > 639 ? 2 : 1}
-                  modules={[Navigation]}
-                  navigation
-                  className='w-52 lg:w-[55rem] md:w-[40rem] sm:w-[35rem]'
-                >
-                  {relatedProducts ? (
-                    relatedProducts?.map((product: Product) => (
-                      <SwiperSlide key={product.id} className='relative mb-3.5 bg-white p-2.5 rounded'>
-                        <Product
-                          product={product}
-                          handleClickEye={handleClickEye(product)}
-                          // handleClickCart={() => handleClickCart(product)}
-                        />
-                      </SwiperSlide>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                </Swiper>
-              </div>
-            </div>
-            <div className='flex-[1] flex flex-col gap-4 justify-center md:justify-start'>
-              <Vouchers />
-              <div className='flex justify-center flex-col xl:flex-col lg:flex-row md:flex-row sm:flex-col'>
-                <ProductsList title='Có thể bạn thích' products={relatedProducts} />
-                <ProductsList title='Sản phẩm đã xem' products={relatedProducts} />
-              </div>
-            </div>
+    <div className="flex flex-col items-center justify-center w-full bg-white">
+      {showQuickView && quickViewProduct && (<QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />)}
+      <div className="w-full max-w-1200">
+        {loadingProduct ? (
+          <div className='flex justify-center items-center w-full min-h-[65vh]'>
+            <Spin size="large" />
           </div>
         ) : (
-          <div className='flex flex-col items-center justify-center bg-gray-50 m-7 p-4 w-full'>
-            <span className='text-2xl font-bold text-gray-500'>Không tìm thấy sản phẩm</span>
+          <div>
+            {mainProduct ? (
+              <div className='flex flex-col flex-wrap gap-6 justify-between lg:flex-row px-4 mt-5 mb-5'>
+                <div className='flex-[3] flex flex-col gap-4'>
+                  <div className='flex flex-col gap-4 md:flex-row'>
+                    <div className='flex-1 overflow-hidden'>
+                      <Image src={mainImageUrl} width={350} height={450} className='object-scale-down bg-gray-200' />
+                      <Swiper
+                        spaceBetween={10}
+                        slidesPerView={4}
+                        modules={[Navigation]}
+                        navigation
+                        className='w-[350px]'
+                      >
+                        {mainProduct.productDetails
+                          .filter((item, index, self) => index === self.findIndex((t) => t.imgUrl === item.imgUrl))
+                          .map((productDetail: IProductDetail) => (
+                            <SwiperSlide key={productDetail.imgUrl}>
+                              <div className={`w-[80px] h-[110px] ${mainImageUrl === productDetail.imgUrl && 'border border-blue-cyan'} flex justify-center items-center object-scale-down bg-gray-200 cursor-pointer overflow-hidden hover:border hover:border-blue-cyan`}>
+                                <img onClick={handleMainImageChange(productDetail.imgUrl)} src={productDetail.imgUrl} />
+                              </div>
+                            </SwiperSlide>
+                          ))}
+                      </Swiper>
+                    </div>
+                    <div className='flex-1 flex flex-col items-start gap-2'>
+                      <Title level={2} className='text-left'>
+                        {mainProduct.name}
+                      </Title>
+                      <div className='flex flex-col gap-3 md:flex-row'>
+                        <span className='text-left'>Thương hiệu: <span className='text-left text-primary'>Bean Fashion</span></span>
+                        <div className='border-l border-gray-300 hidden md:block'></div>
+                        <span className='text-left'>Tình trạng:
+                          {outOfStock ? (
+                            <span className='ml-1 text-left text-red-500'>Hết hàng</span>
+                          ) : (
+                            <span className='ml-1 text-left text-primary'>Còn hàng</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className='flex flex-row gap-2 items-end'>
+                        <span className='text-left text-red-500 font-bold text-2xl'>
+                          {(mainProduct.price - (mainProduct.price * mainProduct.discount) / 100).toLocaleString("de-DE")}₫
+                        </span>
+                        {mainProduct.discount > 0 && (
+                          <span className='text-left text-gray-400 line-through text-base'>
+                            {mainProduct.price.toLocaleString("de-DE")}₫
+                          </span>
+                        )}
+                      </div>
+                      <Divider className='border-gray-200 my-2' />
+                      <div className='flex flex-col'>
+                        <span className='text-left flex gap-1'>Màu sắc:
+                          {activedColorIndex >= 0 && (
+                            <span className='text-left text-primary'>
+                              {mainProduct.productDetails
+                                .filter(
+                                  (item, index, self) =>
+                                    index === self.findIndex((t) => t.color === item.color)
+                                )[activedColorIndex].colorName}
+                            </span>
+                          )}
+                        </span>
+                        <div className='flex flex-row items-start gap-4 mt-1'>
+                          {mainProduct.productDetails
+                            .filter(
+                              (item, index, self) =>
+                                index === self.findIndex((t) => t.color === item.color)
+                            )
+                            .map((productDetail: IProductDetail, index: number) => (
+                              <button
+                                key={productDetail.color}
+                                onClick={handleColorChange(index, productDetail)}
+                                disabled={outOfStock || (!mainProduct.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '')}
+                                className={`${outOfStock || (!mainProduct.productDetails.find((value) => value.color === productDetail.color && value.size === activedSize)?.stock && activedSize !== '') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                              >
+                                <div
+                                  style={{ backgroundColor: productDetail.color }}
+                                  className={`w-7 h-7 border border-gray-200 rounded-full`}
+                                >
+                                  {activedColorIndex === index && (
+                                    <div className={`w-full h-full flex justify-end items-start`}>
+                                      <div className="w-2 h-2 bg-green-500 rounded-full border border-gray-200"></div>
+                                    </div>
+                                  )}
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                      <div className='flex flex-col'>
+                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{[...new Set(mainProduct.productDetails.map((product: ISize) => product.size))][activedSizeIndex]}</span></span>
+                        <div className='flex flex-row items-start space-x-4 mt-1'>
+                          {mainProduct.productDetails
+                            .filter(
+                              (item, index, self) =>
+                                index === self.findIndex((t) => t.size === item.size)
+                            )
+                            .map((productDetail: IProductDetail, index: number) => (
+                              <button
+                                key={productDetail.size}
+                                onClick={handleSizeChange(index, productDetail.size)}
+                                disabled={outOfStock || (!mainProduct.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '')}
+                                className={`${outOfStock || (!mainProduct.productDetails.find((value) => value.size === productDetail.size && value.color === activedColor)?.stock && activedColor !== '') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                              >
+                                <div
+                                  className={`w-7 h-7 ${activedSizeIndex === index
+                                    ? 'bg-blue-cyan text-white'
+                                    : 'bg-white text-blue-cyan'
+                                    } border border-gray-200 flex justify-center items-center rounded`}
+                                >
+                                  {productDetail.size}
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                      {!outOfStock && (
+                        activedColor && activedSize ? (
+                          <div>
+                            <span className='text-left text-primary'> {mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock} sản phẩm có sẵn</span>
+                          </div>
+                        ) : (
+                          <div>
+                            <span className='text-left text-red-400'>Hãy chọn phân loại hàng</span>
+                          </div>
+                        )
+                      )}
+                      <div className='flex flex-col gap-4 md:flex-row mt-4'>
+                        <div className='flex flex-row gap-1'>
+                          <CustomBtn
+                            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+                            onClick={() => {
+                              handleChangeQuantity(Math.max(count - 1, 1))
+                            }}
+                            disabled={outOfStock || count <= 1}
+                            children={icons.minus}
+                          />
+                          <CustomInput
+                            name={mainProduct.name}
+                            size='small'
+                            placeholder='Nhập số lượng'
+                            type='text'
+                            value={count}
+                            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
+                            onChange={(e) => {
+                              handleChangeQuantity(Math.min(parseInt(e.target.value, 10), (mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock ?? 0)))
+                            }}
+                            disabled={outOfStock || !(activedColor && activedSize)}
+                          />
+                          <CustomBtn
+                            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg rounded-l-none !mt-0 p-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-none'
+                            onClick={() => {
+                              activedColor && activedSize &&
+                                handleChangeQuantity(
+                                  count === mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock ? count : count + 1
+                                )
+                            }}
+                            disabled={outOfStock
+                              || activedColor && activedSize && count >= (mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock ?? 0)
+                              || !(activedColor && activedSize)
+                            }
+                            children={icons.plus}
+                          />
+                        </div>
+                        <div className='flex flex-row gap-1'>
+                          <Button
+                            className='bg-blue-cyan text-white uppercase'
+                            onClick={() => handleAddToCart(count)}
+                            disabled={outOfStock || loading || !(activedColor && activedSize)}
+                            loading={loading}
+                          >
+                            Thêm vào giỏ hàng
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Tabs defaultActiveKey="1" items={tabItems} />
+                  </div>
+                  {relatedProducts.length > 0 && (
+                    <div className='flex flex-col overflow-hidden mt-8'>
+                      <Title level={2} className='uppercase !text-blue-cyan !font-bold'>Sản phẩm liên quan</Title>
+                      <Divider className='bg-gray-300 rounded-md border-none h-0.5 -mt-2' />
+                      <Swiper
+                        spaceBetween={10}
+                        slidesPerView={width > 768 ? 4 : width > 639 ? 2 : 1}
+                        modules={[Navigation]}
+                        navigation
+                        className='w-52 lg:w-[55rem] md:w-[40rem] sm:w-[35rem]'
+                      >
+                        {relatedProducts?.map((product: Product) => (
+                          <SwiperSlide
+                            key={product.id}
+                            className="relative bg-white p-2.5 rounded"
+                          >
+                            <Product
+                              product={product}
+                              handleClickEye={handleClickEye(product)}
+                            // handleClickCart={() => handleClickCart(product)}       
+                            />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    </div>)}
+                </div>
+                <div className='flex-[1] flex flex-col gap-4 justify-center md:justify-start'>
+                  <Vouchers />
+                  <div className='flex justify-center flex-col xl:flex-col xl:gap-0 md:gap-4 md:flex-row sm:flex-col'>
+                    {productsYouMayLike.length > 0 && <ProductsList title='maylike' products={productsYouMayLike} />}
+                    {viewedProducts.length > 0 && <ProductsList title='viewed' products={viewedProducts} />}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className='flex flex-col items-center justify-center bg-gray-50 m-7 p-4 w-full'>
+                <span className="text-2xl font-bold text-gray-500">Không tìm thấy sản phẩm</span>
+              </div>
+            )}
           </div>
         )}
       </div>
