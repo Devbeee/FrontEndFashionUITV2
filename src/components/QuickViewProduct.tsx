@@ -54,14 +54,8 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
     }
 
   const findProductDetailId = (): string | undefined => {
-    const uniqueSizes = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.size))]
-    const uniqueColors = [...new Set(product.productDetails.map((detail: IProductDetail) => detail.color))]
-
-    const selectedSize = uniqueSizes[activedSizeIndex]
-    const selectedColor = uniqueColors[activedColorIndex]
-
         return product.productDetails.find(
-            (detail: IProductDetail) => detail.size === selectedSize && detail.color === selectedColor
+            (detail: IProductDetail) => detail.size === activedSize && detail.color === activedColor
         )?.id;
     };
     const handleAddToCart = (quantity: number) => {
@@ -92,6 +86,12 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
         const isOutOfStock = !product.productDetails.some((value) => value.stock > 0);
         setOutOfStock(isOutOfStock);
     }, []);
+
+    useEffect(() => {
+        activedColor && activedSize && product && setCount(
+          Math.min(count, product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock || 1)
+        );
+      }, [activedColor, activedSize])
 
     return (
         <div className='flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 top-0 left-0 bottom-0 right-0 fixed overflow-auto'>
@@ -197,7 +197,7 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                         </div>
                     </div>
                     <div className='flex flex-col'>
-                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{[...new Set(product.productDetails.map((product: ISize) => product.size))][activedSizeIndex]}</span></span>
+                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{activedSize}</span></span>
                         <div className='flex flex-row items-start space-x-4 mt-1'>
                             {product.productDetails
                                 .filter(
@@ -243,7 +243,11 @@ export function QuickViewProduct({ product, handleClosePopup }: QuickViewProduct
                             </div>
                         )
                     )}
-                    {activedColor && activedSize && count === (product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock) && (
+                    {
+                      activedColor 
+                      && activedSize 
+                      && product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock !== undefined 
+                      && count >= product.productDetails.find((value) => value.size === activedSize && value.color === activedColor)!.stock && (
                         <div className='text-left'>
                             <span className='text-left text-red-400'>Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này</span>
                         </div>
