@@ -7,6 +7,8 @@ import Lottie from 'react-lottie'
 import { useApi } from '@/hooks'
 import { checkoutApi } from '@/apis'
 import successAnimationData from '@/animation/Success.json'
+import failAnimationData from '@/animation/Fail.json'
+
 import { PATH, VerifyPaymentStatus } from '@/utils'
 
 export const VerifyPayment = () => {
