@@ -325,7 +325,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     size='large'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}
@@ -350,7 +350,7 @@ export const AddressModal: React.FC<AddressModalProps> = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    className='text-lg'
+                    className='text-lg  address-select'
                     size='large'
                     loading={isFetchingAddress.value}
                     disabled={isFetchingAddress.value}
