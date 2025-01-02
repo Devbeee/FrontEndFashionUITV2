@@ -46,8 +46,8 @@ export function Footer() {
   }, [])
   return (
     <AntFooter className='mt-auto bg-blue-cyan text-white pt-10'>
-      <Row justify='space-around' className='m-auto w-full'>
-        <Col span={5}>
+      <Row justify='space-around' className='m-auto w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10'>
+        <Col>
           <Title level={3} style={{ color: 'white' }}>
             THÔNG TIN CHUNG
           </Title>
@@ -74,7 +74,7 @@ export function Footer() {
           </Space>
         </Col>
 
-        <Col span={5}>
+        <Col>
           <Title level={3} style={{ color: 'white' }}>
             BÀI VIẾT MỚI
           </Title>
@@ -119,7 +119,7 @@ export function Footer() {
         </Col>
 
         {footerInfo.map((infoItem) => (
-          <Col span={4} key={infoItem.title}>
+          <Col key={infoItem.title}>
             <Title level={3} style={{ color: 'white' }}>
               {infoItem.title}
             </Title>
