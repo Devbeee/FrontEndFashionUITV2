@@ -118,8 +118,6 @@ export function Home() {
             }
 
             if (index !== -1) {
-              product.saleCount = discount.sold
-              product.productCountSale = true
               categorizedProducts[index].push(product)
             }
           })
