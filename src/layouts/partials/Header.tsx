@@ -124,14 +124,14 @@ export function Header() {
     }
   ]
   return (
-    <div className='w-1200 mx-auto'>
-      <header className='flex justify-between items-center py-4'>
+    <div className='w-full xl:w-1200 mx-auto'>
+      <header className='flex flex-col lg:flex-row lg:gap-0 justify-between items-center py-4 w-full gap-4'>
         <div className='flex items-center'>
           <img className='w-40 h-16' src={logo} alt='logo' />
         </div>
 
         <div className='flex-1 mr-4'>
-          <div className='flex justify-between items-center border-b pb-2 mb-2'>
+          <div className='flex flex-col gap-2 md:flex-row justify-between items-center border-b pb-2 mb-2'>
             <div className='flex items-center space-x-2'>
               <span className='text-xl'>{icons.phone}</span>
               <span className='text-base font-semibold uppercase'>
@@ -225,12 +225,13 @@ export function Header() {
 
           <Menu
             mode='horizontal'
-            className='flex justify-between uppercase flex-1 text-center'
+            className='flex flex-col sm:flex-row justify-between items-center uppercase flex-1 text-center'
             items={NAVIGATION_ITEMS.map((item) => ({
               ...item,
               style: { flex: 1, textAlign: 'center' }
             }))}
             selectedKeys={currentKey ? [currentKey] : []}
+            overflowedIndicator={<div className='flex justify-center items-start text-4xl'>{icons.menu}</div>}
           />
         </div>
 

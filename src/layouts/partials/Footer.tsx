@@ -46,8 +46,8 @@ export function Footer() {
   }, [])
   return (
     <AntFooter className='mt-auto bg-blue-cyan text-white pt-10'>
-      <Row justify='space-around' className='m-auto w-full'>
-        <Col span={5}>
+      <Row justify='space-around' className='m-auto w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10'>
+        <Col>
           <Title level={3} style={{ color: 'white' }}>
             THÔNG TIN CHUNG
           </Title>
@@ -74,7 +74,7 @@ export function Footer() {
           </Space>
         </Col>
 
-        <Col span={5}>
+        <Col>
           <Title level={3} style={{ color: 'white' }}>
             BÀI VIẾT MỚI
           </Title>
@@ -96,15 +96,15 @@ export function Footer() {
                 <div key={blog.id} className='space-y-2'>
                   <Row gutter={8}>
                     <Link to={`/blogs/${blog.slug}`} className='flex items-center'>
-                    <Col>
+                    <Col className='w-24 max-w-24 h-16 bg-gray-300 !p-0' >
                       <img
                         src={blog.coverImage}
                         alt='thumb'
-                        className='w-26 h-16 object-scale-down'
+                        className='w-24 max-w-24 h-16 object-contain'
                       />
                     </Col>
                     <Col className='ml-2'>
-                      <Text className='text-white hover:text-yellow line-clamp-2'>
+                      <Text className='text-white hover:text-yellow line-clamp-2 h-12 flex justify-center items-start'>
                         {blog.title}
                       </Text>
                       <Text className='text-gray-400'>{convertStringDate(blog.createdAt)}</Text>
@@ -119,7 +119,7 @@ export function Footer() {
         </Col>
 
         {footerInfo.map((infoItem) => (
-          <Col span={4} key={infoItem.title}>
+          <Col key={infoItem.title}>
             <Title level={3} style={{ color: 'white' }}>
               {infoItem.title}
             </Title>

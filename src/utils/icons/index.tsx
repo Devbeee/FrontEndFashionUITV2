@@ -21,6 +21,7 @@ import { GrNext, GrPrevious } from 'react-icons/gr'
 import { MdOutlineWatchLater } from 'react-icons/md'
 import { BiCurrentLocation, BiSolidDiscount } from 'react-icons/bi'
 import { PiUserPlus } from 'react-icons/pi'
+import { IoIosMenu } from "react-icons/io";
 
 export const icons = {
   phone: <LiaPhoneSolid />,
@@ -66,5 +67,6 @@ export const icons = {
   downArrow: <FaArrowDownLong />,
   upArrow: <FaArrowUpLong />,
   ban: <FaBan />,
-  topSearch: <FaFireAlt />
+  topSearch: <FaFireAlt />,
+  menu: <IoIosMenu />
 }
