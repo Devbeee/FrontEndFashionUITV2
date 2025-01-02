@@ -1,5 +1,5 @@
 import { instance as axiosClient } from '@/configs'
-import { IGetProductsParams, IGetRelatedParams } from '@/interfaces'
+import { IGetBySearchQueryParams, IGetProductsParams, IGetRelatedParams } from '@/interfaces'
 
 export const productApi = {
     findAllProducts: async () => {
@@ -16,6 +16,17 @@ export const productApi = {
         const queryString = new URLSearchParams(validParams as Record<string, string>).toString()
 
         const url = `/product/list?${queryString}`
+        return axiosClient.get(url)
+    },
+    getBySearchQuery: async (searchParams: IGetBySearchQueryParams) => {
+        const { searchQuery, ...optionalParams } = searchParams
+        const validParams = Object.fromEntries(
+        Object.entries({ searchQuery, ...optionalParams }).filter(([, value]) => value !== undefined || value !== '')
+        ) as Partial<IGetBySearchQueryParams>
+
+        const queryString = new URLSearchParams(validParams as Record<string, string>).toString()
+
+        const url = `/product/search?${queryString}`
         return axiosClient.get(url)
     },
     getDiscountProduct: async () => {
