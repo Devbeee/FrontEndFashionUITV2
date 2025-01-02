@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { Select, Pagination } from 'antd'
+import { Select, Pagination, Skeleton } from 'antd'
 
 import { useApi, useBoolean } from '@/hooks'
 
@@ -213,12 +213,14 @@ export const AllProducts: React.FC = () => {
             className={'w-full flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}
           >
             {loading ? (
-              <div className={'w-full flex justify-center items-center'}>
-                <div className='flex flex-col items-center'>
-                  <div className='spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-t-primary'></div>
-                  <div className='text-xl font-medium text-gray-500 mt-2'>Đang tải...</div>
+              Array.from({ length: 12 }).map((_, index) => (
+                <div className="md:w-[23.5%] mt-2 w-[46%] h-fit bg-gray-200 rounded-md" key={index}>
+                  <Skeleton.Node 
+                    active 
+                    style={{ width: '207px', height: '350px', borderRadius: '8px' }} 
+                  />
                 </div>
-              </div>
+              ))
             ) : products && products.length === 0 ? (
               <div className={'w-full flex justify-center'}>
                 <div className={'text-2xl font-semibold text-gray-400'}>Không có sản phẩm phù hợp</div>
@@ -232,7 +234,7 @@ export const AllProducts: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className='flex justify-center mt-5'>
+          <div className={`${loading && 'hidden'} flex justify-center mt-5`}>
             <Pagination
               disabled={totalProducts === 0}
               align='center'

@@ -1,4 +1,4 @@
-import { Pagination } from "antd"
+import { Pagination, Skeleton } from "antd"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 
@@ -90,22 +90,24 @@ export const ProductSearch = () => {
             <QuickViewProduct product={quickViewProduct} handleClosePopup={handleClosePopup} />
             )}
              <div className="w-full h-full">
-                <div className="w-[63%] m-auto">
+                <div className="w-[63%] m-auto pb-10">
                     <h1 className="text-2xl font-semibold text-gray-700 text-left pb-4">
                         {loading ? <p>Kết quả tìm kiếm</p>
                          :<p>{`Có ${totalProducts} kết quả tìm kiếm phù hợp`}</p>
                         }
                     </h1>
                     <div
-                        className={'w-full flex flex-wrap gap-[5%] md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}
+                        className={'w-full flex flex-wrap gap-2 md:gap-[2%] justify-start md:px-0 sm:px-2 px-1'}
                     >
                     {loading ? (
-                        <div className="w-full flex justify-center items-center">
-                        <div className="flex flex-col items-center">
-                            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-t-primary"></div>
-                            <div className="text-xl font-medium text-gray-500 mt-2">Đang tải...</div>
-                        </div>
-                        </div>
+                        Array.from({ length: 16 }).map((_, index) => (
+                            <div className="sm:w-[46%] xl:w-[23.5%] mt-2 h-fit bg-gray-200 rounded-md" key={index}>
+                                <Skeleton.Node 
+                                active 
+                                style={{ width: '282px', height: '350px', borderRadius: '8px' }} 
+                                />
+                            </div>
+                        ))
                     ) : products && products.length === 0 ? (
                         <div className="w-full flex justify-center">
                             <div className="text-2xl font-semibold text-gray-400">
@@ -115,7 +117,7 @@ export const ProductSearch = () => {
                     ) : (
                         products?.map((product: IProduct) => (
                         <div
-                            className="md:w-[23.5%] sm:w-[46%] w-full mt-2 h-fit"
+                            className="sm:w-[46%] xl:w-[23.5%] mt-2 h-fit"
                             key={product.id}
                         >
                             <Product
@@ -126,7 +128,7 @@ export const ProductSearch = () => {
                         ))
                     )}
                     </div>
-                    <div className={'flex justify-center my-5'}>
+                    <div className={`${loading && 'hidden'} flex justify-center my-5`}>
                         <Pagination
                             disabled={totalProducts === 0}
                             align='center'
