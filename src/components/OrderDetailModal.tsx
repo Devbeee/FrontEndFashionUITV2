@@ -24,7 +24,7 @@ type OrderDetailModalProps = {
 export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl, defaultData, fetchOrders }) => {
   const { loading: callOrderApiLoading, callApi: callOrderApi } = useApi<void>()
   const [order, setOrder] = useState<IOrderReturn>()
-
+  const [modalLoading, setModalLoading] = useState<boolean>(false)
   const windowSize = useWindowSize()
   const columns: TableColumnsType<IOrderProduct> = [
     {
@@ -108,8 +108,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
     callOrderApi(async () => {
       const data = await checkoutApi.createRepayStripeUrl(defaultData.id)
       if (data) {
-        window.open(data.data, '_blank')
-        window.close()
+        window.location.href = data.data
       } else {
         message.error('Đã xãy ra lỗi khi tạo liên kết thanh toán!')
       }
@@ -117,6 +116,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
   }
   const fetchOrder = (orderId: string) => {
     if (orderId) {
+      setModalLoading(true)
       callOrderApi(async () => {
         const data = await orderApi.getOrder(orderId)
         if (data.data) {
@@ -124,6 +124,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
         } else {
           modalControl.setFalse()
         }
+        setModalLoading(false)
       })
     }
   }
@@ -142,6 +143,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
       onCancel={() => modalControl.setFalse()}
       width={800}
       className='top-16'
+      loading={modalLoading}
       footer={
         order && [
           order.paymentMethod === PaymentMethod.Stripe && order.paymentStatus === PaymentStatus.Unpaid && (
@@ -300,6 +302,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ modalControl
               columns={columns}
               dataSource={order?.products}
               rowKey={(record) => record.id}
+              loading={modalLoading}
               scroll={
                 columns?.length > 0
                   ? {

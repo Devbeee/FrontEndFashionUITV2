@@ -7,6 +7,8 @@ import Lottie from 'react-lottie'
 import { useApi } from '@/hooks'
 import { checkoutApi } from '@/apis'
 import successAnimationData from '@/animation/Success.json'
+import failAnimationData from '@/animation/Fail.json'
+
 import { PATH, VerifyPaymentStatus } from '@/utils'
 
 export const VerifyPayment = () => {
@@ -46,7 +48,7 @@ export const VerifyPayment = () => {
     return {
       loop: false,
       autoplay: true,
-      animationData: status === VerifyPaymentStatus.Failed ? successAnimationData : successAnimationData,
+      animationData: status === VerifyPaymentStatus.Failed ? failAnimationData : successAnimationData,
       rendererSettings: {
         preserveAspectRatio: 'xMidYMid slice'
       }

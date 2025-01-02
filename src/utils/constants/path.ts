@@ -30,5 +30,6 @@ export const PATH = {
   inquiries_sup: '/inquiries_sup',
   payment_sup: '/payment_sup',
   retail_sup: '/retail_sup',
-  size_sup: '/size_sup'
+  size_sup: '/size_sup',
+  searchProduct: '/search',
 }
