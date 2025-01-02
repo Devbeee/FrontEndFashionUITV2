@@ -96,15 +96,15 @@ export function Footer() {
                 <div key={blog.id} className='space-y-2'>
                   <Row gutter={8}>
                     <Link to={`/blogs/${blog.slug}`} className='flex items-center'>
-                    <Col>
+                    <Col className='w-24 max-w-24 h-16 bg-gray-300 !p-0' >
                       <img
                         src={blog.coverImage}
                         alt='thumb'
-                        className='w-26 h-16 object-scale-down'
+                        className='w-24 max-w-24 h-16 object-contain'
                       />
                     </Col>
                     <Col className='ml-2'>
-                      <Text className='text-white hover:text-yellow line-clamp-2'>
+                      <Text className='text-white hover:text-yellow line-clamp-2 h-12 flex justify-center items-start'>
                         {blog.title}
                       </Text>
                       <Text className='text-gray-400'>{convertStringDate(blog.createdAt)}</Text>
