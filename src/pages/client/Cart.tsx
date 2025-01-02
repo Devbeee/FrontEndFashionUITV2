@@ -20,6 +20,7 @@ export function Cart() {
   const navigate = useNavigate()
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const { loading, errorMessage, callApi: callCartApi } = useApi<void>()
+  const { loading: loadingDeleteCart, errorMessage: errorDeleteCart, callApi: callDeleteCartApi } = useApi<void>()
   const {
     value: isOpenDeleteMultipleModal,
     setTrue: openDeleteMultipleModal,
@@ -115,7 +116,7 @@ export function Cart() {
       render: (_, record) => (
         <div className='relative flex items-center max-w-[8rem]'>
           <CustomBtn
-            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'
+            className='bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg rounded-e-none !mt-0 p-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-none z-10'
             onClick={() => {
               handleChangeQuantity(Math.max(record.quantity - 1, 1), record)
             }}
@@ -129,9 +130,9 @@ export function Cart() {
             type='text'
             maxLength={2}
             value={record.quantity}
-            className='bg-gray-50 border-x-0 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
+            className='bg-gray-50 border-gray-300 h-8 text-center text-black text-sm focus:ring-blue-500 focus:border-blue-500 block py-2 w-full rounded-none'
             onChange={(e) => {
-              handleChangeQuantity(parseInt(e.target.value, 10) || 1, record)
+              handleChangeQuantity(Math.min(parseInt(e.target.value, 10), (record?.stock ?? 0)), record)
             }}
           />
           <CustomBtn
@@ -207,7 +208,7 @@ export function Cart() {
   const handleDeleteCartItem = async (id: string) => {
     const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== id)
     const updatedCheckoutItems = checkoutItems.filter((checkoutItem) => checkoutItem.id !== id)
-    await callCartApi(async () => {
+    await callDeleteCartApi(async () => {
       const { data } = await cartApi.deleteCartItem(id)
       if (data) {
         message.success('Xóa sản phẩm thành công')
@@ -226,7 +227,7 @@ export function Cart() {
 
     const deleteIds = checkoutItems.map((item) => item.id)
 
-    await callCartApi(async () => {
+    await callDeleteCartApi(async () => {
       const { data } = await cartApi.deleteMultipleCartItems(deleteIds)
       if (data) {
         message.success('Xóa sản phẩm thành công')
@@ -247,15 +248,20 @@ export function Cart() {
   useEffect(() => {
     getCartItems()
   }, [productCount])
-
+  
   useEffect(() => {
-    if (errorMessage) {
-      message.error(errorMessage)
-      if (errorMessage === errorResponseCases['Login']) {
-        navigate('/login')
+    const showError = (error: string, redirectPath: string | null) => {
+      if (error) {
+        message.error(error)
+        if (redirectPath) {
+          navigate(redirectPath)
+        }
       }
     }
-  }, [errorMessage])
+
+    showError(errorMessage, errorMessage === errorResponseCases['Login'] ? '/login' : null)
+    showError(errorDeleteCart, null)
+  }, [errorMessage, errorDeleteCart, navigate])
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth)
@@ -287,7 +293,7 @@ export function Cart() {
                 key='delete'
                 title='Xóa'
                 onClick={handleDeleteMultipleCartItems}
-                loading={loading}
+                loading={loadingDeleteCart}
                 disabled={loading}
                 type='primary'
                 className='px-5 py-1 !w-fit !h-9'
