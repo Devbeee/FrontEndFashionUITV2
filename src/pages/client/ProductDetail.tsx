@@ -10,7 +10,7 @@ import 'swiper/css'
 
 import { Product, Vouchers, ProductsList, QuickViewProduct, CustomBtn, CustomInput } from '@/components'
 import { errorResponseCases, icons, addProductToRecentlyViewed, getRecentlyViewed, sizeType } from '@/utils'
-import { IProduct, ISize, IProductDetail, IGetRelatedParams } from '@/interfaces'
+import { IProduct, IProductDetail, IGetRelatedParams } from '@/interfaces'
 import { cartApi, productApi } from '@/apis'
 import { useApi } from '@/hooks'
 import { useCartStore } from '@/stores'
@@ -164,14 +164,8 @@ export function ProductDetail() {
   };
 
   const findProductDetailId = (): string | undefined => {
-    const uniqueSizes = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.size))]
-    const uniqueColors = [...new Set(mainProduct?.productDetails.map((detail: IProductDetail) => detail.color))]
-
-    const selectedSize = uniqueSizes[activedSizeIndex]
-    const selectedColor = uniqueColors[activedColorIndex]
-
     return mainProduct?.productDetails.find(
-      (detail: IProductDetail) => detail.size === selectedSize && detail.color === selectedColor
+      (detail: IProductDetail) => detail.size === activedSize && detail.color === activedColor
     )?.id
   }
 
@@ -225,6 +219,12 @@ export function ProductDetail() {
       setOutOfStock(isOutOfStock);
     }
   }, [mainProduct]);
+  
+  useEffect(() => {
+    activedColor && activedSize && mainProduct && setCount(
+      Math.min(count, mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock || 1)
+    );
+  }, [activedColor, activedSize])
 
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white">
@@ -341,7 +341,7 @@ export function ProductDetail() {
                         </div>
                       </div>
                       <div className='flex flex-col'>
-                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{[...new Set(mainProduct.productDetails.map((product: ISize) => product.size))][activedSizeIndex]}</span></span>
+                        <span className='text-left'>Kích thước: <span className='text-left text-primary'>{activedSize}</span></span>
                         <div className='flex flex-row items-start space-x-4 mt-1'>
                           {mainProduct.productDetails
                             .filter(
@@ -387,7 +387,11 @@ export function ProductDetail() {
                           </div>
                         )
                       )}
-                      {activedColor && activedSize && count === (mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock) && (
+                      {
+                        activedColor 
+                        && activedSize 
+                        && mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)?.stock !== undefined 
+                        && count >= mainProduct.productDetails.find((value) => value.size === activedSize && value.color === activedColor)!.stock && (
                           <div className='text-left'>
                               <span className='text-left text-red-400'>Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này</span>
                           </div>
