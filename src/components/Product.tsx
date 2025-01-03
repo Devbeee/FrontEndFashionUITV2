@@ -17,7 +17,7 @@ export const Product: React.FC<ProductProps> = ({ product, handleClickEye }) => 
           <div className='relative overflow-hidden group'>
             <div className='absolute w-full h-full bg-gray-300 opacity-0 z-0 top-0 right-0 ease-in-out duration-150 group-hover:opacity-70'></div>
               <img
-                className='bg-transparent w-auto rounded h-[300px] top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity'
+                className='bg-transparent w-auto rounded md::h-[300px] h-[250px] top-0 bottom-0 m-auto ease-in-out duration-300 will-change-opacity'
                 src={product?.productDetails[0]?.imgUrl}
                 alt={product?.name}
               />
@@ -64,7 +64,7 @@ export const Product: React.FC<ProductProps> = ({ product, handleClickEye }) => 
                   <span className='pr-1 font-medium'>
                     {(product?.price - (product?.price * product?.discount) / 100).toLocaleString('de-DE')}₫
                   </span>
-                  <span className='line-through text-gray-500 text-xs font-'>
+                  <span className='line-through text-gray-500 text-xs'>
                     {product?.price.toLocaleString('de-DE')}₫
                   </span>
                 </>
@@ -73,7 +73,7 @@ export const Product: React.FC<ProductProps> = ({ product, handleClickEye }) => 
               )}
             </div>
             {product.productCount && (
-              <div className='absolute bottom-2 right-2 w-28'>
+              <div className='md:absolute md:bottom-2 md:right-2 md:w-28 md:block hidden '>
                 <div className='w-full h-4 rounded-full relative bg-light-blue mt-1'>
                   <span className='text-xs w-full top-0 absolute z-10 text-white leading-4 left-1/2 font-normal transform -translate-x-1/2'>
                     Đã bán {product?.sold}
