@@ -490,12 +490,12 @@ export function Home() {
                   </TabPanel>
                   <TabList className='flex justify-between items-center m-0 border-b-0 border-t-2 border-t-blue-cyan pt-6'>
                     <Tab
-                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 0 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
+                      className={`flex items-center md:text-base text-xs cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 0 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
                     >
                       <div
-                        className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 0 ? 'border-blue-cyan' : 'border-gray-500'}`}
+                        className={`float-left mb-0 rounded-full md:w-10 md:h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 0 ? 'border-blue-cyan' : 'border-gray-500'}`}
                       >
-                        <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[2]} alt='tab nu' />
+                        <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[1]} alt='tab nu' />
                       </div>
                       <p className='my-0 leading-4'>
                         Thời trang Nam
@@ -505,10 +505,10 @@ export function Home() {
                       </p>
                     </Tab>
                     <Tab
-                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 1 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
+                      className={`flex items-center md:text-base text-xs cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 1 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
                     >
                       <div
-                        className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 1 ? 'border-blue-cyan' : 'border-gray-500'}`}
+                        className={`float-left mb-0 rounded-full md:w-10 md:h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 1 ? 'border-blue-cyan' : 'border-gray-500'}`}
                       >
                         <img className='border-0 max-w-full h-auto bg-transparent' src={tabImages[2]} alt='tab nu' />
                       </div>
@@ -520,10 +520,10 @@ export function Home() {
                       </p>
                     </Tab>
                     <Tab
-                      className={`flex items-center text-base cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 2 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
+                      className={`flex items-center md:text-base text-xs cursor-pointer font-semibold relative w-1/3 mb-0 focus-visible:!outline-none ${tabProductIndex === 2 ? 'text-blue-cyan before:absolute before:w-4 before:h-4 before:left-3 before:-top-8 before:rotate-45 before:border before:border-blue-cyan before:border-t-0 before:border-l-0 before:bg-white' : 'text-black'}`}
                     >
                       <div
-                        className={`float-left mb-0 rounded-full w-10 h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 2 ? 'border-blue-cyan' : 'border-gray-500'}`}
+                        className={`float-left mb-0 rounded-full md:w-10 md:h-10 p-0.5 mr-2.5 border-solid border transition-all duration-300 ${tabProductIndex === 2 ? 'border-blue-cyan' : 'border-gray-500'}`}
                       >
                         <img
                           className='border-0 max-w-full h-auto bg-transparent'
