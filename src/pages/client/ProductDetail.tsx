@@ -477,7 +477,7 @@ export function ProductDetail() {
                 </div>
                 <div className='flex-[1] flex flex-col gap-4 justify-center md:justify-start'>
                   <Vouchers />
-                  <div className='flex justify-center flex-col xl:flex-col xl:gap-0 md:gap-4 md:flex-row sm:flex-col'>
+                  <div className='flex justify-center flex-col lg:flex-col lg:gap-0 md:gap-4 md:flex-row sm:flex-col'>
                     {productsYouMayLike.length > 0 && <ProductsList title='maylike' products={productsYouMayLike} />}
                     {viewedProducts.length > 0 && <ProductsList title='viewed' products={viewedProducts} />}
                   </div>
