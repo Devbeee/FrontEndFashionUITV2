@@ -48,7 +48,7 @@ const initializeNavigationItems = async () => {
     { label: <Link to='/contact'>Liên hệ</Link>, key: 'contact' },
     {
       label: (
-        <Link to='#' className='text-red-500 flex items-center'>
+        <Link to='#' className='text-red-500 flex items-center justify-center'>
           <span>{icons.gift}</span>
           Khuyến mãi
         </Link>
@@ -61,4 +61,3 @@ const initializeNavigationItems = async () => {
 initializeNavigationItems()
 
 export { NAVIGATION_ITEMS }
-

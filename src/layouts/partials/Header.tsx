@@ -28,9 +28,9 @@ export function Header() {
   const { loading, callApi: getBySearchQuery } = useApi<void>()
   const [query, setQuery] = useState<string>('')
   const [products, setProducts] = useState<IProduct[]>([])
-  const {value: isSearching, setTrue: setTrueSearching, setFalse: setFalseSearching} = useBoolean(false)
-  const {value: isFocus, setTrue: setTrueFocus, setFalse: setFalseFocus} = useBoolean(false)
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { value: isSearching, setTrue: setTrueSearching, setFalse: setFalseSearching } = useBoolean(false)
+  const { value: isFocus, setTrue: setTrueFocus, setFalse: setFalseFocus } = useBoolean(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const { debouncedCallback } = useDebouncedCallback(async (searchQuery: string) => {
     await getProducts(searchQuery)
@@ -59,13 +59,13 @@ export function Header() {
   const handleBlur = () => {
     setTimeout(() => {
       if (containerRef.current) {
-        const activeElement = document.activeElement;
+        const activeElement = document.activeElement
         if (!containerRef.current.contains(activeElement)) {
-          setFalseFocus();
+          setFalseFocus()
         }
       }
-    }, 100);
-  };
+    }, 100)
+  }
 
   const handleLogout = () => {
     callApiLogout(async () => {
@@ -74,12 +74,12 @@ export function Header() {
       setQuantity(0)
     })
   }
-  
-  const [isDrawerVisible, setDrawerVisible] = useState(false);
+
+  const [isDrawerVisible, setDrawerVisible] = useState(false)
 
   const toggleDrawer = () => {
-    setDrawerVisible(!isDrawerVisible);
-  };
+    setDrawerVisible(!isDrawerVisible)
+  }
 
   const actionsUser: MenuProps['items'] = [
     {
@@ -164,66 +164,90 @@ export function Header() {
                 onBlur={handleBlur}
               />
               {isFocus && (
-                <div className="absolute right-0 bg-white border border-gray-300 rounded shadow-lg mt-1 z-10 p-2 w-full" style={{ top: '100%' }}>
-                    <div className='w-full flex flex-col items-center gap-1 divide-y-2'>
-                      <div className='flex flex-row justify-center items-center'>
-                        <span className='mr-2'>{icons.topSearch}</span>
-                        <span className='uppercase'>Tìm kiếm nhiều nhất</span>
-                      </div>
-                      <div className="flex flex-wrap items-center p-1 gap-1 w-full">
-                        {topSearch.map((item) => (
-                          <Link
-                            to={`/search?page=1&searchQuery=${item.value}`}
-                            key={item.value}
-                            className="text-sm text-gray-700 bg-gray-200 p-1 rounded hover:bg-gray-300 transition duration-200"
-                            onClick={setFalseFocus}
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
+                <div
+                  className='absolute right-0 bg-white border border-gray-300 rounded shadow-lg mt-1 z-10 p-2 w-full'
+                  style={{ top: '100%' }}
+                >
+                  <div className='w-full flex flex-col items-center gap-1 divide-y-2'>
+                    <div className='flex flex-row justify-center items-center'>
+                      <span className='mr-2'>{icons.topSearch}</span>
+                      <span className='uppercase'>Tìm kiếm nhiều nhất</span>
                     </div>
-                  <div className="flex flex-col items-center divide-y-2">
+                    <div className='flex flex-wrap items-center p-1 gap-1 w-full'>
+                      {topSearch.map((item) => (
+                        <Link
+                          to={`/search?page=1&searchQuery=${item.value}`}
+                          key={item.value}
+                          className='text-sm text-gray-700 bg-gray-200 p-1 rounded hover:bg-gray-300 transition duration-200'
+                          onClick={setFalseFocus}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className='flex flex-col items-center divide-y-2'>
                     {loading ? (
-                      <div className="flex items-center justify-center">
+                      <div className='flex items-center justify-center'>
                         <Spin />
                       </div>
                     ) : products.length > 0 ? (
                       products.map((product) => (
-                        <div key={product.id} className="flex flex-row items-center p-2 gap-3 w-full">
-                          <Link to={`/product/detail/${product.slug}`} className='w-[20%] flex items-center justify-center' onClick={setFalseFocus}>
-                            <img src={product.productDetails[0].imgUrl} alt={product.name} className='w-[65px] h-[80px]'/>
+                        <div key={product.id} className='flex flex-row items-center p-2 gap-3 w-full'>
+                          <Link
+                            to={`/product/detail/${product.slug}`}
+                            className='w-[20%] flex items-center justify-center'
+                            onClick={setFalseFocus}
+                          >
+                            <img
+                              src={product.productDetails[0].imgUrl}
+                              alt={product.name}
+                              className='w-[65px] h-[80px]'
+                            />
                           </Link>
                           <div className='flex flex-col w-[85%] gap-1'>
-                            <Link to={`/product/detail/${product.slug}`} className='text-sm text-gray-700' onClick={setFalseFocus}>
+                            <Link
+                              to={`/product/detail/${product.slug}`}
+                              className='text-sm text-gray-700'
+                              onClick={setFalseFocus}
+                            >
                               {product.name}
                             </Link>
                             <div>
                               {product.discount > 0 ? (
                                 <div>
                                   <span className='text-blue-cyan font-semibold pr-2'>
-                                    {(product?.price - (product?.price * product?.discount) / 100).toLocaleString('de-DE')}₫
+                                    {(product?.price - (product?.price * product?.discount) / 100).toLocaleString(
+                                      'de-DE'
+                                    )}
+                                    ₫
                                   </span>
                                   <span className='line-through text-gray-700'>
-                                  {product?.price.toLocaleString('de-DE')}₫
-                                  </span>
-                                </div>
-                              ) : <span className='text-blue-cyan font-semibold'>
                                     {product?.price.toLocaleString('de-DE')}₫
                                   </span>
-                              }
+                                </div>
+                              ) : (
+                                <span className='text-blue-cyan font-semibold'>
+                                  {product?.price.toLocaleString('de-DE')}₫
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
                       ))
-                    ) : (!isSearching &&
-                      <div className="text-center py-2">Không có sản phẩm</div>
+                    ) : (
+                      !isSearching && <div className='text-center py-2'>Không có sản phẩm</div>
                     )}
                   </div>
-                  {!loading && products.length > 0 && 
-                    <Link to={`/search?page=1&searchQuery=${query}`} className="text-gray-700 text-sm flex items-center justify-center" onClick={setFalseFocus}>
+                  {!loading && products.length > 0 && (
+                    <Link
+                      to={`/search?page=1&searchQuery=${query}`}
+                      className='text-gray-700 text-sm flex items-center justify-center'
+                      onClick={setFalseFocus}
+                    >
                       Xem tất cả kết quả
-                    </Link>}
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -241,34 +265,35 @@ export function Header() {
             disabledOverflow={true}
           />
           <Drawer
-            title="Menu"
-            placement="left"
+            placement='top'
             onClose={toggleDrawer}
             open={isDrawerVisible}
-            width={200}
-            className='p-0 bg-slate-300'
+            className='bg-slate-300'
+            closeIcon={null}
             styles={{
               body: {
-                padding: 0, 
-              }
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              },
+              content: { paddingBottom: '12px' }
             }}
           >
             <Menu
-              mode="vertical"
+              mode='inline'
+              className='lg:max-w-[40%] max-w-[90%] top-0 max-h-[320px] lg:text-xl text-base'
               items={NAVIGATION_ITEMS.map((item) => ({
                 ...item,
-                style: { textAlign: 'start', width: '100%' },
+                style: { textAlign: 'center', width: '100%' },
+                className: 'header-menu-item'
               }))}
+              inlineIndent={28}
               selectedKeys={currentKey ? [currentKey] : []}
             />
           </Drawer>
           <div className='flex items-center justify-center md:hidden'>
-            <Button
-              type="text"
-              icon={icons.menu}
-              onClick={toggleDrawer}
-              className="md:hidden text-center text-4xl"
-            />
+            <Button type='text' icon={icons.menu} onClick={toggleDrawer} className='md:hidden text-center text-4xl' />
           </div>
         </div>
 

@@ -38,3 +38,15 @@
   border-color: #01567f !important;
   box-shadow: 0 0 0 1px #01567f !important;
 }
+.header-menu-item .ant-menu-item-only-child {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.header-menu-item.ant-menu-item-only-child {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.ant-menu-root.ant-menu-inline {
+  border-inline-end: 0;
+  border-inline-start: 1px solid rgba(5, 5, 5, 0.06);
+}
