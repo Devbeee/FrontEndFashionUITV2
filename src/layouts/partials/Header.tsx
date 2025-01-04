@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 
 import type { MenuProps } from 'antd'
-import { Input, Menu, Dropdown, Badge, Spin } from 'antd'
+import { Input, Menu, Dropdown, Badge, Spin, Drawer, Button } from 'antd'
 
 import { authApi, productApi } from '@/apis'
 
@@ -74,6 +74,12 @@ export function Header() {
       setQuantity(0)
     })
   }
+  
+  const [isDrawerVisible, setDrawerVisible] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerVisible(!isDrawerVisible);
+  };
 
   const actionsUser: MenuProps['items'] = [
     {
@@ -130,7 +136,7 @@ export function Header() {
           <img className='w-40 h-16' src={logo} alt='logo' />
         </div>
 
-        <div className='flex-1 mr-4'>
+        <div className='flex-1'>
           <div className='flex flex-col gap-2 md:flex-row justify-between items-center border-b pb-2 mb-2'>
             <div className='flex items-center space-x-2'>
               <span className='text-xl'>{icons.phone}</span>
@@ -225,17 +231,48 @@ export function Header() {
 
           <Menu
             mode='horizontal'
-            className='flex flex-col sm:flex-row justify-between items-center uppercase flex-1 text-center'
+            className='flex-col sm:flex-row justify-between items-center uppercase flex-1 text-center hidden md:flex'
             items={NAVIGATION_ITEMS.map((item) => ({
               ...item,
               style: { flex: 1, textAlign: 'center' }
             }))}
             selectedKeys={currentKey ? [currentKey] : []}
             overflowedIndicator={<div className='flex justify-center items-start text-4xl'>{icons.menu}</div>}
+            disabledOverflow={true}
           />
+          <Drawer
+            title="Menu"
+            placement="left"
+            onClose={toggleDrawer}
+            open={isDrawerVisible}
+            width={200}
+            className='p-0 bg-slate-300'
+            styles={{
+              body: {
+                padding: 0, 
+              }
+            }}
+          >
+            <Menu
+              mode="vertical"
+              items={NAVIGATION_ITEMS.map((item) => ({
+                ...item,
+                style: { textAlign: 'start', width: '100%' },
+              }))}
+              selectedKeys={currentKey ? [currentKey] : []}
+            />
+          </Drawer>
+          <div className='flex items-center justify-center md:hidden'>
+            <Button
+              type="text"
+              icon={icons.menu}
+              onClick={toggleDrawer}
+              className="md:hidden text-center text-4xl"
+            />
+          </div>
         </div>
 
-        <div className='flex items-center text-base space-x-4'>
+        <div className='flex items-center justify-between text-base gap-4'>
           <Dropdown
             menu={{ items: currentUser ? actionsUser : actionsAuth }}
             placement='bottomRight'
